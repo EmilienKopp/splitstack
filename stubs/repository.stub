@@ -1,0 +1,45 @@
+<?php
+
+namespace App\Infrastructure\Repositories;
+
+use App\Domain\Entities\{{ entity }}Entity;
+use App\Infrastructure\Contracts\{{ class }}RepositoryInterface;
+use App\Models\{{ class }};
+use Illuminate\Support\Collection;
+
+class {{ class }}Repository implements {{ class }}RepositoryInterface
+{
+    /** @return Collection<{{ entity }}Entity> */
+    public function all(): Collection
+    {
+        return {{ class }}::all()->map(
+            fn ({{ class }} $model) => {{ entity }}Entity::fromArray($model->toArray()),
+        );
+    }
+
+    public function findById(int $id): ?{{ entity }}Entity
+    {
+        $model = {{ class }}::find($id);
+
+        return $model ? {{ entity }}Entity::fromArray($model->toArray()) : null;
+    }
+
+    public function save({{ entity }}Entity $entity): {{ entity }}Entity
+    {
+        if (! $entity instanceof {{ entity }}Entity) {
+            throw new \InvalidArgumentException('Expected {{ entity }}Entity');
+        }
+
+        $model = {{ class }}::updateOrCreate(
+            ['id' => $entity->id],
+            $entity->toArray(),
+        );
+
+        return {{ entity }}Entity::fromArray($model->toArray());
+    }
+
+    public function delete(int $id): void
+    {
+        {{ class }}::destroy($id);
+    }
+}

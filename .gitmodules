@@ -1,0 +1,12 @@
+[submodule "packages/splitstack/enum-friendly-core"]
+	path = packages/splitstack/enum-friendly-core
+	url = git@github.com:EmilienKopp/EnumFriendlyCore.git
+[submodule "packages/splitstack/laravel-enum-friendly"]
+	path = packages/splitstack/laravel-enum-friendly
+	url = git@github.com:EmilienKopp/EnumFriendly.git
+[submodule "packages/splitstack/laravel-metamon"]
+	path = packages/splitstack/laravel-metamon
+	url = git@github.com:EmilienKopp/Metamon.git
+[submodule "packages/splitstack/laravel-stashable"]
+	path = packages/splitstack/laravel-stashable
+	url = git@github.com:EmilienKopp/Stashable.git

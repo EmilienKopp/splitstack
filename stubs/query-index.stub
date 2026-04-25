@@ -1,0 +1,20 @@
+<?php
+
+namespace {{ namespace }};
+
+use App\Domain\Entities\{{ entity }}Entity;
+use App\Infrastructure\Contracts\{{ repo }}RepositoryInterface;
+use Illuminate\Support\Collection;
+
+class {{ class }}
+{
+    public function __construct(
+        private readonly {{ repo }}RepositoryInterface ${{ lower }},
+    ) {}
+
+    /** @return Collection<{{ entity }}Entity> */
+    public function execute(): Collection
+    {
+        return $this->{{ lower }}->all();
+    }
+}
