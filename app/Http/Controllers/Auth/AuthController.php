@@ -20,7 +20,7 @@ class AuthController extends Controller
     public function authenticate(AuthKitAuthenticationRequest $request)
     {
         // try {
-        $request->authenticate(findUsing: new FindUser);
+        $request->authenticate(findUsing: app(FindUser::class));
         // } catch (TenantNotFoundException $e) {
         //     return redirect()->route('home')
         //       ->with(['showSupportContact' => true])

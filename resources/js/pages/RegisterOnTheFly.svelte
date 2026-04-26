@@ -6,34 +6,12 @@
     import { Button } from '@/components/ui/button';
     import { Input } from '@/components/ui/input';
     import { Label } from '@/components/ui/label';
-
-    let name = $state('');
-    let slug = $state('');
-    let slugEdited = $state(false);
+    import registerOnTheFly from '@/routes/register-on-the-fly';
 
     const user = $derived(page.props.user);
 
-    function slugify(value: string): string {
-        return value
-            .toLowerCase()
-            .trim()
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/^-+|-+$/g, '');
-    }
-
-    function onNameInput(e: Event) {
-        name = (e.target as HTMLInputElement).value;
-        if (!slugEdited) {
-            slug = slugify(name);
-        }
-    }
-
-    function onSlugInput(e: Event) {
-        slug = (e.target as HTMLInputElement).value;
-        slugEdited = true;
-    }
-
-    $inspect(user);
+    let slug = $state(page.props.suggested_org_slug);
+    let name = $state(page.props.org.name);
 </script>
 
 <!-- <AppHead title="Create your organization" /> -->
@@ -46,21 +24,25 @@
             <div
                 class="flex size-9 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground"
             >
-                <AppLogoIcon class="size-5 fill-current text-white dark:text-black" />
+                <AppLogoIcon
+                    class="size-5 fill-current text-white dark:text-black"
+                />
             </div>
         </div>
 
         <div
             class="rounded-lg bg-white p-8 shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] dark:bg-[#161615] dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d]"
         >
-            <h1 class="mb-1 text-lg font-semibold text-[#1b1b18] dark:text-[#EDEDEC]">
+            <h1
+                class="mb-1 text-lg font-semibold text-[#1b1b18] dark:text-[#EDEDEC]"
+            >
                 Create your user and organization
             </h1>
             <p class="mb-6 text-sm text-[#706f6c] dark:text-[#A1A09A]">
                 Set up a workspace for you and your team.
             </p>
 
-            <Form action="/orgs" method="post" class="space-y-5">
+            <Form action={registerOnTheFly.submit()} class="space-y-5">
                 {#snippet children({ errors, processing })}
                     <div class="grid gap-2">
                         <Label for="email">Email</Label>
@@ -68,66 +50,60 @@
                             id="email"
                             name="email"
                             value={user.email}
-                            disabled
-                            class="cursor-not-allowed bg-muted/50"
+                            class="cursor-not-allowed bg-muted/50 pointer-events-none"
                         />
 
                         <div class="grid gap-2 col-span-full">
-                            <Label for="first_name">First Name</Label>
+                            <Label for="name">Name</Label>
                             <Input
-                                id="first_name"
-                                name="first_name"
-                                value={user.firstName}
-                                disabled
-                                class="cursor-not-allowed bg-muted/50"
-                            />
-                            <Label for="last_name">Last Name</Label>
-                            <Input
-                                id="last_name"
-                                name="last_name"
-                                value={user.lastName}
-                                disabled
-                                class="cursor-not-allowed bg-muted/50"
+                                id="name"
+                                name="name"
+                                value={user.name}
+                                class="cursor-not-allowed bg-muted/50 pointer-events-none"
                             />
                         </div>
                     </div>
 
                     <div class="grid gap-2">
-                        <Label for="name">Organization name</Label>
+                        <Label for="org_name">Organization name</Label>
                         <Input
-                            id="name"
-                            name="name"
+                            id="org_name"
+                            name="org_name"
                             value={name}
-                            oninput={onNameInput}
                             placeholder="Acme Inc."
                             required
                             autofocus
                         />
-                        <InputError message={errors.name} />
+                        <InputError message={errors.org_name} />
                     </div>
 
                     <div class="grid gap-2">
-                        <Label for="slug">URL slug</Label>
+                        <Label for="org_slug">URL slug</Label>
                         <div
                             class="flex overflow-hidden rounded-md border focus-within:ring-2 focus-within:ring-ring"
                         >
-                            <span
-                                class="select-none border-r bg-muted px-3 py-2 text-sm text-muted-foreground"
-                            >
-                                app/
-                            </span>
                             <Input
-                                id="slug"
-                                name="slug"
+                                id="org_slug"
+                                name="org_slug"
                                 value={slug}
-                                oninput={onSlugInput}
                                 placeholder="acme-inc"
                                 required
                                 class="rounded-none border-0 shadow-none focus-visible:ring-0"
                             />
+                            <span
+                                class="select-none border-r bg-muted px-3 py-2 text-sm text-muted-foreground"
+                            >
+                                .{page.props.rootDomain}
+                            </span>
                         </div>
-                        <InputError message={errors.slug} />
+                        <InputError message={errors.org_slug} />
                     </div>
+
+                    <input
+                        type="hidden"
+                        name="org_id"
+                        value={page.props.org.id}
+                    />
 
                     <Button type="submit" class="w-full" disabled={processing}>
                         Create organization

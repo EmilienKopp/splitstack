@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Uri;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -36,10 +37,12 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $user = $request->user();
+        $rootDomain = Uri::of(config('app.url'))->host();
 
         return [
             ...parent::share($request),
             'name' => config('app.name'),
+            'rootDomain' => $rootDomain,
             'auth' => [
                 'user' => $user,
             ],

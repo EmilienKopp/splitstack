@@ -11,7 +11,7 @@ class {{ class }}
         private readonly {{ repo }}RepositoryInterface ${{ lower }},
     ) {}
 
-    public function execute(array $data): {{ entity }}Entity
+    public function handle(array $data): {{ entity }}Entity
     {
         $entity = {{ entity }}Entity::fromArray($data);
 

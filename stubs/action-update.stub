@@ -11,7 +11,7 @@ class {{ class }}
         private readonly {{ repo }}RepositoryInterface ${{ lower }},
     ) {}
 
-    public function execute({{ entity }}Entity $entity, array $data): {{ entity }}Entity
+    public function handle({{ entity }}Entity $entity, array $data): {{ entity }}Entity
     {
         // TODO: apply $data mutations to $entity
 

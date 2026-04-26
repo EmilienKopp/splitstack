@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('tenants', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
-            $table->string('domain')->unique();
+            $table->string('domain')->nullable()->unique();
             $table->string('host')->unique();
             $table->string('database')->unique();
             $table->string('org_id')->unique();

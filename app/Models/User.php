@@ -11,17 +11,18 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 #[Fillable(['name', 'email', 'workos_id', 'avatar', 'current_team_id'])]
 #[Hidden(['workos_id', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, HasFullTextSearch, HasTeams, Notifiable;
+    use HasFactory, HasFullTextSearch, HasTeams, Notifiable, UsesTenantConnection;
 
     public function searchableColumns(): array
     {
-        return ['first_name', 'last_name', 'bio'];
+        return ['name', 'bio'];
     }
 
     /**

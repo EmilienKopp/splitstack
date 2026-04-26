@@ -10,7 +10,7 @@ class {{ class }}
         private readonly {{ repo }}RepositoryInterface ${{ lower }},
     ) {}
 
-    public function execute(int $id): void
+    public function handle(int $id): void
     {
         $this->{{ lower }}->delete($id);
     }

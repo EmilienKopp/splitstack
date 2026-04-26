@@ -26,8 +26,8 @@ return new class extends Migration
             // If there's an error (e.g. the users table doesn't exist yet), we'll just use the default type
         }
 
-        Schema::create('users', function (Blueprint $table) use ($userIdColumnType) {
-            $table->$userIdColumnType('id')->primary();
+        Schema::create('users', function (Blueprint $table) {
+            $table->id();
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();

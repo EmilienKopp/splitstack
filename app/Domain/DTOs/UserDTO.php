@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Domain\DTOs;
+
+use App\Application\Shared\Contracts\BaseDTO;
+
+class UserDTO extends BaseDTO
+{
+    public function __construct(
+        public readonly ?int $id = null,
+        public readonly ?string $name = null,
+        public readonly ?string $email = null,
+        public readonly ?string $password = null,
+        public readonly ?string $org_id = null,
+    ) {}
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    public static function fromArray(array $data): static
+    {
+        return new static(
+            id: $data['id'] ?? null,
+            name: $data['name'] ?? null,
+            email: $data['email'] ?? null,
+            password: $data['password'] ?? null,
+            org_id: $data['org_id'] ?? null,
+        );
+    }
+}

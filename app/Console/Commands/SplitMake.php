@@ -29,7 +29,8 @@ class SplitMake extends Command
                             {--actions : Create Create, Update, and Delete actions in app/Actions/}
                             {--queries : Create List and Get queries in app/Queries/}
                             {--usecases : Create read and write use cases in app/UseCases/}
-                            {--all : Create all backend artifacts (entity, model, migration, repository, use cases)}';
+                            {--dto : Create a Data Transfer Object in app/Domain/DTOs/}
+                            {--all : Create all backend artifacts (entity, model, migration, repository, use cases, DTO)}';
 
     protected $description = 'Scaffold clean architecture boilerplate: entities, repositories, actions, queries, and use cases';
 
@@ -38,6 +39,21 @@ class SplitMake extends Command
         intro('  split:make  ·  Clean Architecture Scaffolder');
 
         $name = $this->argument('name');
+
+        if ($this->option('dto') && ! $this->option('all') && ! $this->option('model') && ! $this->option('migration') && ! $this->option('repository') && ! $this->option('actions') && ! $this->option('queries') && ! $this->option('usecases')) {
+            $dtoName = $name
+                ? Str::studly($name)
+                : Str::studly(text(
+                    label: 'DTO name',
+                    placeholder: 'e.g. CreateProduct, UpdateOrder',
+                    validate: fn (string $v) => blank(trim($v)) ? 'DTO name is required.' : null,
+                ));
+
+            $this->generateDto($dtoName);
+            outro('Scaffolding complete.');
+
+            return;
+        }
 
         if ($name) {
             $this->handleBackend(Str::studly($name));
@@ -89,7 +105,8 @@ class SplitMake extends Command
             || $this->option('repository')
             || $this->option('actions')
             || $this->option('queries')
-            || $this->option('usecases');
+            || $this->option('usecases')
+            || $this->option('dto');
 
         if (! $hasArtifactFlags) {
             if (! $this->option('entity-name') && ! $this->option('repository-name')) {
@@ -116,6 +133,7 @@ class SplitMake extends Command
                     'actions' => 'CQS Actions  (Create, Update, Delete)  →  app/Actions/',
                     'queries' => 'CQS Queries  (List, Get)  →  app/Queries/',
                     'usecases' => 'Use Cases  (all operations)  →  app/UseCases/',
+                    'dto' => 'DTO  (Data Transfer Object)  →  app/Domain/DTOs/',
                 ],
                 default: ['model', 'migration', 'repository', 'usecases'],
                 required: true,
@@ -127,6 +145,7 @@ class SplitMake extends Command
             $generateActions = in_array('actions', $selected);
             $generateQueries = in_array('queries', $selected);
             $generateUseCases = in_array('usecases', $selected);
+            $generateDto = in_array('dto', $selected);
         } else {
             $generateModel = $all || (bool) $this->option('model');
             $generateMigration = $all || (bool) $this->option('migration');
@@ -134,6 +153,7 @@ class SplitMake extends Command
             $generateActions = (bool) $this->option('actions');
             $generateQueries = (bool) $this->option('queries');
             $generateUseCases = $all || (bool) $this->option('usecases');
+            $generateDto = $all || (bool) $this->option('dto');
         }
 
         $this->generateEntity($entityName);
@@ -168,6 +188,10 @@ class SplitMake extends Command
             $this->generateUseCase($name, $entityName, $repositoryName, 'delete');
             $this->generateUseCase($name, $entityName, $repositoryName, 'index');
             $this->generateUseCase($name, $entityName, $repositoryName, 'show');
+        }
+
+        if ($generateDto) {
+            $this->generateDto($entityName);
         }
     }
 
@@ -230,6 +254,21 @@ class SplitMake extends Command
         File::ensureDirectoryExists(dirname($path));
         File::put($path, $this->renderStub('repository', $repositoryName, ['entity' => $entityName]));
         info("Repository created: app/Infrastructure/Repositories/{$repositoryName}Repository.php");
+    }
+
+    private function generateDto(string $name): void
+    {
+        $path = app_path("Domain/DTOs/{$name}DTO.php");
+
+        if (File::exists($path)) {
+            warning("DTO already exists: app/Domain/DTOs/{$name}DTO.php");
+
+            return;
+        }
+
+        File::ensureDirectoryExists(dirname($path));
+        File::put($path, $this->renderStub('dto', $name));
+        info("DTO created: app/Domain/DTOs/{$name}DTO.php");
     }
 
     private function generateAction(string $name, string $entityName, string $repositoryName, string $type): void

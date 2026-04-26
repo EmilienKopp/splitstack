@@ -1,11 +1,8 @@
 <?php
 
-use App\Providers\AppServiceProvider;
-use App\Providers\FortifyServiceProvider;
-use App\Providers\SearchServiceProvider;
-
 return [
-    AppServiceProvider::class,
-    FortifyServiceProvider::class,
-    SearchServiceProvider::class,
+    App\Providers\AppServiceProvider::class,
+    App\Providers\SearchServiceProvider::class,
+    App\Providers\SplitstackProvider::class,
+    App\Providers\WorkOSProvider::class,
 ];
