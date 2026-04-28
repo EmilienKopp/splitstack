@@ -72,9 +72,11 @@
             </SidebarMenuItem>
         </SidebarMenu>
         <SidebarMenu>
-            <SidebarMenuItem>
-                <TeamSwitcher />
-            </SidebarMenuItem>
+            {#if page.props.config.usesTeams}
+                <SidebarMenuItem>
+                    <TeamSwitcher />
+                </SidebarMenuItem>
+            {/if}
         </SidebarMenu>
     </SidebarHeader>
 

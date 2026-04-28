@@ -28,7 +28,7 @@ class RegisterOnTheFlyRequest extends FormRequest
             'email' => ['required', 'string', 'email', 'max:255'],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
             'org_name' => ['required', 'string', 'max:255'],
-            'org_slug' => ['required', 'string', 'max:255', 'unique:tenants,host'],
+            'org_slug' => ['required', 'string', 'max:255', 'unique:tenants,space'],
             'org_id' => ['required', 'string', 'max:255', 'unique:tenants,org_id'],
         ];
     }

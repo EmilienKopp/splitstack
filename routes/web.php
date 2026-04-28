@@ -8,11 +8,13 @@ use Laravel\WorkOS\Http\Middleware\ValidateSessionWithWorkOS;
 
 Route::inertia('/', 'Welcome')->name('home');
 
-Route::prefix('{current_team}')
-    ->middleware(['auth', ValidateSessionWithWorkOS::class, EnsureTeamMembership::class])
-    ->group(function () {
-        Route::inertia('dashboard', 'Dashboard')->name('dashboard');
-    });
+function mainRoutes(): void
+{
+    Route::domain('{space?}.'.app_host())
+        ->group(function () {
+            Route::inertia('dashboard', 'Dashboard')->name('dashboard');
+        });
+}
 
 Route::prefix('/registration')
     ->middleware(['web'])
@@ -24,6 +26,15 @@ Route::prefix('/registration')
 Route::middleware(['auth'])->group(function () {
     Route::get('invitations/{invitation}/accept', [TeamInvitationController::class, 'accept'])->name('invitations.accept');
 });
+
+if (config('features.uses_teams')) {
+    Route::prefix('{current_team}')
+        ->middleware(['auth', ValidateSessionWithWorkOS::class, EnsureTeamMembership::class])
+        ->group(fn () => mainRoutes());
+} else {
+    Route::middleware(['auth', ValidateSessionWithWorkOS::class])
+        ->group(fn () => mainRoutes());
+}
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

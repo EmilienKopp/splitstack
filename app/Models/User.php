@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Pennant\Concerns\HasFeatures;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 #[Fillable(['name', 'email', 'workos_id', 'avatar', 'current_team_id'])]
@@ -18,7 +19,7 @@ use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, HasFullTextSearch, HasTeams, Notifiable, UsesTenantConnection;
+    use HasFactory, HasFeatures, HasFullTextSearch, HasTeams, Notifiable, UsesTenantConnection;
 
     public function searchableColumns(): array
     {
@@ -36,5 +37,12 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function teams()
+    {
+        return $this->belongsToMany(Team::class, 'team_members')
+            ->withPivot('role')
+            ->withTimestamps();
     }
 }

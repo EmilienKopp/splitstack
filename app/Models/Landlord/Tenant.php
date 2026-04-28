@@ -2,6 +2,7 @@
 
 namespace App\Models\Landlord;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
 use Laravel\Pennant\Concerns\HasFeatures;
@@ -15,7 +16,7 @@ class Tenant extends BaseTenant
     protected $fillable = [
         'id',
         'name',
-        'host',
+        'space',
         'domain',
         'database',
         'org_id',
@@ -42,5 +43,11 @@ class Tenant extends BaseTenant
                 $model->id = (string) Str::uuid();
             }
         });
+    }
+
+    #[Scope]
+    protected function bySpace($query, $space): void
+    {
+        $query->where('space', $space);
     }
 }

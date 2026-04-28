@@ -13,12 +13,10 @@ class TenantFinder extends \Spatie\Multitenancy\TenantFinder\TenantFinder
         private readonly TenantRepositoryInterface $tenantRepository,
     ) {}
 
-    public function findForRequest(Request $request): ?IsTenant
+    public function findForRequest(Request $_request): ?IsTenant
     {
-        $host = $request->getHost();
-
-        $tenant = Tenant::where('domain', $host)->first();
-
+        $space = get_subdomain();
+        $tenant = Tenant::bySpace($space)->first();
         if (! $tenant) {
             return null;
         }

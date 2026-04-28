@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Actions\Auth\CreateUser;
 use App\Actions\Auth\FindUser;
-use App\Exceptions\TenantNotFoundException;
 use App\Http\Controllers\Controller;
+use App\Models\Landlord\Tenant;
 use Illuminate\Support\Facades\URL;
 use Laravel\WorkOS\Http\Requests\AuthKitAuthenticationRequest;
 use Laravel\WorkOS\Http\Requests\AuthKitLoginRequest;
@@ -19,31 +20,24 @@ class AuthController extends Controller
 
     public function authenticate(AuthKitAuthenticationRequest $request)
     {
-        // try {
-        $request->authenticate(findUsing: app(FindUser::class));
-        // } catch (TenantNotFoundException $e) {
-        //     return redirect()->route('home')
-        //       ->with(['showSupportContact' => true])
-        //       ->withErrors(['error' => 'Tenant not found. Please contact support.']);
-        // } catch (\Exception $e) {
-        //     return redirect()->route('home')->withErrors(['error' => 'Authentication failed. Please try again.']);
-        // }
+        $request->authenticate(findUsing: app(FindUser::class), createUsing: app(CreateUser::class), updateUsing: null);
 
-        // Tenant finding and session storing
-        // dd($request->all());
-
+        $tenant = Tenant::current();
         $user = auth()->user();
-        $currentTeam = $user->currentTeam ?? $user->personalTeam();
 
-        if ($currentTeam && ! $user->current_team_id) {
-            $user->switchTeam($currentTeam);
+        if (config('features.uses_teams')) {
+            $currentTeam = $user->currentTeam ?? $user->personalTeam();
+
+            if ($currentTeam && ! $user->current_team_id) {
+                $user->switchTeam($currentTeam);
+            }
+
+            if ($currentTeam) {
+                URL::defaults(['current_team' => $currentTeam->slug]);
+            }
         }
 
-        if ($currentTeam) {
-            URL::defaults(['current_team' => $currentTeam->slug]);
-        }
-
-        return redirect()->intended(route('dashboard'));
+        return redirect()->intended(route('dashboard', ['space' => $tenant?->space]));
     }
 
     public function logout(AuthKitLogoutRequest $request)

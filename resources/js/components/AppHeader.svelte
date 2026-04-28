@@ -266,7 +266,9 @@
                     </DropdownMenuContent>
                 </DropdownMenu>
 
-                <TeamSwitcher inHeader={true} />
+                {#if page.props.config.usesTeams}
+                    <TeamSwitcher inHeader={true} />
+                {/if}
             </div>
         </div>
     </div>

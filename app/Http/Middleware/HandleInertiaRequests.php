@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Landlord\Tenant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Uri;
 use Inertia\Middleware;
@@ -37,18 +38,43 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $user = $request->user();
-        $rootDomain = Uri::of(config('app.url'))->host();
+
+        $features = $this->getRelevantFeatures();
+        $config = $this->getRelevantConfig();
 
         return [
             ...parent::share($request),
             'name' => config('app.name'),
-            'rootDomain' => $rootDomain,
             'auth' => [
                 'user' => $user,
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'currentTeam' => fn () => $user?->currentTeam ? $user->toUserTeam($user->currentTeam) : null,
             'teams' => fn () => $user?->toUserTeams(includeCurrent: true) ?? [],
+            'features' => $features,
+            'config' => $config,
+            'space' => Tenant::current()?->space,
+        ];
+    }
+
+    public function getRelevantFeatures()
+    {
+        $user = request()->user();
+
+        return $user?->features() ?? [];
+    }
+
+    public function getRelevantConfig()
+    {
+        $rootDomain = Uri::of(config('app.url'))->host();
+
+        return [
+            'app' => [
+                'name' => config('app.name'),
+                'url' => config('app.url'),
+                'rootDomain' => $rootDomain,
+            ],
+            'usesTeams' => config('features.uses_teams'),
         ];
     }
 }

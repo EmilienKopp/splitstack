@@ -7,10 +7,7 @@
     import { Toaster } from '@/components/ui/sonner';
 
     const auth = $derived(page.props.auth);
-    const currentTeam = $derived(page.props.currentTeam as Team | null);
-    const dashboardUrl = $derived(
-        currentTeam ? dashboard(currentTeam.slug) : '/',
-    );
+    const dashboardUrl = $derived(dashboard(page.props.space));
 </script>
 
 <AppHead title="Welcome">

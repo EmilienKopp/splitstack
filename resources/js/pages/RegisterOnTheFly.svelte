@@ -90,11 +90,13 @@
                                 required
                                 class="rounded-none border-0 shadow-none focus-visible:ring-0"
                             />
-                            <span
-                                class="select-none border-r bg-muted px-3 py-2 text-sm text-muted-foreground"
-                            >
-                                .{page.props.rootDomain}
-                            </span>
+                            {#if page.props.config.app?.rootDomain}
+                                <span
+                                    class="select-none border-r bg-muted px-3 py-2 text-sm text-muted-foreground"
+                                >
+                                    .{page.props.config.app.rootDomain}
+                                </span>
+                            {/if}
                         </div>
                         <InputError message={errors.org_slug} />
                     </div>

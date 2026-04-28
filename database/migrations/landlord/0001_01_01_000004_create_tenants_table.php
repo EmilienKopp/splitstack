@@ -12,7 +12,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('name');
             $table->string('domain')->nullable()->unique();
-            $table->string('host')->unique();
+            $table->string('space')->unique();
             $table->string('database')->unique();
             $table->string('org_id')->unique();
             $table->string('hash')->nullable();

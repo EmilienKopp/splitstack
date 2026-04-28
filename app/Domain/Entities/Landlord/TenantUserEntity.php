@@ -9,7 +9,7 @@ class TenantUserEntity
         public readonly ?int $org_id = null,
         public readonly ?string $name = null,
         public readonly ?string $domain = null,
-        public readonly ?string $host = null,
+        public readonly ?string $space = null,
         public readonly ?string $database = null,
         public readonly ?string $hash = null,
         public readonly ?string $created_at = null,
@@ -20,7 +20,7 @@ class TenantUserEntity
     {
         return new self(
             name: $name,
-            host: $slug,
+            space: $slug,
             database: "{$slug}_db",
             hash: hash('sha256', $slug),
         );
@@ -33,7 +33,7 @@ class TenantUserEntity
             org_id: $data['org_id'] ?? null,
             name: $data['name'] ?? null,
             domain: $data['domain'] ?? null,
-            host: $data['host'] ?? null,
+            space: $data['space'] ?? null,
             database: $data['database'] ?? null,
             hash: $data['hash'] ?? null,
             created_at: $data['created_at'] ?? null,
@@ -48,7 +48,7 @@ class TenantUserEntity
             'org_id' => $this->org_id,
             'name' => $this->name,
             'domain' => $this->domain,
-            'host' => $this->host,
+            'space' => $this->space,
             'database' => $this->database,
             'hash' => $this->hash,
             'created_at' => $this->created_at,

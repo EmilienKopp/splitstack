@@ -8,7 +8,7 @@ use App\Models\User;
 use WorkOS\Organizations;
 use WorkOS\UserManagement;
 
-final class FindUser
+final class CreateUser
 {
     public function __construct(public UserManagement $userManagement, public Organizations $organizations) {}
 
@@ -26,7 +26,13 @@ final class FindUser
         }
 
         $tenant->makeCurrent();
+        $newUser = new User;
+        $newUser->name = "{$user->firstName} {$user->lastName}";
+        $newUser->email = $user->email;
+        $newUser->workos_id = $user->id;
+        $newUser->avatar = $user->avatar;
+        $newUser->save();
 
-        return User::where('email', $user->email)->first();
+        return $newUser;
     }
 }

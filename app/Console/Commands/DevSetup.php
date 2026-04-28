@@ -195,7 +195,7 @@ class DevSetup extends Command
                 'id' => str()->uuid(),
                 'name' => 'Tenant Template',
                 'database' => $this->templateDatabase,
-                'host' => 'tenant_template',
+                'space' => 'tenant_template',
                 'domain' => 'tenant_template.localhost',
                 'org_id' => 'tenant_template_org',
             ]);
@@ -280,7 +280,7 @@ class DevSetup extends Command
         $tenant = Tenant::create([
             'name' => 'Dev Tenant',
             'domain' => $domain,
-            'host' => $host,
+            'space' => $host,
             'database' => $database,
             'org_id' => 'dev_org',
         ]);
@@ -399,7 +399,7 @@ class DevSetup extends Command
                 ['Template DB', $this->templateDatabase],
                 ['Tenant DB', $database],
                 ['Domain', $domain],
-                ['Host', $host],
+                ['Space', $host],
                 ['Admin Email', $this->option('admin-email')],
             ]
         );
