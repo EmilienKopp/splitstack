@@ -5,6 +5,8 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Concerns\HasFullTextSearch;
 use App\Concerns\HasTeams;
+use App\Traits\HasGitHubConnection;
+use App\Traits\HasGoogleConnection;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -19,12 +21,8 @@ use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, HasFeatures, HasFullTextSearch, HasTeams, Notifiable, UsesTenantConnection;
-
-    public function searchableColumns(): array
-    {
-        return ['name', 'bio'];
-    }
+    use HasFactory, HasFeatures, HasFullTextSearch, HasGitHubConnection,
+        HasGoogleConnection, HasTeams, Notifiable, UsesTenantConnection;
 
     /**
      * Get the attributes that should be cast.
