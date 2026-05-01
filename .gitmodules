@@ -10,3 +10,6 @@
 [submodule "packages/splitstack/laravel-stashable"]
 	path = packages/splitstack/laravel-stashable
 	url = git@github.com:EmilienKopp/Stashable.git
+[submodule "packages/splitstack/laravel-stashable"]
+	path = packages/splitstack/pg-laravel-translucid
+	url = git@github.com:EmilienKopp/pg-laravel-translucid.git
