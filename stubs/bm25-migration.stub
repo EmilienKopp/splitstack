@@ -1,0 +1,29 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('{{ table }}', function (Blueprint $table) {
+            $table->id();
+            // TODO: define your columns
+            $table->timestamps();
+        });
+
+        $textConfig = config('scout.pg_textsearch.text_config', 'english');
+
+        // BM25 full-text indexes — column order reflects searchableColumns() priority (first = highest weight).
+{{ indexes }}
+    }
+
+    public function down(): void
+    {
+{{ drop_indexes }}
+        Schema::dropIfExists('{{ table }}');
+    }
+};

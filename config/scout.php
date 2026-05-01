@@ -125,8 +125,18 @@ return [
     */
 
     'pg_textsearch' => [
-        'limit' => env('SCOUT_PG_TEXTSEARCH_LIMIT', 25),
+        'limit' => env('SCOUT_PG_TEXTSEARCH_LIMIT', 3),
         'text_config' => env('SCOUT_PG_TEXTSEARCH_TEXT_CONFIG', 'english'),
+
+        /*
+         | Priority scheme for multi-column search. Controls how column position
+         | affects relevance scoring. 'linear' (default) uses weights N, N-1, …, 1.
+         | 'exponential' uses 1.0, 0.5, 0.25, … — a sharper priority drop-off.
+         | Override per-model via searchablePriorityScheme(): string
+         | or provide explicit weights via searchableWeights(): array.
+         | Supported: "linear", "exponential"
+         */
+        'priority_scheme' => env('SCOUT_PG_TEXTSEARCH_PRIORITY_SCHEME', 'linear'),
     ],
 
     'algolia' => [

@@ -122,36 +122,66 @@ class PgTextSearchEngine extends Engine
         $connection = $model->getConnection();
         $table = $model->getTable();
         $pk = $model->getKeyName();
-        $columns = $this->resolveColumns($model);
-        $limit = $options['limit'] ?? ($builder->limit ?? config('scout.pg_textsearch.limit', 25));
+        $columns = $this->resolveColumns($model, $options);
+        $limit = $options['limit'] ?? ($builder->limit ?? config('scout.pg_textsearch.limit', 3));
         $offset = $options['offset'] ?? 0;
 
         $indexNames = $this->ensureIndexesExist($model, $columns);
-
-        $orderExpr = $this->buildOrderExpression($columns, $table, $indexNames);
+        $weights = $this->resolveWeights($model, $columns);
+        $scoreExpr = $this->buildScoreExpression($columns, $table, $indexNames, $weights);
         [$whereSql, $whereBindings] = $this->compileWheres($builder);
 
-        // Each column in the ORDER BY expression needs its own binding.
-        $queryBindings = array_fill(0, count($columns), $builder->query);
+        // Score bindings appear in the CTE SELECT clause, before the WHERE bindings.
+        $scoreBindings = array_fill(0, count($columns), $builder->query);
 
-        $hits = $connection->select(<<<SQL
-            SELECT "{$pk}"
-            FROM "{$table}"
-            {$whereSql}
-            ORDER BY {$orderExpr} ASC
-            LIMIT ? OFFSET ?
-            SQL, [...$whereBindings, ...$queryBindings, $limit, $offset]);
+        $cteSql = "WITH _scored AS (SELECT \"{$pk}\", {$scoreExpr} AS _score FROM \"{$table}\" {$whereSql})";
 
-        $total = (int) $connection->selectOne(<<<SQL
-            SELECT COUNT(*) AS aggregate
-            FROM "{$table}"
-            {$whereSql}
-            SQL, $whereBindings)?->aggregate;
+        $hits = $connection->select(
+            "{$cteSql} SELECT \"{$pk}\" FROM _scored WHERE _score < 0 ORDER BY _score ASC LIMIT ? OFFSET ?",
+            [...$scoreBindings, ...$whereBindings, $limit, $offset]
+        );
+
+        $total = (int) $connection->selectOne(
+            "{$cteSql} SELECT COUNT(*) AS aggregate FROM _scored WHERE _score < 0",
+            [...$scoreBindings, ...$whereBindings]
+        )?->aggregate;
 
         return [
             'hits' => array_map(fn ($row) => (array) $row, $hits),
             'total' => $total,
         ];
+    }
+
+    /**
+     * Resolve per-column priority weights for scoring.
+     *
+     * Resolution order:
+     *   1. Model's searchableWeights(): array — explicit values
+     *   2. Model's searchablePriorityScheme(): string — 'linear' | 'exponential'
+     *   3. config('scout.pg_textsearch.priority_scheme') — global default ('linear')
+     *
+     * Linear (default): weights are N, N-1, …, 1 (first column wins most).
+     * Exponential: weights are 1.0, 0.5, 0.25, … (sharp drop-off).
+     *
+     * @param  array<string>  $columns
+     * @return array<float>
+     */
+    private function resolveWeights(mixed $model, array $columns): array
+    {
+        if (method_exists($model, 'searchableWeights')) {
+            return $model->searchableWeights();
+        }
+
+        $scheme = method_exists($model, 'searchablePriorityScheme')
+            ? $model->searchablePriorityScheme()
+            : config('scout.pg_textsearch.priority_scheme', 'linear');
+
+        $count = count($columns);
+
+        return match ($scheme) {
+            'exponential' => array_map(fn ($i) => 1.0 / (2 ** $i), range(0, $count - 1)),
+            default => array_map(fn ($i) => (float) ($count - $i), range(0, $count - 1)),
+        };
     }
 
     /**
@@ -169,7 +199,6 @@ class PgTextSearchEngine extends Engine
         $textConfig = method_exists($model, 'searchableTextConfig')
             ? $model->searchableTextConfig()
             : config('scout.pg_textsearch.text_config', 'english');
-
         $indexNames = [];
 
         foreach ($columns as $column) {
@@ -215,33 +244,55 @@ class PgTextSearchEngine extends Engine
             SQL);
     }
 
-    private function resolveColumns(mixed $model): array
+    private function resolveColumns(mixed $model, array $options = []): array
     {
-        if (method_exists($model, 'searchableColumns')) {
-            return $model->searchableColumns();
+        $columnsArray = $options['columns'] ?? [];
+
+        if (! method_exists($model, 'searchableColumns')) {
+            throw new \InvalidArgumentException('Model must define searchableColumns() method when using pg_textsearch engine.');
         }
 
-        return array_keys($model->toSearchableArray());
+        $searchable = $model->searchableColumns();
+        if (empty($searchable)) {
+            throw new \InvalidArgumentException('Model\'s searchableColumns() method must return at least one column.');
+        }
+
+        if (empty($columnsArray)) {
+            $columnsArray = $searchable;
+        } else {
+            foreach ($columnsArray as $col) {
+                if (! in_array($col, $searchable)) {
+                    throw new \InvalidArgumentException("Column '{$col}' is not declared in searchableColumns() for model ".get_class($model));
+                }
+            }
+        }
+
+        return $columnsArray;
     }
 
     /**
-     * Build an ORDER BY expression that sums BM25 scores across all columns.
-     * Uses to_bm25query(?, index_name) to explicitly target the right index,
-     * which avoids PDO type ambiguity and prevents "multiple indexes" warnings.
-     * Multi-column scores are summed so any column hit contributes to the rank.
+     * Build a BM25 score expression for use in a CTE.
+     *
+     * BM25 scores are negative — lower (more negative) = better match; 0.0 = no match.
+     * Each column's score is multiplied by its priority weight before summing,
+     * so hits in higher-priority columns dominate the final rank.
+     *
+     * @param  array<string>  $columns
+     * @param  array<string, string>  $indexNames  column => index name
+     * @param  array<float>  $weights  priority weights, index-aligned with $columns
      */
-    /**
-     * @param  array<string, string>  $indexNames  column => index name map
-     */
-    private function buildOrderExpression(array $columns, string $table, array $indexNames): string
+    private function buildScoreExpression(array $columns, string $table, array $indexNames, array $weights): string
     {
-        $parts = array_map(function ($col) use ($indexNames, $table) {
+        $columns = array_values($columns);
+        $parts = [];
+
+        foreach ($columns as $i => $col) {
             $indexName = $indexNames[$col] ?? "{$table}_{$col}_bm25";
+            $weight = $weights[$i] ?? 1.0;
+            $parts[] = "COALESCE(\"{$col}\" <@> to_bm25query(?, '{$indexName}'), 0.0) * {$weight}";
+        }
 
-            return "COALESCE(\"{$col}\" <@> to_bm25query(?, '{$indexName}'), 0.0)";
-        }, $columns);
-
-        return count($parts) === 1
+        return \count($parts) === 1
             ? $parts[0]
             : '('.implode(' + ', $parts).')';
     }
