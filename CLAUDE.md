@@ -14,6 +14,7 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - laravel/framework (LARAVEL) - v13
 - laravel/pennant (PENNANT) - v1
 - laravel/prompts (PROMPTS) - v0
+- laravel/reverb (REVERB) - v1
 - laravel/scout (SCOUT) - v11
 - laravel/wayfinder (WAYFINDER) - v0
 - laravel/boost (BOOST) - v2

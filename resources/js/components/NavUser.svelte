@@ -15,10 +15,15 @@
     import UserInfo from '@/components/UserInfo.svelte';
     import UserMenuContent from '@/components/UserMenuContent.svelte';
     import type { Team } from '@/types';
+    import { translucid } from '@/lib/core/translucid.svelte';
 
     const user = $derived(page.props.auth.user);
     const currentTeam = $derived(page.props.currentTeam as Team | null);
     const { isMobile, state: sidebarState } = useSidebar();
+
+    $inspect(user);
+
+    translucid.init(page.props.space).table('users').watch(user);
 </script>
 
 <SidebarMenu>

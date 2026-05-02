@@ -13,6 +13,7 @@
         "inertiajs/inertia-laravel": "^3.0",
         "laravel/framework": "^13.0",
         "laravel/pennant": "^1.23",
+        "laravel/reverb": "^1.0",
         "laravel/scout": "^11.1",
         "laravel/tinker": "^3.0",
         "laravel/wayfinder": "^0.1.16",
@@ -62,7 +63,7 @@
         "dev": [
             "Composer\\Config::disableProcessTimeout",
             "docker compose up -d",
-            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan queue:listen\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=queue,logs,vite --kill-others"
+            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74,#981237\" \"php artisan queue:listen\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=queue,logs,vite,reverb --kill-others"
         ],
         "lint": [
             "pint --parallel"

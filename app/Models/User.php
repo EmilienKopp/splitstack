@@ -7,6 +7,7 @@ use App\Concerns\HasFullTextSearch;
 use App\Concerns\HasGitHubConnection;
 use App\Concerns\HasGoogleConnection;
 use App\Concerns\HasTeams;
+use App\Concerns\Translucid;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -22,7 +23,7 @@ class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, HasFeatures, HasFullTextSearch, HasGitHubConnection,
-        HasGoogleConnection, HasTeams, Notifiable, UsesTenantConnection;
+        HasGoogleConnection, HasTeams, Notifiable, Translucid, UsesTenantConnection;
 
     /**
      * Get the attributes that should be cast.
