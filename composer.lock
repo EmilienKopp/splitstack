@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bb2c3895c13787f5df9a2a8be4d88e36",
+    "content-hash": "40cfc95d27edfc224f9513f0db661bab",
     "packages": [
         {
             "name": "brick/math",
@@ -5741,16 +5741,17 @@
             "time": "2026-01-12T07:42:22+00:00"
         },
         {
-            "name": "splitstack/pg-laravel-translucid",
-            "version": "2.1.0",
+            "name": "splitstack/translucid",
+            "version": "1.0.0",
             "dist": {
                 "type": "path",
-                "url": "packages/splitstack/pg-laravel-translucid",
-                "reference": "41caadae5ee1f56548ea27bc902d982f9c29f456"
+                "url": "packages/splitstack/translucid",
+                "reference": "a0bad4686ed4fe7510e7036d58dc723a4737695c"
             },
             "require": {
-                "laravel/framework": "^10.0|^11.0|^12.0|^13.0",
-                "php": "^8.1"
+                "laravel/framework": "^11.0|^12.0|^13.0",
+                "laravel/pennant": "^1.0",
+                "php": "^8.2"
             },
             "require-dev": {
                 "pestphp/pest": "^4.6",
@@ -5761,7 +5762,10 @@
                 "laravel": {
                     "providers": [
                         "Splitstack\\Translucid\\Providers\\TranslucidServiceProvider"
-                    ]
+                    ],
+                    "aliases": {
+                        "Translucid": "Splitstack\\Translucid\\Facades\\Translucid"
+                    }
                 }
             },
             "autoload": {
@@ -5787,17 +5791,19 @@
             ],
             "authors": [
                 {
-                    "name": "EmilienKopp"
+                    "name": "EmilienKopp",
+                    "email": "emilien.kopp@gmail.com"
                 }
             ],
-            "description": "Make your Laravel enums friendly with TypeScript, selects, and many more convenient features",
+            "description": "Realtime model updates for Laravel via Postgres LISTEN/NOTIFY or Eloquent lifecycle events",
             "keywords": [
-                "enum",
-                "forms",
-                "friendly",
+                "broadcasting",
                 "laravel",
-                "translations",
-                "typescript"
+                "listen",
+                "notify",
+                "postgres",
+                "realtime",
+                "websockets"
             ],
             "transport-options": {
                 "symlink": true,

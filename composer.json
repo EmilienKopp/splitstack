@@ -22,7 +22,7 @@
         "spatie/laravel-medialibrary": "^11.21",
         "spatie/laravel-multitenancy": "^4.1",
         "spatie/laravel-permission": "^7.3",
-        "splitstack/pg-laravel-translucid": "*"
+        "splitstack/translucid": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24",

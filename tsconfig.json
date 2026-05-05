@@ -37,6 +37,9 @@
             /* Specify a set of entries that re-map imports to additional lookup locations. */ "@/*": [
                 "./resources/js/*"
             ],
+            "translucid-svelte": [
+                "./packages/splitstack/translucid-svelte/src/translucid.svelte.ts"
+            ],
             "$types/*": [
                 "./resources/js/types/*"
             ],
@@ -136,6 +139,8 @@
     "include": [
         "resources/js/**/*.ts",
         "resources/js/**/*.d.ts",
-        "resources/js/**/*.svelte"
+        "resources/js/**/*.svelte",
+        "packages/splitstack/translucid-svelte/src/**/*.ts",
+        "packages/splitstack/translucid-svelte/src/**/*.svelte"
     ]
 }
