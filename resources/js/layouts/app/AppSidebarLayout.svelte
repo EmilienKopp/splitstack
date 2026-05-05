@@ -6,6 +6,8 @@
     import AppSidebarHeader from '@/components/AppSidebarHeader.svelte';
     import { Toaster } from '@/components/ui/sonner';
     import type { BreadcrumbItem } from '@/types';
+    import { page } from '@inertiajs/svelte';
+    import { translucid } from 'translucid-svelte';
 
     let {
         breadcrumbs = [],
@@ -14,6 +16,8 @@
         breadcrumbs?: BreadcrumbItem[];
         children?: Snippet;
     } = $props();
+
+    translucid.configure(() => page.props.space as string);
 </script>
 
 <AppShell variant="sidebar">
