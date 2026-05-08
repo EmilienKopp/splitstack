@@ -216,12 +216,19 @@ php artisan translucid:listen # Start the PG LISTEN loop
 
 ## Project Structure
 
-```bash
+```text
 app/
-├── Actions/           # Single-responsibility handlers
-├── Application/       # Contracts (DTO, TransactionHandler)
+├── Application/
+│   ├── Actions/       # Single-responsibility handlers
+│   ├── Queries/       # Read-side handlers
+│   ├── UseCases/      # Multi-step orchestration
+│   └── Shared/
+│       └── Contracts/ # BaseDTO, DTO, TransactionHandler
 ├── Console/Commands/  # Custom Artisan commands
-├── Domain/            # DTOs, Entities, ValueObjects
+├── Domain/
+│   ├── DTOs/          # Input carriers (extend BaseDTO)
+│   ├── Entities/      # Domain objects with identity
+│   └── ValueObjects/  # Immutable, identity-less concepts
 ├── Facades/           # Split facade
 ├── Http/
 │   ├── Concerns/      # HasHybridResponses trait
@@ -233,8 +240,7 @@ app/
 ├── Models/
 │   └── Landlord/      # Cross-tenant models (Tenant, User, Role…)
 ├── Providers/         # SplitstackProvider (auto-binding)
-├── Support/TypeScript/ # Codegen pipeline
-└── UseCases/          # Multi-step orchestration
+└── Support/TypeScript/ # Codegen pipeline
 
 packages/splitstack/
 ├── translucid/        # PG LISTEN/NOTIFY real-time eventing
