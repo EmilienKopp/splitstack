@@ -4,7 +4,7 @@
 
 A production-ready Laravel + Svelte starter template with end-to-end type safety, built-in multi-tenancy, and a clean DDD architecture — so you start every project with the hard parts already done.
 
-### The pitch
+## The pitch
 
 Most full-stack templates give you a running app. Splitstack gives you a typed pipeline from database to UI — annotate a PHP class, run one command, and your Svelte components have the interface. No manual syncing, no drift between backend shapes and frontend types.
 
