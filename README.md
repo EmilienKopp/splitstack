@@ -2,7 +2,21 @@
 
 **Svelte · PostgreSQL · Laravel · Inertia · TypeScript**
 
-A production-ready Laravel + Svelte starter template built for developers who want to move fast without sacrificing architecture. Comes with multi-tenancy, teams, real-time eventing, hybrid responses, and a typed RBAC system — all wired together so you don't have to.
+A production-ready Laravel + Svelte starter template with end-to-end type safety, built-in multi-tenancy, and a clean DDD architecture — so you start every project with the hard parts already done.
+
+### The pitch
+
+Most full-stack templates give you a running app. Splitstack gives you a typed pipeline from database to UI — annotate a PHP class, run one command, and your Svelte components have the interface. No manual syncing, no drift between backend shapes and frontend types.
+
+```
+PHP models / DTOs  →  php artisan typegen  →  TypeScript interfaces  →  Svelte components
+     ↑                                                                         ↑
+ type-hinted,                                                          statically checked,
+ validated at                                                          no runtime surprises
+ the boundary
+```
+
+On top of that: a multi-tenant architecture with teams, role-based UI config, real-time DB events without a broker, and hybrid controllers that serve both JSON and Inertia from the same method.
 
 ---
 
