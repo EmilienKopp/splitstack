@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Http\Concerns;
+
+use App\Http\Responses\SplitResponseBuilder;
+
+/**
+ * Provides a respond() method that returns the appropriate response type
+ * depending on the request and the target destination.
+ *
+ * Can be mixed into any controller, or used via the Split facade.
+ *
+ * @see HybridController
+ * @see Split
+ */
+trait HasHybridResponses
+{
+    /**
+     * Start a fluent split response builder.
+     */
+    public function respond(array $data = [], ?string $component = null, ?string $route = null): SplitResponseBuilder
+    {
+        $builder = $this->builder instanceof SplitResponseBuilder
+            ? $this->builder
+            : app()->make(SplitResponseBuilder::class);
+
+        return $builder->respond($data)->component($component)->route($route);
+    }
+}

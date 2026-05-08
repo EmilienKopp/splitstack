@@ -12,7 +12,6 @@
         children?: Snippet;
         [key: string]: any;
     } = $props();
-    $inspect(restProps);
 </script>
 
 <AppLayout {breadcrumbs}>

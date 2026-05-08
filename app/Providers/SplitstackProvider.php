@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Application\Shared\Contracts\TransactionHandler;
+use App\Http\Controllers\HybridController;
+use App\Http\Responses\SplitResponseBuilder;
 use App\Infrastructure\DBTransactionHandler;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
@@ -27,6 +29,14 @@ class SplitstackProvider extends ServiceProvider
             TransactionHandler::class,
             DBTransactionHandler::class
         );
+
+        $this->app->bind(SplitResponseBuilder::class, function ($app) {
+            return new SplitResponseBuilder;
+        });
+
+        $this->app->bind('split', function ($app) {
+            return new HybridController($app->make(SplitResponseBuilder::class));
+        });
     }
 
     /**

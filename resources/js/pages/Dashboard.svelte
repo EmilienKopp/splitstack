@@ -9,7 +9,7 @@
                 title: 'Dashboard',
                 href: props.currentTeam
                     ? dashboard(props.currentTeam.slug)
-                    : '/',
+                    : '/dashboard',
             },
         ],
     });

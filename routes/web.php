@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\RegistrationController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Teams\TeamInvitationController;
 use App\Http\Middleware\EnsureTeamMembership;
 use Illuminate\Support\Facades\Route;
@@ -12,7 +13,7 @@ function mainRoutes(): void
 {
     Route::domain('{space?}.'.app_host())
         ->group(function () {
-            Route::inertia('dashboard', 'Dashboard')->name('dashboard');
+            Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         });
 }
 

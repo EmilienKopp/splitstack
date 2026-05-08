@@ -20,6 +20,7 @@
     } from '@/components/ui/sidebar';
     import { dashboard } from '@/routes';
     import type { NavItem, Team } from '@/types';
+    import { toUrl } from '@/lib/utils';
 
     let {
         children,
@@ -29,7 +30,7 @@
 
     const currentTeam = $derived(page.props.currentTeam as Team | null);
     const dashboardUrl = $derived(
-        currentTeam ? dashboard(currentTeam.slug) : '/',
+        currentTeam ? toUrl(dashboard(currentTeam.slug)) : '/dashboard',
     );
 
     const mainNavItems = $derived<NavItem[]>([

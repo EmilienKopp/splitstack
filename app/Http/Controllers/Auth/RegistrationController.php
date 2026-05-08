@@ -7,8 +7,8 @@ use App\Domain\DTOs\RegisterOnTheFlyDTO;
 use App\Domain\DTOs\UserDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterOnTheFlyRequest;
+use App\Facades\Split;
 use App\UseCases\RegisterBothTenantAndUser;
-use Inertia\Inertia;
 
 class RegistrationController extends Controller
 {
@@ -37,12 +37,7 @@ class RegistrationController extends Controller
         $userDTO = UserDTO::fromArray($data);
         $this->createTenantAndUser->execute($tenantDTO, $userDTO);
 
-        $dashboardUrl = route('dashboard', ['space' => $tenantDTO->org_slug]);
-
-        if ($request->inertia()) {
-            return Inertia::location($dashboardUrl);
-        }
-
-        return redirect()->to($dashboardUrl);
+        return Split::respond()
+            ->route('dashboard', ['space' => $tenantDTO->org_slug]);
     }
 }
