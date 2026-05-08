@@ -45,8 +45,12 @@ A clean separation between HTTP, domain logic, and infrastructure:
 
 ```text
 app/
-├── Actions/          # Single-responsibility handlers (CreateTenant, CreateUser…)
-├── UseCases/         # Orchestrate multiple Actions with rollback on failure
+├── Application/
+│   ├── Actions/      # Single-responsibility handlers (CreateTenant, CreateUser…)
+│   ├── Queries/      # Read-side handlers (CQRS)
+│   ├── UseCases/     # Orchestrate multiple Actions with rollback on failure
+│   └── Shared/
+│       └── Contracts/ # BaseDTO, DTO, TransactionHandler
 ├── Domain/
 │   ├── DTOs/         # Input carriers: move validated request data across layer boundaries
 │   ├── Entities/     # Domain objects with identity (Tenant, User…)
