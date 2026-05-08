@@ -1,10 +1,12 @@
+import './echo.js';
+
 import AppLayout from '@/layouts/AppLayout.svelte';
 import SettingsLayout from '@/layouts/settings/Layout.svelte';
 import { createInertiaApp } from '@inertiajs/svelte';
 import { initializeFlashToast } from '@/lib/flash-toast';
 import { initializeTheme } from '@/lib/theme.svelte';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'App';
 
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),

@@ -1,8 +1,15 @@
 <?php
 
+use App\Providers\AppServiceProvider;
+use App\Providers\SearchServiceProvider;
+use App\Providers\SplitstackProvider;
+use App\Providers\WorkOSProvider;
+use Splitstack\Translucid\Providers\TranslucidServiceProvider;
+
 return [
-    App\Providers\AppServiceProvider::class,
-    App\Providers\SearchServiceProvider::class,
-    App\Providers\SplitstackProvider::class,
-    App\Providers\WorkOSProvider::class,
+    AppServiceProvider::class,
+    SearchServiceProvider::class,
+    SplitstackProvider::class,
+    WorkOSProvider::class,
+    TranslucidServiceProvider::class,
 ];
