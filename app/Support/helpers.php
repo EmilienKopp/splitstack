@@ -20,3 +20,16 @@ if (! function_exists('app_host')) {
         return parse_url(config('app.url'), PHP_URL_HOST);
     }
 }
+
+if (! function_exists('unislash')) {
+
+    /**
+     * Remove all double slashes outside of protocol
+     */
+    function unislash(string $url): string
+    {
+        $regex = '/(?<!:)\/\/+/';
+
+        return preg_replace($regex, '/', $url);
+    }
+}

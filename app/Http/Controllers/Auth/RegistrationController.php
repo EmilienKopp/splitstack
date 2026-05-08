@@ -8,6 +8,7 @@ use App\Domain\DTOs\UserDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterOnTheFlyRequest;
 use App\UseCases\RegisterBothTenantAndUser;
+use Inertia\Inertia;
 
 class RegistrationController extends Controller
 {
@@ -19,7 +20,7 @@ class RegistrationController extends Controller
     {
         $user = session()->get('pending_user');
         $org = session()->get('pending_org');
-        $user->name = "{$user['firstName']} {$user['lastName']}";
+        $user['name'] = "{$user['firstName']} {$user['lastName']}";
 
         return inertia('RegisterOnTheFly', [
             'user' => $user,
@@ -34,11 +35,14 @@ class RegistrationController extends Controller
 
         $tenantDTO = CreateTenantDTO::fromArray($data);
         $userDTO = UserDTO::fromArray($data);
-        $result = $this->createTenantAndUser->execute($tenantDTO, $userDTO);
+        $this->createTenantAndUser->execute($tenantDTO, $userDTO);
 
-        // dd($result);
+        $dashboardUrl = route('dashboard', ['space' => $tenantDTO->org_slug]);
 
-        // For now, we'll just return a success response.
-        return response()->json(['message' => 'Registration successful']);
+        if ($request->inertia()) {
+            return Inertia::location($dashboardUrl);
+        }
+
+        return redirect()->to($dashboardUrl);
     }
 }

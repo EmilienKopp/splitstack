@@ -13,6 +13,6 @@ final class DeleteTenant
 
     public function handle(TenantEntity $tenant): void
     {
-        // $this->tenantRepository->purge($tenant);
+        $this->tenantRepository->delete($tenant->id);
     }
 }

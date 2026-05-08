@@ -18,7 +18,7 @@ class TenantRepository implements TenantRepositoryInterface
         );
     }
 
-    public function findById(int $id): ?TenantEntity
+    public function findById(int|string $id): ?TenantEntity
     {
         $model = Tenant::find($id);
 
@@ -57,7 +57,7 @@ class TenantRepository implements TenantRepositoryInterface
         return TenantEntity::fromArray($model->toArray());
     }
 
-    public function delete(int $id): void
+    public function delete(int|string $id): void
     {
         Tenant::destroy($id);
     }

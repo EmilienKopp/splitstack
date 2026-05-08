@@ -12,6 +12,8 @@ class UserDTO extends BaseDTO
         public readonly ?string $email = null,
         public readonly ?string $password = null,
         public readonly ?string $org_id = null,
+        public readonly ?string $workos_id = null,
+        public readonly ?string $avatar = null,
     ) {}
 
     /**
@@ -25,6 +27,8 @@ class UserDTO extends BaseDTO
             email: $data['email'] ?? null,
             password: $data['password'] ?? null,
             org_id: $data['org_id'] ?? null,
+            workos_id: $data['workos_id'] ?? null,
+            avatar: $data['avatar'] ?? null,
         );
     }
 }

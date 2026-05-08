@@ -10,11 +10,11 @@ interface TenantRepositoryInterface
     /** @return Collection<TenantEntity> */
     public function all(): Collection;
 
-    public function findById(int $id): ?TenantEntity;
+    public function findById(int|string $id): ?TenantEntity;
 
     public function save(TenantEntity $entity): TenantEntity;
 
-    public function delete(int $id): void;
+    public function delete(int|string $id): void;
 
     public function purge(TenantEntity $entity): void;
 }

@@ -106,6 +106,8 @@
                         name="org_id"
                         value={page.props.org.id}
                     />
+                    <input type="hidden" name="workos_id" value={user.id} />
+                    <input type="hidden" name="avatar" value={user.avatar} />
 
                     <Button type="submit" class="w-full" disabled={processing}>
                         Create organization

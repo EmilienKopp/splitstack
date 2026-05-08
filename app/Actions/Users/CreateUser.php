@@ -18,7 +18,9 @@ final class CreateUser
             name: $data->name,
             email: $data->email,
             password: $data->password,
+            workos_id: $data->workos_id,
             org_id: $data->org_id,
+            avatar: $data->avatar,
         );
 
         return $this->userRepository->save($user);

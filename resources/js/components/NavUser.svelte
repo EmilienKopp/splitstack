@@ -21,7 +21,7 @@
     const currentTeam = $derived(page.props.currentTeam as Team | null);
     const { isMobile, state: sidebarState } = useSidebar();
 
-    translucid.table('users').watch(user);
+    if (user) translucid.table('users').watch(user);
 </script>
 
 <SidebarMenu>

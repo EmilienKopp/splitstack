@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Application\Shared\Contracts\TransactionHandler;
+use App\Infrastructure\DBTransactionHandler;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
 
@@ -20,6 +22,11 @@ class SplitstackProvider extends ServiceProvider
                 $this->app->bind($interface, $class);
             }
         }
+
+        $this->app->bind(
+            TransactionHandler::class,
+            DBTransactionHandler::class
+        );
     }
 
     /**
