@@ -2,13 +2,13 @@
 
 **Svelte · PostgreSQL · Laravel · Inertia · TypeScript**
 
-A production-ready Laravel + Svelte starter template with end-to-end type safety, built-in multi-tenancy, and a clean DDD architecture — so you start every project with the hard parts already done.
+A Laravel + Svelte starter template with end-to-end type safety, built-in multi-tenancy, and a clean DDD architecture — so you start every project with the hard parts already done.
 
-## The pitch
+## Why Splitstack?
 
-Most full-stack templates give you a running app. Splitstack gives you a typed pipeline from database to UI — annotate a PHP class, run one command, and your Svelte components have the interface. No manual syncing, no drift between backend shapes and frontend types.
+Most full-stack templates give you a running app. Splitstack gives you a **typed pipeline from database to UI** — annotate a PHP class, run one command, and your Svelte components have the interface. No manual syncing, no drift between backend shapes and frontend types.
 
-```
+```text
 PHP models / DTOs  →  php artisan typegen  →  TypeScript interfaces  →  Svelte components
      ↑                                                                         ↑
  type-hinted,                                                          statically checked,
@@ -16,11 +16,11 @@ PHP models / DTOs  →  php artisan typegen  →  TypeScript interfaces  →  Sv
  the boundary
 ```
 
-On top of that: a multi-tenant architecture with teams, role-based UI config, real-time DB events without a broker, and hybrid controllers that serve both JSON and Inertia from the same method.
+On top of that: real-time DB events with zero broker overhead, a multi-tenant architecture with teams, role-based UI config, and hybrid controllers that serve both JSON and Inertia from the same method.
 
 ---
 
-## Stack
+## 🗃️ Stack
 
 | Layer     | Technology                                     |
 | --------- | ---------------------------------------------- |
@@ -35,13 +35,13 @@ On top of that: a multi-tenant architecture with teams, role-based UI config, re
 
 ---
 
-## What's Included
+## ✨ What's Included
 
-### Backend
+### 🔧 Backend
 
 #### Hybrid Response System
 
-Controllers can return either JSON or an Inertia page from the same method — no branching, no duplicated logic.
+Controllers can return JSON or an Inertia page from the same method — no branching, no duplicated logic.
 
 ```php
 // Works for API clients (returns JSON) and browser requests (returns Inertia page)
@@ -74,7 +74,7 @@ app/
     └── DBTransactionHandler.php
 ```
 
-**DTOs** extend `BaseDTO` and get `fromRequest()`, `fromArray()`, `fromEntity()`, and `toArray()` for free. They carry input across boundaries.
+**DTOs** extend `BaseDTO` and get `fromRequest()`, `fromArray()`, `fromEntity()`, and `toArray()` for free.
 
 **Entities** have identity and represent domain objects that persist over time.
 
@@ -82,28 +82,80 @@ app/
 
 #### Multi-Tenancy (Landlord / Tenant)
 
-Separate `Models/Landlord/` and `Models/` namespaces. `SplitstackProvider` auto-binds `Repository ↔ RepositoryInterface` pairs by naming convention — no manual registration.
+Separate `Models/Landlord/` and `Models/` namespaces. `SplitstackProvider` auto-binds `Repository ↔ RepositoryInterface` pairs by naming convention — no manual registration needed.
 
-#### TypeScript Generation
+#### 🔷 TypeScript Generation
 
-Annotate PHP classes with `TypeScriptConvertible`, run `php artisan typegen`, and get typed interfaces in your frontend automatically. Driven by config — define source directories, include/exclude filters, and output paths.
+Annotate a PHP class, run one command, get a TypeScript interface. Driven by config — define source directories, include/exclude filters, and output paths.
+
+```bash
+php artisan typegen
+```
+
+Your Svelte components stay in sync with your backend shapes automatically.
 
 ---
 
-### In-Repo Packages (`packages/splitstack/`)
+### 📦 In-Repo Packages (`packages/splitstack/`)
 
-#### Translucid — PostgreSQL real-time events
+#### ⚡ Translucid — real-time DB events, no broker needed
 
-Use PG `LISTEN/NOTIFY` as a zero-broker event bus. One call installs a trigger on any table:
+Most real-time setups require Redis, a message broker, or a hosted service. Translucid uses **PostgreSQL's native `LISTEN/NOTIFY`** — the moment a row changes, your Svelte component knows about it. No Redis. No Pusher. No extra process.
+
+**1. Add the trait to your model**
+
+```php
+use Splitstack\Translucid\Concerns\HasTranslucid;
+
+class Order extends Model
+{
+    use HasTranslucid;
+}
+```
+
+**2. Install the PG trigger once** (e.g. in a migration or seeder)
 
 ```php
 Translucid::observe(Order::class);
-// Now fires TranslucidCreated/Updated/Deleted events on every DB change
+// Installs a PostgreSQL trigger that fires pg_notify on every INSERT / UPDATE / DELETE
 ```
 
-Multi-tenant aware — scopes channels per tenant so each tenant only receives their own events. No Redis, no Pusher, no extra process.
+**3. Watch changes reactively in Svelte — single record**
 
-#### Stashable — attribute-driven repository caching
+```svelte
+<script lang="ts">
+    import { translucid } from 'translucid-svelte';
+    import { onDestroy } from 'svelte';
+
+    let { order } = $props();
+
+    // Patches the local object in-place when the DB row changes
+    const stop = translucid.table('orders').watch(order);
+    onDestroy(stop);
+</script>
+
+<p>Status: {order.status}</p> <!-- updates live, no polling -->
+```
+
+**4. Watch changes reactively in Svelte — full collection**
+
+```svelte
+<script lang="ts">
+    import { watchCollection } from 'translucid-svelte';
+    import { onDestroy } from 'svelte';
+
+    let { orders } = $props();
+
+    const stop = watchCollection('orders', {
+        onCreated(payload) { orders = [payload.data, ...orders]; },
+    });
+    onDestroy(stop);
+</script>
+```
+
+Multi-tenant aware — each tenant's events are scoped to their own private channel, so there's no data leakage between tenants.
+
+#### 🗄️ Stashable — attribute-driven repository caching
 
 Annotate a repository method and get tenant-aware caching with a single decorator:
 
@@ -119,7 +171,7 @@ OrderRepository::fresh('findById', $id);   // bypass cache entirely
 
 Cache keys are automatically prefixed by tenant. Supports tag-based bulk flush per tenant.
 
-#### Metamon — typed metadata on Eloquent models
+#### 🏷️ Metamon — typed metadata on Eloquent models
 
 A `HandlesMetadata` trait that turns any JSON column into a first-class API:
 
@@ -132,7 +184,7 @@ User::whereMetadata('plan', 'pro')->get();  // query scope
 
 Supports dot notation, role-scoped allowed keys, nesting depth limits, and size validation.
 
-#### EnumFriendly — Laravel-aware enum utilities
+#### 🔢 EnumFriendly — Laravel-aware enum utilities
 
 Add to any backed enum for instant Collection, validation rule, and select-option support:
 
@@ -145,11 +197,11 @@ UserStatus::rule();              // Laravel Enum validation rule instance
 
 ---
 
-### Frontend
+### 🎨 Frontend
 
-#### Perspective — typed RBAC config system
+#### 👁️ Perspective — typed RBAC config system
 
-Define role-variant configurations once; resolve them anywhere by role string. No conditionals, no scattered `if (role === 'admin')` checks.
+Define role-variant configurations once; resolve them anywhere by role string. No conditionals, no scattered `if (role === 'admin')` checks scattered across your components.
 
 ```ts
 // perspectives/users.ts
@@ -167,15 +219,15 @@ const config = usersPerspective.for(currentUser.role);
 
 Works for navigation, table columns, available actions, visible UI sections — anything that varies by role. The included `navigationPerspective` is wired to the sidebar out of the box.
 
-#### Flash Toast
+#### 🔔 Flash Toast
 
-Inertia's `flash` event is wired to `svelte-sonner` out of the box. Flash a toast from any Laravel controller:
+Inertia's `flash` event is wired to `svelte-sonner` out of the box. Trigger a toast from any Laravel controller:
 
 ```php
 session()->flash('toast', ['type' => 'success', 'message' => 'Saved!']);
 ```
 
-#### Support Utilities (`lib/core/support/`)
+#### 🛠️ Support Utilities (`lib/core/support/`)
 
 Small, typed utility functions — no dependencies, no magic:
 
@@ -185,7 +237,7 @@ Small, typed utility functions — no dependencies, no magic:
 - **assessing** — `truthy`, `falsy`, `empty`, `exists` (handles arrays and objects correctly)
 - **numbers**, **formatting**, **highlight**, **requests**
 
-#### Wayfinder Integration
+#### 🗺️ Wayfinder Integration
 
 All controller routes are auto-generated as typed TypeScript functions in `resources/js/actions/`. No hardcoded URLs, no guessing route names.
 
@@ -194,13 +246,13 @@ import { DashboardController } from '@/actions/App/Http/Controllers';
 router.visit(DashboardController.index.url({ space: slug }));
 ```
 
-#### UI Components
+#### 🧩 UI Components
 
 shadcn-svelte components under `components/ui/` — Avatar, Badge, Button, Card, Dialog, Dropdown, Select, Sidebar, Skeleton, Sonner, and more. Plus app-level components: `TeamSwitcher`, `NavMain`, `NavUser`, `AppSidebar`, `AppShell`.
 
 ---
 
-## Getting Started
+## 🚀 Getting Started
 
 ```bash
 git clone https://github.com/EmilienKopp/splitstack
@@ -216,7 +268,7 @@ composer run dev
 
 ---
 
-## Artisan Commands
+## 🎯 Artisan Commands
 
 ```bash
 php artisan split:make        # Scaffold Actions, UseCases, DTOs
@@ -228,7 +280,7 @@ php artisan translucid:listen # Start the PG LISTEN loop
 
 ---
 
-## Project Structure
+## 📁 Project Structure
 
 ```text
 app/
