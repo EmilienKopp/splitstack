@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Application\Actions\Tenants\CreateTenant;
 use App\Domain\DTOs\RegisterOnTheFlyDTO;
 use App\Http\Requests\StoreTenantRequest;
-use App\UseCases\Tenants\CreateTenant;
 use Illuminate\Http\Request;
 
 class TenantController extends Controller

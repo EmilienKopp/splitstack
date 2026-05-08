@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Auth;
+namespace App\Application\Actions\Auth;
 
 use App\Exceptions\TenantNotFoundException;
 use App\Models\Landlord\Tenant;

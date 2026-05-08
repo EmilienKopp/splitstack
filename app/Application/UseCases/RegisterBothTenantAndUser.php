@@ -1,10 +1,10 @@
 <?php
 
-namespace App\UseCases;
+namespace App\Application\UseCases;
 
-use App\Actions\Tenants\CreateTenant;
-use App\Actions\Tenants\DeleteTenant;
-use App\Actions\Users\CreateUser;
+use App\Application\Actions\Tenants\CreateTenant;
+use App\Application\Actions\Tenants\DeleteTenant;
+use App\Application\Actions\Users\CreateUser;
 use App\Domain\DTOs\CreateTenantDTO;
 use App\Domain\DTOs\UserDTO;
 

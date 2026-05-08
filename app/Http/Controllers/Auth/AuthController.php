@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Actions\Auth\CreateUser;
-use App\Actions\Auth\FindUser;
+use App\Application\Actions\Auth\CreateUser;
+use App\Application\Actions\Auth\FindUser;
 use App\Http\Controllers\Controller;
 use App\Models\Landlord\Tenant;
 use Illuminate\Support\Facades\URL;

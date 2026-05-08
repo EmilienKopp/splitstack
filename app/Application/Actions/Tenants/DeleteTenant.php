@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Tenants;
+namespace App\Application\Actions\Tenants;
 
 use App\Domain\Entities\Landlord\TenantEntity;
 use App\Infrastructure\Contracts\TenantRepositoryInterface;

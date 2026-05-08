@@ -2,7 +2,7 @@
 
 namespace App\Listeners;
 
-use App\Actions\Teams\CreateTeam;
+use App\Application\Actions\Teams\CreateTeam;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 

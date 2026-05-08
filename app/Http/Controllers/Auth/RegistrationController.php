@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Application\UseCases\RegisterBothTenantAndUser;
 use App\Domain\DTOs\CreateTenantDTO;
 use App\Domain\DTOs\RegisterOnTheFlyDTO;
 use App\Domain\DTOs\UserDTO;
+use App\Facades\Split;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterOnTheFlyRequest;
-use App\Facades\Split;
-use App\UseCases\RegisterBothTenantAndUser;
 
 class RegistrationController extends Controller
 {
