@@ -16,11 +16,7 @@ class TenantFinder extends \Spatie\Multitenancy\TenantFinder\TenantFinder
     public function findForRequest(Request $_request): ?IsTenant
     {
         $space = get_subdomain();
-        $tenant = Tenant::bySpace($space)->first();
-        if (! $tenant) {
-            return null;
-        }
 
-        return $tenant;
+        return Tenant::bySpace($space)->first();
     }
 }

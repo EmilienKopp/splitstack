@@ -38,7 +38,13 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $user = $request->user();
-
+        // if (! $user) {
+        //     $tenant = Tenant::find(session('tenant_id'));
+        //     if ($tenant) {
+        //         $tenant->makeCurrent();
+        //         $user = $request->user();
+        //     }
+        // }
         $features = $this->getRelevantFeatures();
         $config = $this->getRelevantConfig();
 

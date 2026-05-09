@@ -7,7 +7,9 @@ use App\Http\Middleware\EnsureTeamMembership;
 use Illuminate\Support\Facades\Route;
 use Laravel\WorkOS\Http\Middleware\ValidateSessionWithWorkOS;
 
-Route::inertia('/', 'Welcome')->name('home');
+Route::get('/', function () {
+    return inertia('Welcome');
+})->name('home');
 
 function mainRoutes(): void
 {

@@ -25,6 +25,8 @@ class AuthController extends Controller
         $tenant = Tenant::current();
         $user = auth()->user();
 
+        session()->put('tenant_id', $tenant?->id);
+
         if (config('features.uses_teams')) {
             $currentTeam = $user->currentTeam ?? $user->personalTeam();
 
