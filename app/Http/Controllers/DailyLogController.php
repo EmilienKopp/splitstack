@@ -48,7 +48,7 @@ class DailyLogController extends Controller
         $data = ClockInDTO::fromValidatable($request);
         $entry = $this->clockInAction->execute($data);
 
-        return Split::respond($entry, route: 'dashboard', params: ['space' => Tenant::current()->space]);
+        return Split::respond($entry, route: 'dashboard', params: ['space' => Tenant::current()?->space]);
     }
 
     public function clockOut(ClockEntryStoreRequest $request)
@@ -56,14 +56,14 @@ class DailyLogController extends Controller
         $data = ClockOutDTO::fromValidatable($request);
         $entry = $this->clockOutAction->execute($data);
 
-        return Split::respond($entry, route: 'dashboard', params: ['space' => Tenant::current()->space]);
+        return Split::respond($entry, route: 'dashboard', params: ['space' => Tenant::current()?->space]);
     }
 
     public function punch(Request $_request, DailyLogEntity $dailyLog)
     {
         $updated = $this->punchAction->execute($dailyLog);
 
-        return Split::respond($updated, route: 'dashboard', params: ['space' => Tenant::current()->space]);
+        return Split::respond($updated, route: 'dashboard', params: ['space' => Tenant::current()?->space]);
     }
 
     /**
