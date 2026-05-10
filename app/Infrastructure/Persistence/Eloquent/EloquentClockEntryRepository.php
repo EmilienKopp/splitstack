@@ -12,7 +12,7 @@ class EloquentClockEntryRepository implements ClockEntryRepository
 {
     protected static array $with = ['dailyLog.project'];
 
-    public function find(int $id): ?ClockEntryEntity
+    public function find(int|string $id): ?ClockEntryEntity
     {
         $clockEntry = ClockEntry::with(static::$with)->find($id);
 
@@ -24,12 +24,12 @@ class EloquentClockEntryRepository implements ClockEntryRepository
         return ClockEntry::with(static::$with)->get()->map->toEntity();
     }
 
-    public function findByUser(int $userId): Collection
+    public function findByUser(int|string $userId): Collection
     {
         return ClockEntry::with(static::$with)->where('user_id', $userId)->get();
     }
 
-    public function findActiveByUser(int $userId): ?ClockEntryEntity
+    public function findActiveByUser(int|string $userId): ?ClockEntryEntity
     {
         $clockEntry = ClockEntry::whereHas('dailyLog', function ($query) use ($userId) {
             $query->where('user_id', $userId);
@@ -54,7 +54,7 @@ class EloquentClockEntryRepository implements ClockEntryRepository
         return ClockEntry::create($data)->toEntity();
     }
 
-    private function update(int $id, array $data): ?ClockEntryEntity
+    private function update(int|string $id, array $data): ?ClockEntryEntity
     {
         $entry = ClockEntry::findOrFail($id);
 
@@ -76,7 +76,7 @@ class EloquentClockEntryRepository implements ClockEntryRepository
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getEntriesForUser(
-        int $userId,
+        int|string $userId,
         ?Carbon $startDate = null,
         ?Carbon $endDate = null
     ): Collection {
@@ -100,7 +100,7 @@ class EloquentClockEntryRepository implements ClockEntryRepository
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getTodayEntries(int $userId): Collection
+    public function getTodayEntries(int|string $userId): Collection
     {
         return ClockEntry::whereHas('dailyLog', function ($query) use ($userId) {
             $query->where('user_id', $userId);

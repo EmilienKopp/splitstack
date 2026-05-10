@@ -3,32 +3,57 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Concerns\HasFullTextSearch;
+use App\Attributes\ExportRelationship;
+use App\Casts\N8nConfigCast;
 use App\Concerns\HasGitHubConnection;
 use App\Concerns\HasGoogleConnection;
-use App\Concerns\HasTeams;
-use App\Domain\Identity\Entities\UserEntity;
-use App\Domain\Shared\ValueObjects\ID;
-use App\Models\Concerns\HasEntity;
+use App\Models\Landlord\Tenant;
 use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
+use Laravel\Passport\Contracts\OAuthenticatable;
+use Laravel\Passport\HasApiTokens;
 use Laravel\Pennant\Concerns\HasFeatures;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
-use Splitstack\Translucid\Concerns\HasTranslucid;
+use Spatie\Permission\Traits\HasRoles;
 
-#[Hidden(['workos_id', 'remember_token'])]
-class User extends Authenticatable
+class User extends Authenticatable implements OAuthenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasEntity, HasFactory, HasFeatures, HasFullTextSearch, HasGitHubConnection,
-        HasGoogleConnection, HasTeams, HasTranslucid, Notifiable, UsesTenantConnection;
+    use HasApiTokens, HasFactory, HasFeatures, HasGitHubConnection, HasGoogleConnection, HasRoles, Notifiable, UsesTenantConnection;
 
-    protected $guarded = [
-        'org_id',
-        'id',
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
+    protected $fillable = [
+        'first_name',
+        'middle_name',
+        'last_name',
+        'handle',
+        'title',
+        'phone_main',
+        'phone_secondary',
+        'github',
+        'email',
+        'password',
+        'workos_id',
+        'n8n_config',
+        'preferences',
+    ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var list<string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
     ];
 
     /**
@@ -41,21 +66,76 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'id' => ID::class,
-            'org_id' => ID::class,
-            'workos_id' => ID::class,
+            'n8n_config' => N8nConfigCast::class,
+            'preferences' => 'array',
         ];
     }
 
-    public function teams()
+    public static function booted()
     {
-        return $this->belongsToMany(Team::class, 'team_members')
-            ->withPivot('role')
+        static::creating(function ($user) {
+            if (! $user->handle) {
+                $user->handle = $user->email;
+            }
+            $user->assignRole('user');
+
+        });
+
+        static::created(function ($user) {
+            DB::connection('landlord')->table('tenant_users')->insert([
+                'tenant_id' => Tenant::current()->id,
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        });
+    }
+
+    public function organizations()
+    {
+        return $this->belongsToMany(Organization::class)
+            ->using(OrganizationUser::class)
+            ->withPivot('elevated')
             ->withTimestamps();
     }
 
-    public function toEntity(): UserEntity
+    /**
+     * @return BelongsToMany<Project>
+     */
+    public function projects()
     {
-        return UserEntity::fromArray($this->toArray());
+        return $this->belongsToMany(Project::class)
+            ->using(ProjectUser::class);
+    }
+
+    #[ExportRelationship(ClockEntry::class, type: 'hasMany')]
+    public function clockEntries()
+    {
+        return $this->hasManyThrough(
+            ClockEntry::class,
+            DailyLog::class,
+            'user_id', // Foreign key on DailyLog table
+            'daily_log_id', // Foreign key on ClockEntry table
+            'id', // Local key on User table
+            'id' // Local key on DailyLog table
+        );
+    }
+
+    public function todaysEntries()
+    {
+        return $this->clockEntries()->today()->with(['dailyLog.project'])->orderBy('created_at', 'desc');
+    }
+
+    #[ExportRelationship(Report::class, type: 'hasMany')]
+    public function reports()
+    {
+        return $this->hasMany(Report::class);
+    }
+
+    #[ExportRelationship(VoiceCommand::class, type: 'hasMany')]
+    public function voiceCommands()
+    {
+        return $this->hasMany(VoiceCommand::class);
     }
 }

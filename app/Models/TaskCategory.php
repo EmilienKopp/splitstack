@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Attributes\ExportRelationship;
-use App\Traits\Aliasable;
+use App\Models\Concerns\Aliasable;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 

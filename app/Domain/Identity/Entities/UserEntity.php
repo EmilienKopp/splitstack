@@ -3,7 +3,6 @@
 namespace App\Domain\Identity\Entities;
 
 use App\Domain\Shared\BaseEntity;
-use App\Domain\Shared\ValueObjects\ID;
 
 /**
  * Parent entity — load via UserRepository.
@@ -12,7 +11,7 @@ use App\Domain\Shared\ValueObjects\ID;
 class UserEntity extends BaseEntity
 {
     public function __construct(
-        public ?ID $id = null,
+        public int|string|null $id = null,
         public ?string $workos_id = null,
         public ?string $handle = null,
         public ?string $name = null,
@@ -23,11 +22,18 @@ class UserEntity extends BaseEntity
         public string $timezone = 'UTC',
         public ?array $preferences = null,
         public ?array $cli_config = null,
-        public ?ID $current_team_id = null,
-        public ?ID $org_id = null,
+        public int|string|null $current_team_id = null,
+        public int|string|null $org_id = null,
         public ?string $password = null,
         public ?string $created_at = null,
         public ?string $updated_at = null,
+        public ?string $email_verified_at = null,
+        public $currentTeam = null,
+        public ?array $todays_entries = null,
+        public ?array $roles = null,
+        public ?array $projects = null,
+        public ?array $organizations = null,
+        public ?array $permissions = null,
     ) {
         if (! $this->handle && $this->name) {
             $this->handle = strtolower(str_replace(' ', '_', $this->name)).'_'.substr((string) $this->workos_id, 0, 8);
@@ -36,7 +42,7 @@ class UserEntity extends BaseEntity
         }
     }
 
-    public static function fromAuthInfo($name, $email, $password, ?ID $org_id = null, ?ID $workos_id = null, ?string $avatar = null): self
+    public static function fromAuthInfo($name, $email, $password, int|string|null $org_id = null, ?string $workos_id = null, ?string $avatar = null): self
     {
         return new self(
             name: $name,

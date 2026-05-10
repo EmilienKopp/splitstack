@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Models\Landlord\Tenant;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Uri;
 use Inertia\Middleware;
 
@@ -38,13 +39,6 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $user = $request->user();
-        // if (! $user) {
-        //     $tenant = Tenant::find(session('tenant_id'));
-        //     if ($tenant) {
-        //         $tenant->makeCurrent();
-        //         $user = $request->user();
-        //     }
-        // }
         $features = $this->getRelevantFeatures();
         $config = $this->getRelevantConfig();
 
@@ -56,10 +50,17 @@ class HandleInertiaRequests extends Middleware
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'currentTeam' => fn () => $user?->currentTeam ? $user->toUserTeam($user->currentTeam) : null,
-            'teams' => fn () => $user?->toUserTeams(includeCurrent: true) ?? [],
+            // 'teams' => fn () => $user?->toUserTeams(includeCurrent: true) ?? [], //TODO: figure out what to to with teams on UserEntity
             'features' => $features,
             'config' => $config,
             'space' => Tenant::current()?->space,
+            'context' => [
+                'tenant' => Context::get('tenantId'),
+                'domain' => Context::get('domain'),
+                'executionContext' => Context::get('executionContext'),
+                'host' => Context::get('host'),
+                'availableTenants' => Context::get('availableTenants'),
+            ],
         ];
     }
 

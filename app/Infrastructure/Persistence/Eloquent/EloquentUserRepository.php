@@ -5,18 +5,16 @@ namespace App\Infrastructure\Persistence\Eloquent;
 use App\Domain\Identity\Contracts\UserRepository;
 use App\Domain\Identity\Entities\UserEntity;
 use App\Models\User;
-use DateTimeInterface;
 use Illuminate\Support\Collection;
 
 class EloquentUserRepository implements UserRepository
 {
     public function with(array $relations): UserRepository
     {
-        // This is a no-op for the local repository
         return $this;
     }
 
-    public function find(int $id, $relations = null): ?UserEntity
+    public function find(int|string $id, $relations = null): ?UserEntity
     {
         if ($relations) {
             $model = User::with($relations)->find($id);
@@ -29,21 +27,21 @@ class EloquentUserRepository implements UserRepository
         return $model ? UserEntity::fromArray($model->toArray()) : null;
     }
 
-    public function findByWorkosId(string $workosId): ?UserEntity
+    public function findByWorkosId(int|string $workosId): ?UserEntity
     {
         $user = User::where('workos_id', $workosId)->first();
 
         return $user ? UserEntity::fromArray($user->toArray()) : null;
     }
 
-    public function findByGitHubId(string $githubUserId): ?UserEntity
+    public function findByGitHubId(int|string $githubUserId): ?UserEntity
     {
         return User::whereHas('gitHubConnection', function ($query) use ($githubUserId) {
             $query->where('github_user_id', $githubUserId);
         })->first();
     }
 
-    public function findByGoogleId(string $googleUserId): ?User
+    public function findByGoogleId(int|string $googleUserId): ?UserEntity
     {
         return User::whereHas('googleConnection', function ($query) use ($googleUserId) {
             $query->where('google_user_id', $googleUserId);
@@ -55,7 +53,7 @@ class EloquentUserRepository implements UserRepository
         return User::where('email', $email)->first();
     }
 
-    public function getGitHubUserId(int $userId): ?string
+    public function getGitHubUserId(int|string $userId): ?string
     {
         $user = User::find($userId);
 
@@ -72,7 +70,7 @@ class EloquentUserRepository implements UserRepository
         return User::create($user->toArray())->toEntity();
     }
 
-    public function delete(int $id): bool
+    public function delete(int|string $id): bool
     {
         $user = User::find($id);
         if (! $user) {
@@ -81,12 +79,4 @@ class EloquentUserRepository implements UserRepository
 
         return $user->delete();
     }
-
-    // public function batchSetClockOutTime(User $user, ?DateTimeInterface $autoClockOutTime = null, ?DateTimeInterface $before = null): void
-    // {
-    //     $user->clockEntries()
-    //         ->whereNull('out')
-    //         ->when($before, fn ($query) => $query->where('in', '<=', $before))
-    //         ->update(['out' => $autoClockOutTime]);
-    // }
 }

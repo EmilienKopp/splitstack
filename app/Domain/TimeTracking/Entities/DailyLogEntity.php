@@ -3,7 +3,6 @@
 namespace App\Domain\TimeTracking\Entities;
 
 use App\Domain\Shared\BaseEntity;
-use App\Domain\Shared\ValueObjects\ID;
 use App\Domain\TimeTracking\Exceptions\AlreadyClockedInException;
 use App\Domain\TimeTracking\Exceptions\NoActiveClockEntry;
 use Carbon\Carbon;
@@ -26,10 +25,10 @@ class DailyLogEntity extends BaseEntity
     private array $monitoredActivities = [];
 
     public function __construct(
-        public readonly ID $user_id,
-        public readonly ID $project_id,
+        public readonly int|string $user_id,
+        public readonly int|string $project_id,
         public readonly DateTimeInterface $date,
-        public readonly ?ID $id = null,
+        public readonly int|string|null $id = null,
         private int $total_seconds = 0,
     ) {}
 
@@ -42,7 +41,7 @@ class DailyLogEntity extends BaseEntity
     public function clockIn(DateTimeInterface $time, ?string $timezone = 'UTC'): void
     {
         if ($this->findActiveEntry()) {
-            throw AlreadyClockedInException::forProject($this->project_id);
+            throw AlreadyClockedInException::forProject((string) $this->project_id);
         }
 
         $entry = new ClockEntryEntity(
@@ -59,7 +58,8 @@ class DailyLogEntity extends BaseEntity
         $activeEntry = $this->findActiveEntry();
 
         if (! $activeEntry) {
-            throw NoActiveClockEntry::forProject($this->project_id);
+            dd($this->clockEntries);
+            throw NoActiveClockEntry::forProject((string) $this->project_id);
         }
 
         $activeEntry->clockOut(Carbon::instance($time));

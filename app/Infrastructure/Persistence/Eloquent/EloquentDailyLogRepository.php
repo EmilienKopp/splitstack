@@ -2,7 +2,6 @@
 
 namespace App\Infrastructure\Persistence\Eloquent;
 
-use App\Domain\Shared\ValueObjects\ID;
 use App\Domain\TimeTracking\Contracts\DailyLogRepository;
 use App\Domain\TimeTracking\Entities\DailyLogEntity;
 use App\Models\ClockEntry;
@@ -10,15 +9,14 @@ use App\Models\DailyLog;
 use Carbon\Carbon;
 use DateTimeInterface;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class EloquentDailyLogRepository implements DailyLogRepository
 {
-    public function findByDate(Carbon|string $date, ?ID $userId, ?ID $projectId): ?DailyLogEntity
+    public function findByDate(Carbon|string $date, int|string|null $userId, int|string|null $projectId): ?DailyLogEntity
     {
         return DailyLog::where('date', $date->format('Y-m-d'))
-            ->where('user_id', $userId ?? Auth::guard('tenant')->id())
+            ->where('user_id', $userId)
             ->when($projectId, function ($query) use ($projectId) {
                 $query->where('project_id', $projectId);
             })
@@ -26,29 +24,40 @@ class EloquentDailyLogRepository implements DailyLogRepository
             ->toEntity();
     }
 
-    public function find(ID $id): ?DailyLogEntity
+    public function find(int|string $id): ?DailyLogEntity
     {
         return DailyLog::findOrFail($id)->toEntity();
     }
 
-    public function findByUserAndDate(ID $userId, Carbon|DateTimeInterface $date): Collection
+    public function findByUserAndDate(int|string $userId, Carbon|DateTimeInterface $date): Collection
     {
         $collection = DailyLog::where('user_id', $userId)
             ->where('date', $date->format('Y-m-d'))
+            ->with('clockEntries')
             ->get()
             ->map(fn (DailyLog $dailyLog) => $dailyLog->toEntity());
 
         return DailyLog::toEntityCollection($collection);
     }
 
-    public function findByUserDateAndProject(ID $userId, Carbon|DateTimeInterface $date, ID $projectId): ?DailyLogEntity
+    public function findByUserDateAndProject(int|string $userId, Carbon|DateTimeInterface $date, int|string $projectId): ?DailyLogEntity
     {
         $dailyLog = DailyLog::where('user_id', $userId)
             ->where('date', $date->format('Y-m-d'))
             ->where('project_id', $projectId)
+            ->with('clockEntries')
             ->first();
 
-        return $dailyLog?->toEntity();
+        if (! $dailyLog) {
+            return null;
+        }
+
+        $entity = $dailyLog->toEntity();
+        foreach ($dailyLog->clockEntries as $entry) {
+            $entity->addClockEntry($entry->toEntity());
+        }
+
+        return $entity;
     }
 
     public function save(DailyLogEntity $log): DailyLogEntity

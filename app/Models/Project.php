@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Attributes\ExportRelationship;
+use App\Domain\TimeTracking\Entities\ProjectEntity;
+use Database\Factories\ProjectFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,7 +13,7 @@ use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 class Project extends Model
 {
-    /** @use HasFactory<\Database\Factories\ProjectFactory> */
+    /** @use HasFactory<ProjectFactory> */
     use HasFactory, Searchable, SoftDeletes, UsesTenantConnection;
 
     protected $guarded = [];
@@ -57,5 +59,15 @@ class Project extends Model
     public function repositories()
     {
         return $this->hasMany(Repository::class);
+    }
+
+    public function toEntity(): ProjectEntity
+    {
+        return new ProjectEntity(
+            id: $this->id,
+            name: $this->name,
+            description: $this->description,
+            organization_id: $this->organization_id,
+        );
     }
 }

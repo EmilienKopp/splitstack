@@ -18,10 +18,9 @@ class ClockIn
 
     public function execute(ClockInDTO $data)
     {
-        $clockInTime = $data->in instanceof Carbon
-            ? $data->in
-            : Carbon::now($data->timezone);
-        $dailyLog = $this->dailyLogRepository->findByUserAndDate($data->user_id, $clockInTime);
+        $clockInTime = $data->in ? Carbon::parse($data->in) : Carbon::now($data->timezone);
+
+        $dailyLog = $this->dailyLogRepository->findByUserDateAndProject($data->user_id, $clockInTime, $data->project_id);
         if (! $dailyLog) {
             $dailyLog = $this->dailyLogRepository->save(
                 new DailyLogEntity(

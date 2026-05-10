@@ -5,10 +5,12 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Attributes\ExportRelationship;
 use App\Casts\N8nConfigCast;
+use App\Concerns\HasGitHubConnection;
+use App\Concerns\HasGoogleConnection;
 use App\Models\Landlord\Tenant;
-use App\Traits\HasGitHubConnection;
-use App\Traits\HasGoogleConnection;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
@@ -19,7 +21,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements OAuthenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, HasGitHubConnection, HasGoogleConnection, HasRoles, Notifiable, UsesTenantConnection;
 
     /**
@@ -98,7 +100,7 @@ class User extends Authenticatable implements OAuthenticatable
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<Project>
+     * @return BelongsToMany<Project>
      */
     public function projects()
     {

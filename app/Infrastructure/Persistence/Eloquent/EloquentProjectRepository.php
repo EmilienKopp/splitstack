@@ -2,33 +2,34 @@
 
 namespace App\Infrastructure\Persistence\Eloquent;
 
+use App\Domain\TimeTracking\Contracts\ProjectRepository;
+use App\Domain\TimeTracking\Entities\ProjectEntity;
 use App\Models\Project;
-use App\Repositories\ProjectRepositoryInterface;
 use Illuminate\Support\Collection;
 
-class EloquentProjectRepository implements ProjectRepositoryInterface
+class EloquentProjectRepository implements ProjectRepository
 {
-    public function find(int $id): ?Project
+    public function find(int $id): ?ProjectEntity
     {
-        return Project::find($id);
+        return Project::find($id)?->toEntity();
     }
 
     public function all(): Collection
     {
-        return Project::all();
+        return Project::all()->map->toEntity();
     }
 
-    public function findByOrganization(int $organizationId): Collection
+    public function findByOrganizationId(int $organizationId): Collection
     {
-        return Project::where('organization_id', $organizationId)->get();
+        return Project::where('organization_id', $organizationId)->get()->map->toEntity();
     }
 
-    public function create(array $data): Project
+    public function save(ProjectEntity $project): ProjectEntity
     {
-        return Project::create($data);
+        return Project::create($project->toArray())->toEntity();
     }
 
-    public function update(int $id, array $data): ?Project
+    public function update(int $id, array $data): ?ProjectEntity
     {
         $project = Project::find($id);
         if (! $project) {
@@ -36,7 +37,7 @@ class EloquentProjectRepository implements ProjectRepositoryInterface
         }
         $project->update($data);
 
-        return $project->fresh();
+        return $project->fresh()->toEntity();
     }
 
     public function delete(int $id): bool
@@ -49,16 +50,10 @@ class EloquentProjectRepository implements ProjectRepositoryInterface
         return $project->delete();
     }
 
-    public function findForUser(\App\Models\User|string $user)
+    public function findForUser(int|string $userId): iterable
     {
-        if ($user instanceof \App\Models\User) {
-            $userId = $user->id;
-        } else {
-            $userId = $user;
-        }
-
         return Project::whereHas('users', function ($query) use ($userId) {
-            $query->where('user_id', $userId);
+            $query->where('users.id', $userId);
         })->get();
     }
 

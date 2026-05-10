@@ -7,9 +7,9 @@ use Illuminate\Support\Collection;
 
 interface UserRepository
 {
-    public function find(int $id): ?UserEntity;
+    public function find(int|string $id, $with = []): ?UserEntity;
 
-    public function findByWorkosId(string $workosId): ?UserEntity;
+    public function findByWorkosId(int|string $workosId): ?UserEntity;
 
     public function findByEmail(string $email): ?UserEntity;
 
@@ -18,5 +18,5 @@ interface UserRepository
     /** @return Collection<UserEntity> */
     public function all(): Collection;
 
-    public function delete(int $id): bool;
+    public function delete(int|string $id): bool;
 }

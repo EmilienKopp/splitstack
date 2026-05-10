@@ -21,6 +21,9 @@ abstract class BaseEntity implements Arrayable, ArrayAccess, IteratorAggregate
 
     public static function fromArray(array $data): static
     {
+        // Protect from "Unknown named parameters" error if array keys don't match constructor params
+        $data = array_filter($data, fn ($key) => property_exists(static::class, $key), ARRAY_FILTER_USE_KEY);
+
         return new static(...$data);
     }
 

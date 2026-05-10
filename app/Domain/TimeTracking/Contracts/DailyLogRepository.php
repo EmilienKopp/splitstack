@@ -2,7 +2,6 @@
 
 namespace App\Domain\TimeTracking\Contracts;
 
-use App\Domain\Shared\ValueObjects\ID;
 use App\Domain\TimeTracking\Entities\DailyLogEntity;
 use Carbon\Carbon;
 use DateTimeInterface;
@@ -10,14 +9,14 @@ use Illuminate\Support\Collection;
 
 interface DailyLogRepository
 {
-    public function find(ID $id): ?DailyLogEntity;
+    public function find(int|string $id): ?DailyLogEntity;
 
-    public function findByDate(Carbon|string $date, ?ID $userId, ?ID $projectId): ?DailyLogEntity;
+    public function findByDate(Carbon|string $date, int|string|null $userId, int|string|null $projectId): ?DailyLogEntity;
 
     /** @return Collection<DailyLogEntity> */
-    public function findByUserAndDate(ID $userId, DateTimeInterface|Carbon $date): Collection;
+    public function findByUserAndDate(int|string $userId, DateTimeInterface|Carbon $date): Collection;
 
-    public function findByUserDateAndProject(ID $userId, DateTimeInterface|Carbon $date, ID $projectId): ?DailyLogEntity;
+    public function findByUserDateAndProject(int|string $userId, DateTimeInterface|Carbon $date, int|string $projectId): ?DailyLogEntity;
 
     public function save(DailyLogEntity $dailyLog): DailyLogEntity;
 }

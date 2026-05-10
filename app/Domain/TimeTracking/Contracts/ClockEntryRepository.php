@@ -8,17 +8,17 @@ use Illuminate\Support\Collection;
 
 interface ClockEntryRepository
 {
-    public function find(int $id): ?ClockEntryEntity;
+    public function find(int|string $id): ?ClockEntryEntity;
 
     public function all(): Collection;
 
-    public function findByUser(int $userId): Collection;
+    public function findByUser(int|string $userId): Collection;
 
-    public function findActiveByUser(int $userId): ?ClockEntryEntity;
+    public function findActiveByUser(int|string $userId): ?ClockEntryEntity;
 
-    public function getEntriesForUser(int $userId, ?Carbon $startDate = null, ?Carbon $endDate = null): Collection;
+    public function getEntriesForUser(int|string $userId, ?Carbon $startDate = null, ?Carbon $endDate = null): Collection;
 
-    public function getTodayEntries(int $userId): Collection;
+    public function getTodayEntries(int|string $userId): Collection;
 
     public function save(ClockEntryEntity $data): ClockEntryEntity;
 

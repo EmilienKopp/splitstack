@@ -11,6 +11,7 @@ use App\Domain\TimeTracking\Entities\ClockEntryEntity;
 use App\Domain\TimeTracking\Entities\DailyLogEntity;
 use App\Facades\Split;
 use App\Http\Requests\TimeTracking\ClockEntryStoreRequest;
+use App\Models\Landlord\Tenant;
 use Illuminate\Http\Request;
 
 class DailyLogController extends Controller
@@ -47,7 +48,7 @@ class DailyLogController extends Controller
         $data = ClockInDTO::fromValidatable($request);
         $entry = $this->clockInAction->execute($data);
 
-        return Split::respond($entry, component: 'Dashboard');
+        return Split::respond($entry, route: 'dashboard', params: ['space' => Tenant::current()->space]);
     }
 
     public function clockOut(ClockEntryStoreRequest $request)
@@ -55,14 +56,14 @@ class DailyLogController extends Controller
         $data = ClockOutDTO::fromValidatable($request);
         $entry = $this->clockOutAction->execute($data);
 
-        return Split::respond($entry, component: 'Dashboard');
+        return Split::respond($entry, route: 'dashboard', params: ['space' => Tenant::current()->space]);
     }
 
     public function punch(Request $_request, DailyLogEntity $dailyLog)
     {
         $updated = $this->punchAction->execute($dailyLog);
 
-        return Split::respond($updated, component: 'Dashboard');
+        return Split::respond($updated, route: 'dashboard', params: ['space' => Tenant::current()->space]);
     }
 
     /**

@@ -19,13 +19,11 @@ class ClockEntry extends Model
     use HasEntity, HasFactory, UsesTenantConnection;
 
     protected $fillable = [
+        'daily_log_id',
         'client_id',
         'in',
         'out',
-        'note',
         'notes',
-        'project_id',
-        'user_id',
         'timezone',
     ];
 
@@ -135,8 +133,15 @@ class ClockEntry extends Model
         );
     }
 
-    public function toEntity()
+    public function toEntity(): ClockEntryEntity
     {
-        return ClockEntryEntity::fromArray($this->toArray());
+        return new ClockEntryEntity(
+            id: $this->id,
+            daily_log_id: $this->daily_log_id,
+            in: $this->in,
+            out: $this->out,
+            timezone: $this->timezone,
+            notes: $this->notes,
+        );
     }
 }

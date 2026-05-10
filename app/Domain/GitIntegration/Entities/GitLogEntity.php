@@ -2,8 +2,6 @@
 
 namespace App\Domain\GitIntegration\Entities;
 
-use App\Domain\Shared\ValueObjects\ID;
-
 final class GitLogEntity
 {
     public function __construct(
@@ -14,7 +12,7 @@ final class GitLogEntity
         public string $author_email,
         public string $message,
         public string $diff,
-        public ID $user_id,
+        public int|string $user_id,
         public \DateTime $committed_at,
     ) {}
 }

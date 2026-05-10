@@ -3,7 +3,6 @@
 namespace App\Domain\TimeTracking\Entities;
 
 use App\Domain\Shared\BaseEntity;
-use App\Domain\Shared\ValueObjects\ID;
 use Carbon\Carbon;
 
 /**
@@ -14,18 +13,18 @@ use Carbon\Carbon;
 class ClockEntryEntity extends BaseEntity
 {
     public function __construct(
-        public readonly ID $daily_log_id,
-        public readonly ?Carbon $in,
+        public readonly int|string $daily_log_id,
+        public ?Carbon $in,
         public readonly ?string $timezone = 'UTC',
         public readonly ?int $duration_seconds = 0,
-        public readonly ?Carbon $out = null,
+        public ?Carbon $out = null,
         public readonly ?float $applied_rate = null,
         public readonly ?float $amount = null,
         public readonly ?string $currency = null,
         public readonly ?string $client_id = null,
-        public readonly ?ID $rate_id = null,
+        public readonly int|string|null $rate_id = null,
         public readonly ?string $notes = null,
-        public readonly ?ID $id = null,
+        public readonly int|string|null $id = null,
     ) {}
 
     public function isClockedIn(): bool
