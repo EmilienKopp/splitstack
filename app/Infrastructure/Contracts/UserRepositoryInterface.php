@@ -2,7 +2,7 @@
 
 namespace App\Infrastructure\Contracts;
 
-use App\Domain\Entities\UserEntity;
+use App\Domain\Identity\Entities\UserEntity;
 use Illuminate\Support\Collection;
 
 interface UserRepositoryInterface

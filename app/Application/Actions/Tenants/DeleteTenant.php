@@ -2,13 +2,13 @@
 
 namespace App\Application\Actions\Tenants;
 
-use App\Domain\Entities\Landlord\TenantEntity;
-use App\Infrastructure\Contracts\TenantRepositoryInterface;
+use App\Domain\Landlord\Contracts\TenantRepository;
+use App\Domain\Landlord\Entities\TenantEntity;
 
 final class DeleteTenant
 {
     public function __construct(
-        private readonly TenantRepositoryInterface $tenantRepository,
+        private readonly TenantRepository $tenantRepository,
     ) {}
 
     public function handle(TenantEntity $tenant): void

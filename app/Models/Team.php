@@ -11,12 +11,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 #[Fillable(['name', 'slug', 'is_personal'])]
 class Team extends Model
 {
     /** @use HasFactory<TeamFactory> */
-    use GeneratesUniqueTeamSlugs, HasFactory, SoftDeletes;
+    use GeneratesUniqueTeamSlugs, HasFactory, SoftDeletes, UsesTenantConnection;
 
     /**
      * Bootstrap the model and its traits.

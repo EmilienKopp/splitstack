@@ -74,7 +74,7 @@ app/
     └── DBTransactionHandler.php
 ```
 
-**DTOs** extend `BaseDTO` and get `fromRequest()`, `fromArray()`, `fromEntity()`, and `toArray()` for free.
+**DTOs** extend `BaseDTO` and get `fromValidatable()`, `fromArray()`, `fromEntity()`, and `toArray()` for free.
 
 **Entities** have identity and represent domain objects that persist over time.
 

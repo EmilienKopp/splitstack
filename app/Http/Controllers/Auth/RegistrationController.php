@@ -31,7 +31,7 @@ class RegistrationController extends Controller
 
     public function registerOnTheFly(RegisterOnTheFlyRequest $request)
     {
-        $data = RegisterOnTheFlyDTO::fromRequest($request)->toArray();
+        $data = RegisterOnTheFlyDTO::fromValidatable($request)->toArray();
 
         $tenantDTO = CreateTenantDTO::fromArray($data);
         $userDTO = UserDTO::fromArray($data);

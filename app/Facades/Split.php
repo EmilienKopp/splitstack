@@ -2,8 +2,6 @@
 
 namespace App\Facades;
 
-use App\Http\Concerns\HasHybridResponses;
-use App\Http\Controllers\HybridController;
 use Illuminate\Support\Facades\Facade;
 
 /**
@@ -12,7 +10,7 @@ use Illuminate\Support\Facades\Facade;
  * Proxies to the HybridController instance bound to the 'split' container key,
  * making respond() available as a static call from anywhere in the application.
  *
- * @method static \App\Http\Responses\SplitResponseBuilder respond(array $data = [], ?string $component = null, ?string $route = null)
+ * @method static \App\Http\Responses\SplitResponseBuilder respond(iterable $data = [], ?string $component = null, ?string $route = null)
  *
  * @see HybridController
  * @see HasHybridResponses

@@ -3,16 +3,17 @@
 namespace App\Domain\DTOs;
 
 use App\Application\Shared\Contracts\BaseDTO;
+use App\Domain\Shared\ValueObjects\ID;
 
 class UserDTO extends BaseDTO
 {
     public function __construct(
-        public readonly ?int $id = null,
+        public readonly ?ID $id = null,
         public readonly ?string $name = null,
         public readonly ?string $email = null,
         public readonly ?string $password = null,
-        public readonly ?string $org_id = null,
-        public readonly ?string $workos_id = null,
+        public readonly ?ID $org_id = null,
+        public readonly ?ID $workos_id = null,
         public readonly ?string $avatar = null,
     ) {}
 
@@ -22,12 +23,12 @@ class UserDTO extends BaseDTO
     public static function fromArray(array $data): static
     {
         return new static(
-            id: $data['id'] ?? null,
+            id: isset($data['id']) ? new ID($data['id']) : null,
             name: $data['name'] ?? null,
             email: $data['email'] ?? null,
             password: $data['password'] ?? null,
-            org_id: $data['org_id'] ?? null,
-            workos_id: $data['workos_id'] ?? null,
+            org_id: isset($data['org_id']) ? new ID($data['org_id']) : null,
+            workos_id: isset($data['workos_id']) ? new ID($data['workos_id']) : null,
             avatar: $data['avatar'] ?? null,
         );
     }

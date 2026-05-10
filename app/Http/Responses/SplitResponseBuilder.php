@@ -14,9 +14,9 @@ class SplitResponseBuilder implements Responsable
 
     protected array $params = [];
 
-    public function respond(array $data): self
+    public function respond(iterable $data): self
     {
-        $this->data = $data;
+        $this->data = is_array($data) ? $data : iterator_to_array($data);
 
         return $this;
     }

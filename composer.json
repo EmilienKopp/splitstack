@@ -1,15 +1,10 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/svelte-starter-kit",
+    "name": "ec2k/qadran",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": [
-        "laravel",
-        "framework"
-    ],
     "license": "MIT",
     "require": {
-        "php": "^8.3",
+        "php": "^8.4",
         "inertiajs/inertia-laravel": "^3.0",
         "laravel/framework": "^13.0",
         "laravel/pennant": "^1.23",
@@ -22,6 +17,7 @@
         "spatie/laravel-medialibrary": "^11.21",
         "spatie/laravel-multitenancy": "^4.1",
         "spatie/laravel-permission": "^7.3",
+        "splitstack/laravel-enum-friendly": "^2.1",
         "splitstack/translucid": "^0.1.0"
     },
     "require-dev": {
@@ -103,15 +99,6 @@
             "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"
         ]
     },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "packages/*/*",
-            "options": {
-                "symlink": true
-            }
-        }
-    ],
     "extra": {
         "laravel": {
             "dont-discover": []

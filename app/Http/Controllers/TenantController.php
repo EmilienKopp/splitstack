@@ -32,7 +32,7 @@ class TenantController extends Controller
      */
     public function store(StoreTenantRequest $request)
     {
-        $data = RegisterOnTheFlyDTO::fromRequest($request);
+        $data = RegisterOnTheFlyDTO::fromValidatable($request);
 
         $tenant = $this->createTenant->execute($data);
 

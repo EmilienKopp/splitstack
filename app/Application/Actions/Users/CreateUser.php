@@ -3,13 +3,13 @@
 namespace App\Application\Actions\Users;
 
 use App\Domain\DTOs\UserDTO;
-use App\Domain\Entities\UserEntity;
-use App\Infrastructure\Contracts\UserRepositoryInterface;
+use App\Domain\Identity\Contracts\UserRepository;
+use App\Domain\Identity\Entities\UserEntity;
 
 final class CreateUser
 {
     public function __construct(
-        private readonly UserRepositoryInterface $userRepository,
+        private readonly UserRepository $userRepository,
     ) {}
 
     public function handle(UserDTO $data): UserEntity

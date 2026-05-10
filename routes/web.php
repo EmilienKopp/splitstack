@@ -17,6 +17,14 @@ function mainRoutes(): void
         ->group(function () {
             Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         });
+
+    Route::group(['prefix' => 'clock-entries'], function () {
+        Route::get('/', [ClockEntryController::class, 'index'])->name('clock-entry.index');
+        Route::get('/{clockEntry}', [ClockEntryController::class, 'show'])->name('clock-entry.show');
+        Route::get('/{clockEntry}/edit', [ClockEntryController::class, 'edit'])->name('clock-entry.edit');
+        Route::patch('/{clockEntry}', [ClockEntryController::class, 'update'])->name('clock-entry.update');
+        Route::delete('/{clockEntry}', [ClockEntryController::class, 'destroy'])->name('clock-entry.destroy');
+    });
 }
 
 Route::prefix('/registration')

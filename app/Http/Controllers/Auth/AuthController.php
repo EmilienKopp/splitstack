@@ -15,11 +15,14 @@ class AuthController extends Controller
 {
     public function login(AuthKitLoginRequest $request)
     {
-        return $request->redirect();
+        $response = $request->redirect();
+
+        return $response;
     }
 
     public function authenticate(AuthKitAuthenticationRequest $request)
     {
+
         $request->authenticate(findUsing: app(FindUser::class), createUsing: app(CreateUser::class), updateUsing: null);
 
         $tenant = Tenant::current();

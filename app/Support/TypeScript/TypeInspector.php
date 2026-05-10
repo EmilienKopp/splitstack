@@ -39,7 +39,7 @@ class TypeInspector
     ];
 
     protected static array $dateClasses = [
-        'Carbon', 'CarbonImmutable', 'DateTime', 'DateTimeImmutable', 'DateTimeInterface',
+        'Carbon', 'CarbonImmutable', 'DateTime', 'DateTimeInterface', 'DateTimeInterface',
     ];
 
     protected static array $collectionClasses = [

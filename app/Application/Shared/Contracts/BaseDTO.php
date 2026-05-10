@@ -4,15 +4,15 @@ namespace App\Application\Shared\Contracts;
 
 use App\Concerns\ImmutableArrayable;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Http\Request;
+use IteratorAggregate;
 
-abstract class BaseDTO implements DTO
+abstract class BaseDTO implements DTO, IteratorAggregate
 {
     use ImmutableArrayable;
 
-    public static function fromRequest(Request $request): static
+    public static function fromValidatable(HasValidatedData $source): static
     {
-        return static::fromArray($request->validated());
+        return static::fromArray($source->validated());
     }
 
     /**
@@ -34,5 +34,10 @@ abstract class BaseDTO implements DTO
     public static function fromEntity(Arrayable $entity): static
     {
         return static::fromArray($entity->toArray());
+    }
+
+    public function getIterator(): \Traversable
+    {
+        return new \ArrayIterator($this->toArray());
     }
 }

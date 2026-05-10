@@ -2,6 +2,8 @@
 
 namespace App\Models\Landlord;
 
+use App\Domain\Landlord\Entities\TenantEntity;
+use App\Models\Concerns\HasEntity;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
@@ -11,7 +13,7 @@ use Spatie\Multitenancy\Models\Tenant as BaseTenant;
 
 class Tenant extends BaseTenant
 {
-    use HasFactory, HasFeatures, UsesLandlordConnection;
+    use HasEntity, HasFactory, HasFeatures, UsesLandlordConnection;
 
     protected $fillable = [
         'id',
@@ -49,5 +51,20 @@ class Tenant extends BaseTenant
     protected function bySpace($query, $space): void
     {
         $query->where('space', $space);
+    }
+
+    public function toEntity(): TenantEntity
+    {
+        return new TenantEntity(
+            id: $this->id,
+            org_id: $this->org_id,
+            name: $this->name,
+            domain: $this->domain,
+            space: $this->space,
+            database: $this->database,
+            hash: $this->hash,
+            created_at: $this->created_at?->toDateTimeString(),
+            updated_at: $this->updated_at?->toDateTimeString(),
+        );
     }
 }
