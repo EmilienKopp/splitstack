@@ -18,6 +18,12 @@ class Project extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
+        'metadata' => 'array',
+    ];
+
     #[ExportRelationship(DailyLog::class, type: 'hasMany')]
     public function dailyLogs()
     {
@@ -63,11 +69,6 @@ class Project extends Model
 
     public function toEntity(): ProjectEntity
     {
-        return new ProjectEntity(
-            id: $this->id,
-            name: $this->name,
-            description: $this->description,
-            organization_id: $this->organization_id,
-        );
+        return ProjectEntity::fromArray($this->toArray());
     }
 }

@@ -168,6 +168,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //     Route::patch('/{clockEntry}', [ClockEntryController::class, 'update'])->name('clock-entry.update');
     //     Route::delete('/{clockEntry}', [ClockEntryController::class, 'destroy'])->name('clock-entry.destroy');
     // });
+    Route::middleware([HandlePrecognitiveRequests::class])->prefix('projects')->group(function () {
+        Route::get('/', [ProjectController::class, 'index'])->name('project.index');
+        Route::get('/create', [ProjectController::class, 'create'])->name('project.create');
+        Route::post('/', [ProjectController::class, 'store'])->name('project.store');
+    });
+
     Route::middleware([HandlePrecognitiveRequests::class])->prefix('daily-logs')->group(function () {
         Route::post('/clock-in', [DailyLogController::class, 'clockIn'])->name('daily-log.clock-in');
         Route::post('/clock-out', [DailyLogController::class, 'clockOut'])->name('daily-log.clock-out');

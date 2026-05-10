@@ -15,4 +15,6 @@ interface ProjectRepository
     public function findForUser(int|string $userId): iterable;
 
     public function save(ProjectEntity $project): ProjectEntity;
+
+    public function attachUser(int $projectId, int $userId): void;
 }

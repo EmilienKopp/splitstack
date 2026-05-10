@@ -26,7 +26,14 @@ class EloquentProjectRepository implements ProjectRepository
 
     public function save(ProjectEntity $project): ProjectEntity
     {
-        return Project::create($project->toArray())->toEntity();
+        $data = collect($project->toArray())->reject(fn ($v, $k) => $k === 'id' && is_null($v))->all();
+
+        return Project::create($data)->toEntity();
+    }
+
+    public function attachUser(int $projectId, int $userId): void
+    {
+        Project::findOrFail($projectId)->users()->syncWithoutDetaching([$userId]);
     }
 
     public function update(int $id, array $data): ?ProjectEntity
