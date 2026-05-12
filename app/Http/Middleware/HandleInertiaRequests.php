@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Uri;
 use Inertia\Middleware;
+use Spatie\Navigation\Navigation;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -41,6 +42,16 @@ class HandleInertiaRequests extends Middleware
         $user = $request->user();
         $features = $this->getRelevantFeatures();
         $config = $this->getRelevantConfig();
+        $nav = Navigation::make()->tree();
+        $nav = collect($nav)->map(fn ($item) => [
+            ...$item,
+            'href' => Uri::of($item['url'])->path(),
+        ]);
+        $crumbs = Navigation::make()->breadcrumbs();
+        $crumbs = collect($crumbs)->map(fn ($item) => [
+            ...$item,
+            'href' => Uri::of($item['url'])->path(),
+        ]);
 
         return [
             ...parent::share($request),
@@ -61,6 +72,8 @@ class HandleInertiaRequests extends Middleware
                 'host' => Context::get('host'),
                 'availableTenants' => Context::get('availableTenants'),
             ],
+            'nav' => $nav,
+            'crumbs' => $crumbs,
         ];
     }
 

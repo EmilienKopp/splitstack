@@ -1,24 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\TimeTracking;
 
 use App\Application\TimeTracking\Actions\ClockIn;
-use App\Application\TimeTracking\Actions\ClockOut;
-use App\Application\TimeTracking\Actions\Punch;
 use App\Application\TimeTracking\DTOs\ClockInDTO;
-use App\Application\TimeTracking\DTOs\ClockOutDTO;
 use App\Domain\TimeTracking\Entities\ClockEntryEntity;
-use App\Domain\TimeTracking\Entities\DailyLogEntity;
 use App\Facades\Split;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\TimeTracking\ClockEntryStoreRequest;
 use Illuminate\Http\Request;
 
-class DailyLogController extends Controller
+class ClockEntryController extends Controller
 {
     public function __construct(
         protected readonly ClockIn $clockInAction,
-        protected readonly ClockOut $clockOutAction,
-        protected readonly Punch $punchAction,
     ) {}
 
     /**
@@ -37,32 +32,15 @@ class DailyLogController extends Controller
         //
     }
 
-    public function store(Request $request)
-    {
-        //
-    }
-
-    public function clockIn(ClockEntryStoreRequest $request)
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(ClockEntryStoreRequest $request)
     {
         $data = ClockInDTO::fromValidatable($request);
         $entry = $this->clockInAction->execute($data);
 
-        return Split::respond($entry, route: 'dashboard');
-    }
-
-    public function clockOut(ClockEntryStoreRequest $request)
-    {
-        $data = ClockOutDTO::fromValidatable($request);
-        $entry = $this->clockOutAction->execute($data);
-
-        return Split::respond($entry, route: 'dashboard');
-    }
-
-    public function punch(Request $_request, DailyLogEntity $dailyLog)
-    {
-        $updated = $this->punchAction->execute($dailyLog);
-
-        return Split::respond($updated, route: 'dashboard');
+        return Split::respond($entry, component: 'Dashboard');
     }
 
     /**

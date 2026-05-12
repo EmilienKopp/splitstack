@@ -11,7 +11,16 @@ return [
     */
     'sources' => [
         'entities' => [
-            'directories' => ['Domain/Entities'],
+            'directories' => [
+                'Domain/TimeTracking/Entities',
+                'Domain/Finance/Entities',
+                'Domain/Identity/Entities',
+                'Domain/GitIntegration/Entities',
+                'Domain/Monitoring/Entities',
+                'Domain/Organization/Entities',
+                'Domain/Reporting/Entities',
+                'Domain/Categorization/Entities',
+            ],
             'include' => ['*'],
             'exclude' => ['Base*'],
             'opt_in' => false,  // introspect all concrete classes automatically

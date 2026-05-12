@@ -4,18 +4,18 @@ use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\ActivityTypeController;
 use App\Http\Controllers\AudioController;
-use App\Http\Controllers\ClockEntryController;
-use App\Http\Controllers\DailyLogController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GitHubOAuthController;
 use App\Http\Controllers\McpTokenController;
-use App\Http\Controllers\OrganizationController;
+use App\Http\Controllers\Organization\OrganizationController;
 use App\Http\Controllers\PrivacyPolicyController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\QuickActionController;
 use App\Http\Controllers\RateController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\TimeTracking\ClockEntryController;
+use App\Http\Controllers\TimeTracking\DailyLogController;
+use App\Http\Controllers\TimeTracking\ProjectController;
 use App\Http\Controllers\VoiceAssistantController;
 use App\Models\Landlord\Tenant;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
@@ -128,24 +128,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // });
 
     // Route::middleware([HandlePrecognitiveRequests::class])->prefix('projects')->group(function () {
-    //     Route::get('/', [ProjectController::class, 'index'])->name('project.index');
-    //     Route::get('/create', [ProjectController::class, 'create'])->name('project.create');
-    //     Route::post('/store', [ProjectController::class, 'store'])->name('project.store');
-    //     Route::get('/{project}', [ProjectController::class, 'show'])->name('project.show');
-    //     Route::get('/{project}/edit', [ProjectController::class, 'edit'])->name('project.edit');
-    //     Route::patch('/{project}', [ProjectController::class, 'update'])->name('project.update');
-    //     Route::delete('/{project}', [ProjectController::class, 'destroy'])->name('project.destroy');
+    //     Route::get('/', [ProjectController::class, 'index'])->name('projects.index');
+    //     Route::get('/create', [ProjectController::class, 'create'])->name('projects.create');
+    //     Route::post('/store', [ProjectController::class, 'store'])->name('projects.store');
+    //     Route::get('/{project}', [ProjectController::class, 'show'])->name('projects.show');
+    //     Route::get('/{project}/edit', [ProjectController::class, 'edit'])->name('projects.edit');
+    //     Route::patch('/{project}', [ProjectController::class, 'update'])->name('projects.update');
+    //     Route::delete('/{project}', [ProjectController::class, 'destroy'])->name('projects.destroy');
     // });
 
-    // Route::middleware([HandlePrecognitiveRequests::class])->prefix('organizations')->group(function () {
-    //     Route::get('/', [OrganizationController::class, 'index'])->name('organization.index');
-    //     Route::get('/create', [OrganizationController::class, 'create'])->name('organization.create');
-    //     Route::post('/store', [OrganizationController::class, 'store'])->name('organization.store');
-    //     Route::get('/{organization}', [OrganizationController::class, 'show'])->name('organization.show');
-    //     Route::get('/{organization}/edit', [OrganizationController::class, 'edit'])->name('organization.edit');
-    //     Route::patch('/{organization}', [OrganizationController::class, 'update'])->name('organization.update');
-    //     Route::delete('/{organization}', [OrganizationController::class, 'destroy'])->name('organization.destroy');
-    // });
+    Route::middleware([HandlePrecognitiveRequests::class])->prefix('organizations')->group(function () {
+        Route::get('/', [OrganizationController::class, 'index'])->name('organization.index');
+        Route::get('/create', [OrganizationController::class, 'create'])->name('organization.create');
+        Route::post('/store', [OrganizationController::class, 'store'])->name('organization.store');
+        Route::get('/{organization}', [OrganizationController::class, 'show'])->name('organization.show');
+        Route::get('/{organization}/edit', [OrganizationController::class, 'edit'])->name('organization.edit');
+        Route::patch('/{organization}', [OrganizationController::class, 'update'])->name('organization.update');
+        Route::delete('/{organization}', [OrganizationController::class, 'destroy'])->name('organization.destroy');
+    });
 
     // Route::middleware([HandlePrecognitiveRequests::class])->prefix('activity-types')->group(function () {
     //     Route::get('/', [ActivityTypeController::class, 'index'])->name('activity-type.index');
@@ -169,9 +169,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //     Route::delete('/{clockEntry}', [ClockEntryController::class, 'destroy'])->name('clock-entry.destroy');
     // });
     Route::middleware([HandlePrecognitiveRequests::class])->prefix('projects')->group(function () {
-        Route::get('/', [ProjectController::class, 'index'])->name('project.index');
-        Route::get('/create', [ProjectController::class, 'create'])->name('project.create');
-        Route::post('/', [ProjectController::class, 'store'])->name('project.store');
+        Route::get('/', [ProjectController::class, 'index'])->name('projects.index');
+        Route::get('/create', [ProjectController::class, 'create'])->name('projects.create');
+        Route::get('/{project}', [ProjectController::class, 'show'])->name('projects.show');
+        Route::post('/', [ProjectController::class, 'store'])->name('projects.store');
     });
 
     Route::middleware([HandlePrecognitiveRequests::class])->prefix('daily-logs')->group(function () {

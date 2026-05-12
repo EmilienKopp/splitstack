@@ -3,6 +3,7 @@
 return [
     App\Providers\AppServiceProvider::class,
     App\Providers\EntityBindingProvider::class,
+    App\Providers\NavigationProvider::class,
     App\Providers\RepositoryServiceProvider::class,
     App\Providers\SearchServiceProvider::class,
     App\Providers\SplitstackProvider::class,

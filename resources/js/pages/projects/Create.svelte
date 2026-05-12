@@ -1,6 +1,8 @@
 <script module lang="ts">
-    import { index } from '@/routes/project';
-
+    import { index } from '@/routes/projects';
+    import { usePage } from '@inertiajs/svelte';
+    const page = usePage();
+    console.log('Page props:', page.props);
     export const layout = {
         breadcrumbs: [
             { title: 'Projects', href: index() },
@@ -11,7 +13,7 @@
 
 <script lang="ts">
     import { Form } from '@inertiajs/svelte';
-    import ProjectController from '@/actions/App/Http/Controllers/ProjectController';
+    import ProjectController from '@/actions/App/Http/Controllers/TimeTracking/ProjectController';
     import AppHead from '@/components/AppHead.svelte';
     import Heading from '@/components/Heading.svelte';
     import InputError from '@/components/InputError.svelte';
@@ -35,13 +37,21 @@
 <AppHead title="New project" />
 
 <div class="flex flex-col space-y-6">
-    <Heading title="New project" description="Create a new project to track time against" />
+    <Heading
+        title="New project"
+        description="Create a new project to track time against"
+    />
 
     <Form {...ProjectController.store.form()} class="space-y-6">
         {#snippet children({ errors, processing })}
             <div class="grid gap-2">
                 <Label for="name">Name</Label>
-                <Input id="name" name="name" required placeholder="Project name" />
+                <Input
+                    id="name"
+                    name="name"
+                    required
+                    placeholder="Project name"
+                />
                 <InputError message={errors.name} />
             </div>
 
@@ -94,7 +104,9 @@
             </div>
 
             <div class="flex items-center gap-4">
-                <Button type="submit" disabled={processing}>Create project</Button>
+                <Button type="submit" disabled={processing}
+                    >Create project</Button
+                >
             </div>
         {/snippet}
     </Form>

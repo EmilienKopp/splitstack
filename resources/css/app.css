@@ -6,6 +6,10 @@
 @source '../../storage/framework/views/*.php';
 
 @custom-variant dark (&:is(.dark *));
+@plugin "daisyui" {
+    themes: lofi --default, black --prefersdark;
+    prefix: 'du-';
+}
 
 @theme inline {
     --font-sans:
@@ -169,4 +173,9 @@
     body {
         @apply bg-background text-foreground;
     }
+}
+
+
+.app-main {
+    @apply flex min-h-full flex-col p-12
 }

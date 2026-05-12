@@ -10,7 +10,6 @@
     
     onMount(() => {
         const cleanup = router.on('navigate', ({detail: {page: {props}}}) => {
-            console.log('Navigation event:', props);
             if(Object.keys(props.errors || {}).length > 0) {
                 Object.values(props.errors).forEach((error) => {
                     toast.error(error as string, { duration: 5000 });

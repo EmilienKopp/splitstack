@@ -5,6 +5,8 @@
     import AppShell from '@/components/AppShell.svelte';
     import { Toaster } from '@/components/ui/sonner';
     import type { BreadcrumbItem } from '@/types';
+    import { translucid } from 'translucid-svelte';
+    import { page } from '@inertiajs/svelte';
 
     let {
         breadcrumbs = [],
@@ -13,6 +15,8 @@
         breadcrumbs?: BreadcrumbItem[];
         children?: Snippet;
     } = $props();
+
+    translucid.configure(() => page.props.space as string);
 </script>
 
 <AppShell variant="header">

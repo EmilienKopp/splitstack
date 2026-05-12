@@ -1,8 +1,10 @@
 <script lang="ts">
+    // #region Import Hell
     import { Link, page } from '@inertiajs/svelte';
     import BookOpen from 'lucide-svelte/icons/book-open';
     import FolderGit2 from 'lucide-svelte/icons/folder-git-2';
     import LayoutGrid from 'lucide-svelte/icons/layout-grid';
+    import Building2 from 'lucide-svelte/icons/building-2';
     import type { Snippet } from 'svelte';
     import AppLogo from '@/components/AppLogo.svelte';
     import NavFooter from '@/components/NavFooter.svelte';
@@ -21,6 +23,7 @@
     import { dashboard } from '@/routes';
     import type { NavItem, Team } from '@/types';
     import { toUrl } from '@/lib/utils';
+    // #endregion
 
     let {
         children,
@@ -33,14 +36,23 @@
         currentTeam ? toUrl(dashboard(currentTeam.slug)) : '/dashboard',
     );
 
-    const mainNavItems = $derived<NavItem[]>([
-        {
-            title: 'Dashboard',
-            href: dashboardUrl,
-            icon: LayoutGrid,
-        },
-    ]);
+    //#region Main Items
+    // Map icons to backend-provided nav
+    const icons = {
+        Dashboard: LayoutGrid,
+        Projects: FolderGit2,
+        Organizations: Building2,
+    };
 
+    const mainNavItems = $derived<NavItem[]>(
+        page.props.nav.map((item: NavItem) => ({
+            ...item,
+            icon: icons[item.title as keyof typeof icons],
+        })),
+    );
+    // #endregion
+
+    // #region Footer Items
     const footerNavItems: NavItem[] = [
         {
             title: 'Repository',
@@ -53,6 +65,7 @@
             icon: BookOpen,
         },
     ];
+    // #endregion
 </script>
 
 <Sidebar collapsible="icon" variant="inset">
