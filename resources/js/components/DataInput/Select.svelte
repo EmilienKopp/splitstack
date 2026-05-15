@@ -54,11 +54,7 @@
     );
 
     let classes = $derived(
-        clsx(
-            'du-select-bordered du-select w-full text-xs',
-            normalizedError && 'du-select-error',
-            className,
-        ),
+        clsx('du-select w-full text-xs', normalizedError && 'du-select-error', className),
     );
 
     if (!options?.length && items && mapping) {
@@ -83,7 +79,7 @@
     });
 </script>
 
-<fieldset class="fieldset w-full" data-error={normalizedError ? 'true' : 'false'}>
+<fieldset class="du-fieldset w-full" data-error={normalizedError ? 'true' : 'false'}>
     {#if label && !hidden}
         <InputLabel for={rest.id} {required}>
             {label}

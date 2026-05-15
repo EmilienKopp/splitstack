@@ -45,7 +45,7 @@
     --color-destructive: var(--destructive);
     --color-destructive-foreground: var(--destructive-foreground);
 
-    --color-border: var(--border);
+    --color-border: var(--border-color);
     --color-input: var(--input);
     --color-ring: var(--ring);
 
@@ -110,7 +110,7 @@
     --accent-foreground: hsl(0 0% 9%);
     --destructive: hsl(0 84.2% 60.2%);
     --destructive-foreground: hsl(0 0% 98%);
-    --border: hsl(0 0% 92.8%);
+    --border-color: hsl(0 0% 92.8%);
     --input: hsl(0 0% 89.8%);
     --ring: hsl(0 0% 3.9%);
     --chart-1: hsl(12 76% 61%);
@@ -147,7 +147,7 @@
     --accent-foreground: hsl(0 0% 98%);
     --destructive: hsl(0 84% 60%);
     --destructive-foreground: hsl(0 0% 98%);
-    --border: hsl(0 0% 14.9%);
+    --border-color: hsl(0 0% 14.9%);
     --input: hsl(0 0% 14.9%);
     --ring: hsl(0 0% 83.1%);
     --chart-1: hsl(220 70% 50%);
