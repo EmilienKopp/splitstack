@@ -11,17 +11,19 @@ use DateTimeInterface;
 class ProjectEntity extends BaseEntity
 {
     public function __construct(
-        public readonly string $status,
-        public readonly string $name,
-        public readonly string $type,
-        public readonly ?int $id = null,
-        public readonly ?int $organization_id = null,
-        public readonly ?string $description = null,
-        public readonly ?DateTimeInterface $start_date = null,
-        public readonly ?DateTimeInterface $end_date = null,
-        public readonly ?string $location = null,
-        public readonly ?string $icon = null,
-        public readonly ?string $default_break_duration_seconds = null,
-        public readonly ?array $metadata = [],
+        public string $status,
+        public string $name,
+        public string $type,
+        public ?int $id = null,
+        public ?int $organization_id = null,
+        public ?string $description = null,
+        public ?DateTimeInterface $start_date = null,
+        public ?DateTimeInterface $end_date = null,
+        public ?string $location = null,
+        public ?string $icon = null,
+        public ?string $default_break_duration_seconds = null,
+        public array $entries = [],
+        public array $daily_logs = [],
+        public ?array $metadata = [],
     ) {}
 }

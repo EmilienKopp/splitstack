@@ -156,3 +156,27 @@ export function formatStringRangeToNumbers(
     const min = Math.min(first, last);
     return [min, max];
 }
+
+export function autoticks(
+    values: number[],
+    magnitude: number = 1000,
+    tickCount: number = 5,
+): number[] {
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const roundedMagnitudeMax = Math.ceil(max / magnitude) * magnitude;
+    const roundedMagnitudeMin = Math.floor(min / magnitude) * magnitude;
+    const ticks: number[] = [];
+    if (tickCount !== undefined) {
+        const step = (roundedMagnitudeMax - roundedMagnitudeMin) / tickCount;
+        for (let tick = roundedMagnitudeMin; tick <= roundedMagnitudeMax; tick += step) {
+            ticks.push(tick);
+        }
+        return ticks;
+    }
+
+    for (let tick = roundedMagnitudeMin; tick <= roundedMagnitudeMax; tick += magnitude) {
+        ticks.push(tick);
+    }
+    return ticks;
+}

@@ -207,13 +207,22 @@
                     {#each todayEntries as entry}
                         <div
                             class="flex items-center justify-between py-2 px-3 rounded-lg border border-border/60 text-sm">
-                            <span class="text-muted-foreground"
-                                >{entry.daily_log?.project?.name ?? 'No project'}</span>
+                            <span class="text-muted-foreground">
+                                {entry.daily_log?.project?.name ?? 'No project'}
+                            </span>
                             <span class="font-mono text-xs text-muted-foreground/70">
-                                {formatTime(entry.in)} – {entry.out ? formatTime(entry.out) : '…'}
+                                {formatTime(entry.in)} –
+                                {#if entry.out}
+                                    {formatTime(entry.out)}
+                                {:else}
+                                    <span
+                                        class="du-loading du-loading-infinity du-loading-xs mb-0.5">
+                                    </span>
+                                {/if}
                                 {#if entry.in}
-                                    <span class="ml-1 text-muted-foreground/50"
-                                        >({formatDuration(entry)})</span>
+                                    <span class="ml-1 text-muted-foreground/50">
+                                        ({formatDuration(entry)})
+                                    </span>
                                 {/if}
                             </span>
                         </div>

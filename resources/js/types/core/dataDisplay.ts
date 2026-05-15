@@ -48,9 +48,11 @@ export type DataAction<T> = {
     /** Optional function to determine if action should be hidden */
     hidden?: (row: T) => boolean;
     /** Optional function to return a URL for link actions */
-    href?: (row: T) => string;
+    href?: (row: T) => string | undefined;
     /** Optional position index for ordering multiple actions */
     position?: number;
+    /** Optionally defines that an action is only available on list-views */
+    listViewOnly?: boolean;
 };
 
 /**

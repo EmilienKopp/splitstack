@@ -171,8 +171,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware([HandlePrecognitiveRequests::class])->prefix('projects')->group(function () {
         Route::get('/', [ProjectController::class, 'index'])->name('projects.index');
         Route::get('/create', [ProjectController::class, 'create'])->name('projects.create');
+        Route::get('/edit/{project}', [ProjectController::class, 'edit'])->name('projects.edit');
         Route::get('/{project}', [ProjectController::class, 'show'])->name('projects.show');
         Route::post('/', [ProjectController::class, 'store'])->name('projects.store');
+        Route::patch('/update/{project}', [ProjectController::class, 'update'])->name('projects.update');
     });
 
     Route::middleware([HandlePrecognitiveRequests::class])->prefix('daily-logs')->group(function () {

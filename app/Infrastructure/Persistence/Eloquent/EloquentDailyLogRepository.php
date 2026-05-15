@@ -7,6 +7,7 @@ use App\Domain\TimeTracking\Entities\DailyLogEntity;
 use App\Models\ClockEntry;
 use App\Models\DailyLog;
 use Carbon\Carbon;
+use DateInterval;
 use DateTimeInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -83,5 +84,17 @@ class EloquentDailyLogRepository implements DailyLogRepository
 
             return $dailyLog;
         });
+    }
+
+    public function getForProject(int|string $projectId, ?DateInterval $interval = null): Collection
+    {
+        $query = DailyLog::where('project_id', $projectId)
+            ->with('clockEntries');
+
+        if ($interval) {
+            $query->where('date', '>=', Carbon::now()->sub($interval)->format('Y-m-d'));
+        }
+
+        return $query->get()->pipe(fn ($c) => DailyLog::toEntityCollection($c));
     }
 }

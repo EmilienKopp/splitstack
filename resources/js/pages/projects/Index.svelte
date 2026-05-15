@@ -44,12 +44,6 @@
     {#if projects.length === 0}
         <p class="text-sm text-muted-foreground">No projects yet.</p>
     {:else}
-        <DataTable
-            selectable
-            bind:this={table}
-            data={projects}
-            {headers}
-            {actions}
-            onRowClick={(project) => router.visit(ProjectController.show.url(project.id))} />
+        <DataTable selectable bind:this={table} data={projects} {headers} {actions} />
     {/if}
 </div>

@@ -37,6 +37,26 @@ class ProjectController extends Controller
         ]);
     }
 
+    public function edit(int|string $id): Response
+    {
+        $project = $this->projectRepository->getProjectData($id);
+
+        return Inertia::render('projects/Edit', [
+            'project' => $project,
+            'statusOptions' => collect(ProjectStatus::cases())->map(fn ($c) => ['value' => $c->value, 'label' => $c->name]),
+            'typeOptions' => collect(ProjectType::cases())->map(fn ($c) => ['value' => $c->value, 'label' => $c->name]),
+        ]);
+    }
+
+    public function show(int|string $id): Response
+    {
+        $project = $this->projectRepository->getProjectData($id);
+
+        return Inertia::render('projects/Show', [
+            'project' => $project,
+        ]);
+    }
+
     public function store(CreateProjectRequest $request): RedirectResponse
     {
         $this->createProject->execute(CreateProjectDTO::fromValidatable($request));
@@ -44,12 +64,9 @@ class ProjectController extends Controller
         return redirect()->route('projects.index');
     }
 
-    public function show(int|string $id): Response
+    public function update(int|string $id, CreateProjectRequest $request): RedirectResponse
     {
-        $project = $this->projectRepository->find((int) $id);
 
-        return Inertia::render('projects/Show', [
-            'project' => $project,
-        ]);
+        return redirect()->route('projects.index');
     }
 }

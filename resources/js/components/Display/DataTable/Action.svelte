@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { DataAction } from '$types/common/dataDisplay';
+    import type { DataAction } from '$types/core/dataDisplay';
     import { Link } from '@inertiajs/svelte';
     import { twMerge } from 'tailwind-merge';
     import { Cell } from '$components/ui/table';
@@ -10,6 +10,8 @@
     }
 
     let { actions, row }: Props = $props();
+
+    $inspect(actions, 'actions');
 </script>
 
 {#snippet buttonContent(action: DataAction<any>, row: any)}

@@ -81,4 +81,12 @@ class EloquentProjectRepository implements ProjectRepository
     {
         return Project::where('name', 'ILIKE', $name)->first();
     }
+
+    public function getProjectData(int|string $projectId): ?ProjectEntity
+    {
+        $project = Project::with(['dailyLogs'])
+            ->find($projectId);
+
+        return $project?->toEntity();
+    }
 }

@@ -6,12 +6,11 @@ use App\Attributes\ExportRelationship;
 use App\Domain\TimeTracking\Entities\ProjectEntity;
 use Database\Factories\ProjectFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
-class Project extends Model
+class Project extends BaseModel
 {
     /** @use HasFactory<ProjectFactory> */
     use HasFactory, Searchable, SoftDeletes, UsesTenantConnection;
@@ -24,10 +23,15 @@ class Project extends Model
         'metadata' => 'array',
     ];
 
+    public function entityClass(): string
+    {
+        return ProjectEntity::class;
+    }
+
     #[ExportRelationship(DailyLog::class, type: 'hasMany')]
     public function dailyLogs()
     {
-        return $this->hasMany(DailyLog::class);
+        return $this->hasMany(DailyLog::class)->orderBy('date');
     }
 
     public function entries()
@@ -35,7 +39,7 @@ class Project extends Model
         return $this->hasManyThrough(
             ClockEntry::class,
             DailyLog::class
-        );
+        )->orderBy('start_time');
     }
 
     #[ExportRelationship(Task::class, type: 'hasMany')]
@@ -65,10 +69,5 @@ class Project extends Model
     public function repositories()
     {
         return $this->hasMany(Repository::class);
-    }
-
-    public function toEntity(): ProjectEntity
-    {
-        return ProjectEntity::fromArray($this->toArray());
     }
 }

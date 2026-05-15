@@ -17,4 +17,6 @@ interface ProjectRepository
     public function save(ProjectEntity $project): ProjectEntity;
 
     public function attachUser(int $projectId, int $userId): void;
+
+    public function getProjectData(int|string $projectId): ?ProjectEntity;
 }

@@ -45,12 +45,12 @@ class HandleInertiaRequests extends Middleware
         $nav = Navigation::make()->tree();
         $nav = collect($nav)->map(fn ($item) => [
             ...$item,
-            'href' => Uri::of($item['url'])->path(),
+            'href' => parse_url($item['url'], PHP_URL_PATH),
         ]);
         $crumbs = Navigation::make()->breadcrumbs();
         $crumbs = collect($crumbs)->map(fn ($item) => [
             ...$item,
-            'href' => Uri::of($item['url'])->path(),
+            'href' => parse_url($item['url'], PHP_URL_PATH),
         ]);
 
         return [
