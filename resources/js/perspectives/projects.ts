@@ -1,4 +1,5 @@
 import type { DataAction, DataHeader } from '@/types/core/dataDisplay';
+import { Eye, SquarePen } from 'lucide-svelte';
 import { edit, show } from '@/routes/projects';
 
 import { Perspective } from '@/lib/core/perspective';
@@ -21,10 +22,14 @@ export default new Perspective<ProjectTableConfig>({}, () => ({
             label: 'View',
             href: (project) => (project?.id ? show.url(project.id) : undefined),
             listViewOnly: true,
+            icon: () => Eye,
+            iconOnly: true,
         },
         {
             label: 'Edit',
             href: (project) => (project?.id ? edit.url(project.id) : undefined),
+            icon: () => SquarePen,
+            iconOnly: true,
         },
     ],
 }));

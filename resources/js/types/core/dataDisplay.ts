@@ -53,6 +53,8 @@ export type DataAction<T> = {
     position?: number;
     /** Optionally defines that an action is only available on list-views */
     listViewOnly?: boolean;
+    /** Whether only the icon should display */
+    iconOnly?: boolean;
 };
 
 /**

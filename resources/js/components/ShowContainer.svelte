@@ -4,6 +4,8 @@
     import type { DataAction } from '@/types/core/dataDisplay';
     import { Link } from '@inertiajs/svelte';
     import ArrowLeft from 'lucide-svelte/icons/arrow-left';
+    import Tip from '@/components/Tip.svelte';
+
     let {
         children,
         class: className = '',
@@ -23,6 +25,7 @@
     const visibleActions = $derived(
         actions.filter((a) => !a.hidden?.(record) && !a.listViewOnly && !noActions),
     );
+    $inspect(visibleActions, 'visibleActions');
 </script>
 
 <div class={cn('py-10 px-1', className)}>
@@ -46,9 +49,13 @@
                                 class="btn btn-sm {action.css?.(record) ?? 'btn-outline'}">
                                 {#if action.icon}
                                     {@const Icon = action.icon(record)}
-                                    <Icon class="w-4 h-4" />
+                                    <Tip text={action.label}>
+                                        <Icon class="w-4 h-4" />
+                                    </Tip>
                                 {/if}
-                                {action.label}
+                                {#if !action.iconOnly}
+                                    {action.label}
+                                {/if}
                             </Link>
                         {:else if action.callback}
                             <button
@@ -57,9 +64,13 @@
                                 class="btn btn-sm {action.css?.(record) ?? 'btn-outline'}">
                                 {#if action.icon}
                                     {@const Icon = action.icon(record)}
-                                    <Icon class="w-4 h-4" />
+                                    <Tip text={action.label}>
+                                        <Icon class="w-4 h-4" />
+                                    </Tip>
                                 {/if}
-                                {action.label}
+                                {#if !action.iconOnly}
+                                    {action.label}
+                                {/if}
                             </button>
                         {/if}
                     {/each}
