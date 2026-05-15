@@ -4,7 +4,7 @@
     import AppShell from '@/components/AppShell.svelte';
     import AppSidebar from '@/components/AppSidebar.svelte';
     import AppSidebarHeader from '@/components/AppSidebarHeader.svelte';
-    import { Toaster } from '@/components/ui/sonner';
+    import Toaster from '@/components/Toaster.svelte';
     import type { BreadcrumbItem } from '@/types';
     import { page } from '@inertiajs/svelte';
     import { translucid } from 'translucid-svelte';

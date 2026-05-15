@@ -9,8 +9,8 @@
     import AppLogoIcon from '@/components/AppLogoIcon.svelte';
     import Breadcrumbs from '@/components/Breadcrumbs.svelte';
     import TeamSwitcher from '@/components/TeamSwitcher.svelte';
-    import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-    import { Button } from '@/components/ui/button';
+    import Avatar from '@/components/Display/Avatar.svelte';
+    import Button from '@/components/Actions/Button.svelte';
     import {
         DropdownMenu,
         DropdownMenuContent,
@@ -311,15 +311,13 @@
                                 onclick={props.onclick}
                                 aria-expanded={props['aria-expanded']}
                                 data-state={props['data-state']}>
-                                <Avatar class="size-8 overflow-hidden rounded-full">
-                                    {#if auth.user.avatar}
-                                        <AvatarImage src={auth.user.avatar} alt={auth.user.name} />
-                                    {/if}
-                                    <AvatarFallback
-                                        class="rounded-lg bg-neutral-200 font-semibold text-black dark:bg-neutral-700 dark:text-white">
-                                        {getInitials(auth.user?.name)}
-                                    </AvatarFallback>
-                                </Avatar>
+                                <Avatar
+                                    src={auth.user.avatar ?? undefined}
+                                    fallback={getInitials(auth.user?.name)}
+                                    alt={auth.user.name}
+                                    class="size-8 overflow-hidden rounded-full"
+                                    fallbackClass="rounded-lg bg-neutral-200 font-semibold text-black dark:bg-neutral-700 dark:text-white"
+                                />
                             </Button>
                         {/snippet}
                     </DropdownMenuTrigger>

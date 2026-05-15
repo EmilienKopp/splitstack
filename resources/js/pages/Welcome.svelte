@@ -4,7 +4,7 @@
     import { toUrl } from '@/lib/utils';
     import { dashboard, login } from '@/routes';
     import type { Team } from '@/types';
-    import { Toaster } from '@/components/ui/sonner';
+    import Toaster from '@/components/Toaster.svelte';
 
     const auth = $derived(page.props.auth);
     const dashboardUrl = $derived(dashboard(page.props.space));

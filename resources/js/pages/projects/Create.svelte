@@ -16,10 +16,10 @@
     import ProjectController from '@/actions/App/Http/Controllers/TimeTracking/ProjectController';
     import AppHead from '@/components/AppHead.svelte';
     import Heading from '@/components/Heading.svelte';
-    import InputError from '@/components/InputError.svelte';
-    import { Button } from '@/components/ui/button';
-    import { Input } from '@/components/ui/input';
-    import { Label } from '@/components/ui/label';
+    import Button from '@/components/Actions/Button.svelte';
+    import Input from '@/components/DataInput/Input.svelte';
+    import Textarea from '@/components/DataInput/Textarea.svelte';
+    import Select from '@/components/DataInput/Select.svelte';
 
     interface SelectOption {
         value: string;
@@ -44,69 +44,49 @@
 
     <Form {...ProjectController.store.form()} class="space-y-6">
         {#snippet children({ errors, processing })}
-            <div class="grid gap-2">
-                <Label for="name">Name</Label>
-                <Input
-                    id="name"
-                    name="name"
-                    required
-                    placeholder="Project name"
-                />
-                <InputError message={errors.name} />
-            </div>
+            <Input
+                label="Name"
+                name="name"
+                required
+                placeholder="Project name"
+                error={errors.name}
+            />
 
-            <div class="grid gap-2">
-                <Label for="description">Description</Label>
-                <textarea
-                    id="description"
-                    name="description"
-                    rows="3"
-                    placeholder="Optional description"
-                    class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-                ></textarea>
-                <InputError message={errors.description} />
-            </div>
+            <Textarea
+                label="Description"
+                name="description"
+                rows={3}
+                placeholder="Optional description"
+                error={errors.description}
+            />
 
             <div class="grid grid-cols-2 gap-4">
-                <div class="grid gap-2">
-                    <Label for="type">Type</Label>
-                    <select
-                        id="type"
-                        name="type"
-                        class="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                        {#each typeOptions as option (option.value)}
-                            <option value={option.value}>{option.label}</option>
-                        {/each}
-                    </select>
-                    <InputError message={errors.type} />
-                </div>
+                <Select
+                    label="Type"
+                    name="type"
+                    options={typeOptions}
+                    mapping={{ valueColumn: 'value', labelColumn: 'label' }}
+                    error={errors.type}
+                />
 
-                <div class="grid gap-2">
-                    <Label for="status">Status</Label>
-                    <select
-                        id="status"
-                        name="status"
-                        class="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                        {#each statusOptions as option (option.value)}
-                            <option value={option.value}>{option.label}</option>
-                        {/each}
-                    </select>
-                    <InputError message={errors.status} />
-                </div>
+                <Select
+                    label="Status"
+                    name="status"
+                    options={statusOptions}
+                    mapping={{ valueColumn: 'value', labelColumn: 'label' }}
+                    error={errors.status}
+                />
             </div>
 
-            <div class="grid gap-2">
-                <Label for="start_date">Start date</Label>
-                <Input id="start_date" name="start_date" type="date" />
-                <InputError message={errors.start_date} />
-            </div>
+            <Input
+                label="Start date"
+                name="start_date"
+                type="date"
+                error={errors.start_date}
+            />
 
             <div class="flex items-center gap-4">
-                <Button type="submit" disabled={processing}
-                    >Create project</Button
-                >
+                <Button type="submit" disabled={processing}>Create project</Button>
             </div>
         {/snippet}
     </Form>

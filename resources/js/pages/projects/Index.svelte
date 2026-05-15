@@ -11,7 +11,7 @@
     import ProjectController from '@/actions/App/Http/Controllers/TimeTracking/ProjectController';
     import AppHead from '@/components/AppHead.svelte';
     import Heading from '@/components/Heading.svelte';
-    import { Button } from '@/components/ui/button';
+    import Button from '@/components/Actions/Button.svelte';
     import { DataTable } from '@/components/Display/DataTable';
     import perspective from '@/perspectives/projects';
     import { getUserRoleName } from '@/lib/inertia';

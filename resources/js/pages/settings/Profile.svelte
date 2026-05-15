@@ -17,10 +17,8 @@
     import AppHead from '@/components/AppHead.svelte';
     import DeleteUser from '@/components/DeleteUser.svelte';
     import Heading from '@/components/Heading.svelte';
-    import InputError from '@/components/InputError.svelte';
-    import { Button } from '@/components/ui/button';
-    import { Input } from '@/components/ui/input';
-    import { Label } from '@/components/ui/label';
+    import Button from '@/components/Actions/Button.svelte';
+    import Input from '@/components/DataInput/Input.svelte';
 
     const user = $derived(page.props.auth.user);
 </script>
@@ -42,35 +40,27 @@
         options={{ preserveScroll: true }}
     >
         {#snippet children({ errors, processing })}
-            <div class="grid gap-2">
-                <Label for="name">Name</Label>
-                <Input
-                    id="name"
-                    name="name"
-                    class="mt-1 block w-full"
-                    value={user.name}
-                    required
-                    autocomplete="name"
-                    placeholder="Full name"
-                />
-                <InputError class="mt-2" message={errors.name} />
-            </div>
+            <Input
+                label="Name"
+                name="name"
+                value={user.name}
+                required
+                autocomplete="name"
+                placeholder="Full name"
+                error={errors.name}
+            />
 
-            <div class="grid gap-2">
-                <Label for="email">Email address</Label>
-                <Input
-                    id="email"
-                    type="email"
-                    name="email"
-                    class="mt-1 block w-full"
-                    value={user.email}
-                    required
-                    autocomplete="username"
-                    placeholder="Email address"
-                    disabled
-                />
-                <InputError class="mt-2" message={errors.email} />
-            </div>
+            <Input
+                label="Email address"
+                name="email"
+                type="email"
+                value={user.email}
+                required
+                autocomplete="username"
+                placeholder="Email address"
+                disabled
+                error={errors.email}
+            />
 
             <div class="flex items-center gap-4">
                 <Button

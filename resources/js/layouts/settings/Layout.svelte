@@ -1,8 +1,7 @@
 <script lang="ts">
-    import { Link } from '@inertiajs/svelte';
     import type { Snippet } from 'svelte';
     import Heading from '@/components/Heading.svelte';
-    import { Button } from '@/components/ui/button';
+    import Button from '@/components/Actions/Button.svelte';
     import { Separator } from '@/components/ui/separator';
     import { currentUrlState } from '@/lib/currentUrl.svelte';
     import { toUrl } from '@/lib/utils';
@@ -50,19 +49,15 @@
                 {#each sidebarNavItems as item (toUrl(item.href))}
                     <Button
                         variant="ghost"
+                        href={toUrl(item.href)}
                         class="w-full justify-start {url.isCurrentOrParentUrl(
                             item.href,
                             url.currentUrl,
                         )
                             ? 'bg-muted'
                             : ''}"
-                        asChild
                     >
-                        {#snippet children(props)}
-                            <Link href={toUrl(item.href)} class={props.class}>
-                                {item.title}
-                            </Link>
-                        {/snippet}
+                        {item.title}
                     </Button>
                 {/each}
             </nav>

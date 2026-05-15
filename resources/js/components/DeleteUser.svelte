@@ -2,7 +2,7 @@
     import { Form } from '@inertiajs/svelte';
     import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
     import Heading from '@/components/Heading.svelte';
-    import { Button } from '@/components/ui/button';
+    import Button from '@/components/Actions/Button.svelte';
     import {
         Dialog,
         DialogClose,

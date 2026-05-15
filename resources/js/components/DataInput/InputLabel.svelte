@@ -10,7 +10,7 @@
   let { children, required, ...rest }: Props = $props();
 </script>
 
-<legend class={twMerge('fieldset-legend', rest.class)} {...rest}>
+<legend class={twMerge('du-fieldset-legend', rest.class)} {...rest}>
   {@render children?.()}
   {#if required}
     <span class="text-error">*</span>

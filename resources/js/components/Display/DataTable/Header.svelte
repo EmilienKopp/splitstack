@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Row, Head, Header } from '$components/ui/table';
-    import Checkbox from '@/components/ui/checkbox/Checkbox.svelte';
+    import Checkbox from '@/components/DataInput/Checkbox.svelte';
     import type { DataHeader } from '@/types/core/dataDisplay';
     import { getContext } from 'svelte';
 

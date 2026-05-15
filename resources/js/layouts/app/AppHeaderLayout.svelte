@@ -3,7 +3,7 @@
     import AppContent from '@/components/AppContent.svelte';
     import AppHeader from '@/components/AppHeader.svelte';
     import AppShell from '@/components/AppShell.svelte';
-    import { Toaster } from '@/components/ui/sonner';
+    import Toaster from '@/components/Toaster.svelte';
     import type { BreadcrumbItem } from '@/types';
     import { translucid } from 'translucid-svelte';
     import { page } from '@inertiajs/svelte';

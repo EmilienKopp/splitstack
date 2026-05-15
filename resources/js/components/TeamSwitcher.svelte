@@ -6,7 +6,7 @@
     import Users from 'lucide-svelte/icons/users';
     import { onMount } from 'svelte';
     import CreateTeamModal from '@/components/CreateTeamModal.svelte';
-    import { Button } from '@/components/ui/button';
+    import Button from '@/components/Actions/Button.svelte';
     import {
         DropdownMenu,
         DropdownMenuContent,

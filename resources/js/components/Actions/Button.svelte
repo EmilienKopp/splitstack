@@ -5,6 +5,7 @@
 
   interface Props {
     variant?: string;
+    size?: 'default' | 'sm' | 'lg' | 'icon' | 'xs';
     children?: import('svelte').Snippet;
     href?: string;
     onclick?: (e: MouseEvent) => void;
@@ -15,6 +16,7 @@
 
   let {
     variant = 'primary',
+    size = 'default',
     children,
     onclick,
     href,
@@ -23,6 +25,23 @@
     prefetch,
     ...rest
   }: Props = $props();
+
+  const variantClass = $derived(clsx({
+    'du-btn-primary': variant === 'primary' || variant === 'default',
+    'du-btn-secondary': variant === 'secondary',
+    'du-btn-accent': variant === 'accent',
+    'du-btn-error': variant === 'danger' || variant === 'destructive',
+    'du-btn-ghost': variant === 'ghost',
+    'du-btn-outline': variant === 'outline' || variant === 'outline-solid',
+    'du-btn-link': variant === 'link',
+  }));
+
+  const sizeClass = $derived(clsx({
+    'du-btn-sm': size === 'sm',
+    'du-btn-lg': size === 'lg',
+    'du-btn-xs': size === 'xs',
+    'du-btn-square': size === 'icon',
+  }));
 </script>
 
 {#if href}
@@ -30,21 +49,10 @@
     {...rest}
     {href}
     {prefetch}
-    class={twMerge(
-      'btn',
-      clsx({
-        'btn-error': variant === 'danger',
-        'btn-primary': variant === 'primary',
-        'btn-secondary': variant === 'secondary',
-        'btn-accent': variant === 'accent',
-        'btn-outline': variant === 'outline-solid',
-        'btn-link': variant === 'link',
-      }),
-      rest.class
-    )}
+    class={twMerge('du-btn', variantClass, sizeClass, rest.class)}
   >
     {#if loading}
-      <span class="loading loading-spinner"></span>
+      <span class="du-loading du-loading-spinner"></span>
     {/if}
     {@render children?.()}
   </Link>
@@ -54,21 +62,10 @@
     {...rest}
     {type}
     {onclick}
-    class={twMerge(
-      'btn',
-      clsx({
-        'btn-error': variant === 'danger',
-        'btn-primary': variant === 'primary',
-        'btn-secondary': variant === 'secondary',
-        'btn-accent': variant === 'accent',
-        'btn-outline': variant === 'outline-solid',
-        'btn-link': variant === 'link',
-      }),
-      rest.class
-    )}
+    class={twMerge('du-btn', variantClass, sizeClass, rest.class)}
   >
     {#if loading}
-      <span class="loading loading-spinner"></span>
+      <span class="du-loading du-loading-spinner"></span>
     {/if}
     {@render children?.()}
   </button>

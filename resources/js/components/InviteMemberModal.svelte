@@ -1,7 +1,6 @@
 <script lang="ts">
     import { Form } from '@inertiajs/svelte';
-    import InputError from '@/components/InputError.svelte';
-    import { Button } from '@/components/ui/button';
+    import Button from '@/components/Actions/Button.svelte';
     import {
         Dialog,
         DialogClose,
@@ -10,8 +9,8 @@
         DialogFooter,
         DialogTitle,
     } from '@/components/ui/dialog';
-    import { Input } from '@/components/ui/input';
-    import { Label } from '@/components/ui/label';
+    import Input from '@/components/DataInput/Input.svelte';
+    import Label from '@/components/DataInput/Label.svelte';
     import {
         Select,
         SelectContent,
@@ -67,16 +66,15 @@
 
                     <div class="grid gap-4">
                         <div class="grid gap-2">
-                            <Label for="email">Email address</Label>
                             <Input
-                                id="email"
+                                label="Email address"
                                 name="email"
                                 type="email"
                                 placeholder="colleague@example.com"
                                 required
+                                error={errors.email}
                                 data-test="invite-email"
                             />
-                            <InputError message={errors.email} />
                         </div>
 
                         <div class="grid gap-2">

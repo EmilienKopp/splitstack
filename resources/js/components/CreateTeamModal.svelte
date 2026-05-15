@@ -1,8 +1,7 @@
 <script lang="ts">
     import { Form } from '@inertiajs/svelte';
     import type { Snippet } from 'svelte';
-    import InputError from '@/components/InputError.svelte';
-    import { Button } from '@/components/ui/button';
+    import Button from '@/components/Actions/Button.svelte';
     import {
         Dialog,
         DialogClose,
@@ -12,8 +11,7 @@
         DialogTitle,
         DialogTrigger,
     } from '@/components/ui/dialog';
-    import { Input } from '@/components/ui/input';
-    import { Label } from '@/components/ui/label';
+    import Input from '@/components/DataInput/Input.svelte';
     import { store } from '@/routes/teams';
 
     type TriggerProps = {
@@ -61,19 +59,18 @@
                     </div>
 
                     <div class="grid gap-2">
-                        <Label for="name">Team name</Label>
                         <Input
-                            id="name"
+                            label="Team name"
                             name="name"
                             placeholder="My team"
                             required
+                            error={errors.name}
                             data-test="create-team-name"
                         />
-                        <InputError message={errors.name} />
                     </div>
 
                     <DialogFooter class="gap-2">
-                        <DialogClose asChild>
+                        <DialogClose>
                             <Button variant="secondary">Cancel</Button>
                         </DialogClose>
 

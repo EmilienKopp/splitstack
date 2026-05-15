@@ -7,7 +7,7 @@
     import { query } from '$lib/stores/global/query.svelte';
     // import type { Paginated } from '$types/pagination';
     import { Root, Body, Row } from '$components/ui/table';
-    import { Checkbox } from '$components/ui/checkbox';
+    import Checkbox from '@/components/DataInput/Checkbox.svelte';
     import type { SelectableDataItem } from '$types/core/dataDisplay';
     import { setContext } from 'svelte';
 

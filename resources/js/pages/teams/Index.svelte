@@ -12,21 +12,15 @@
 </script>
 
 <script lang="ts">
-    import { Link } from '@inertiajs/svelte';
     import Eye from 'lucide-svelte/icons/eye';
     import Pencil from 'lucide-svelte/icons/pencil';
     import Plus from 'lucide-svelte/icons/plus';
     import AppHead from '@/components/AppHead.svelte';
     import CreateTeamModal from '@/components/CreateTeamModal.svelte';
     import Heading from '@/components/Heading.svelte';
-    import { Badge } from '@/components/ui/badge';
-    import { Button } from '@/components/ui/button';
-    import {
-        Tooltip,
-        TooltipContent,
-        TooltipProvider,
-        TooltipTrigger,
-    } from '@/components/ui/tooltip';
+    import Tip from '@/components/Tip.svelte';
+    import Button from '@/components/Actions/Button.svelte';
+    import Badge from '@/components/Display/Badge.svelte';
     import { edit } from '@/routes/teams';
     import type { Team } from '@/types';
 
@@ -35,19 +29,6 @@
     }: {
         teams: Team[];
     } = $props();
-
-    const callClickHandler = (handler: unknown, event: MouseEvent) => {
-        if (typeof handler === 'function') {
-            handler(event);
-        }
-    };
-
-    const handleCreateTeamClick = (
-        props: Record<string, unknown>,
-        event: MouseEvent,
-    ) => {
-        callClickHandler(props.onClick, event);
-    };
 </script>
 
 <AppHead title="Teams" />
@@ -65,7 +46,7 @@
         <CreateTeamModal>
             {#snippet children(props)}
                 <Button
-                    onclick={(event) => handleCreateTeamClick(props, event)}
+                    onclick={props.onClick}
                     data-test="teams-new-team-button"
                 >
                     <Plus class="h-4 w-4" /> New team
@@ -96,63 +77,31 @@
                     </div>
                 </div>
 
-                <TooltipProvider delayDuration={0}>
-                    <div class="flex items-center gap-2">
-                        {#if team.role === 'member'}
-                            <Tooltip>
-                                <TooltipTrigger>
-                                    {#snippet child({ props })}
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            asChild
-                                            {...props}
-                                        >
-                                            {#snippet children(buttonProps)}
-                                                <Link
-                                                    {...buttonProps}
-                                                    href={edit(team.slug)}
-                                                    data-test="team-view-button"
-                                                >
-                                                    <Eye class="h-4 w-4" />
-                                                </Link>
-                                            {/snippet}
-                                        </Button>
-                                    {/snippet}
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    <p>View team</p>
-                                </TooltipContent>
-                            </Tooltip>
-                        {:else}
-                            <Tooltip>
-                                <TooltipTrigger>
-                                    {#snippet child({ props })}
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            asChild
-                                            {...props}
-                                        >
-                                            {#snippet children(buttonProps)}
-                                                <Link
-                                                    {...buttonProps}
-                                                    href={edit(team.slug)}
-                                                    data-test="team-edit-button"
-                                                >
-                                                    <Pencil class="h-4 w-4" />
-                                                </Link>
-                                            {/snippet}
-                                        </Button>
-                                    {/snippet}
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    <p>Edit team</p>
-                                </TooltipContent>
-                            </Tooltip>
-                        {/if}
-                    </div>
-                </TooltipProvider>
+                <div class="flex items-center gap-2">
+                    {#if team.role === 'member'}
+                        <Tip text="View team">
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                href={edit(team.slug)}
+                                data-test="team-view-button"
+                            >
+                                <Eye class="h-4 w-4" />
+                            </Button>
+                        </Tip>
+                    {:else}
+                        <Tip text="Edit team">
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                href={edit(team.slug)}
+                                data-test="team-edit-button"
+                            >
+                                <Pencil class="h-4 w-4" />
+                            </Button>
+                        </Tip>
+                    {/if}
+                </div>
             </div>
         {/each}
 

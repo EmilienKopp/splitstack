@@ -29,16 +29,16 @@
   );
 </script>
 
-<fieldset class="fieldset w-full {className}" data-error={normalizedError ? 'true' : 'false'}>
-  <div class="form-control">
-    <label class="label cursor-pointer justify-start gap-4">
-      <input 
-        type="checkbox" 
-        class="toggle toggle-primary" 
-        bind:checked 
+<fieldset class="du-fieldset w-full {className}" data-error={normalizedError ? 'true' : 'false'}>
+  <div class="du-form-control">
+    <label class="du-label cursor-pointer justify-start gap-4">
+      <input
+        type="checkbox"
+        class="du-toggle du-toggle-primary"
+        bind:checked
         {...rest}
       />
-      <span class="label-text">
+      <span class="du-label-text">
         {label}
         {#if required}
           <span class="text-error ml-1">*</span>

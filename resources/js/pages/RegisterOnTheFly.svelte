@@ -2,10 +2,10 @@
     import { Form, page } from '@inertiajs/svelte';
     import AppHead from '@/components/AppHead.svelte';
     import AppLogoIcon from '@/components/AppLogoIcon.svelte';
-    import InputError from '@/components/InputError.svelte';
-    import { Button } from '@/components/ui/button';
-    import { Input } from '@/components/ui/input';
-    import { Label } from '@/components/ui/label';
+    import Button from '@/components/Actions/Button.svelte';
+    import Input from '@/components/DataInput/Input.svelte';
+    import Label from '@/components/DataInput/Label.svelte';
+    import InputError from '@/components/DataInput/InputError.svelte';
     import registerOnTheFly from '@/routes/register-on-the-fly';
 
     const user = $derived(page.props.user);
@@ -44,56 +44,45 @@
 
             <Form action={registerOnTheFly.submit()} class="space-y-5">
                 {#snippet children({ errors, processing })}
-                    <div class="grid gap-2">
-                        <Label for="email">Email</Label>
-                        <Input
-                            id="email"
-                            name="email"
-                            value={user.email}
-                            class="cursor-not-allowed bg-muted/50 pointer-events-none"
-                        />
+                    <Input
+                        label="Email"
+                        name="email"
+                        value={user.email}
+                        disabled
+                        readonly
+                    />
 
-                        <div class="grid gap-2 col-span-full">
-                            <Label for="name">Name</Label>
-                            <Input
-                                id="name"
-                                name="name"
-                                value={user.name}
-                                class="cursor-not-allowed bg-muted/50 pointer-events-none"
-                            />
-                        </div>
-                    </div>
+                    <Input
+                        label="Name"
+                        name="name"
+                        value={user.name}
+                        disabled
+                        readonly
+                    />
 
-                    <div class="grid gap-2">
-                        <Label for="org_name">Organization name</Label>
-                        <Input
-                            id="org_name"
-                            name="org_name"
-                            value={name}
-                            placeholder="Acme Inc."
-                            required
-                            autofocus
-                        />
-                        <InputError message={errors.org_name} />
-                    </div>
+                    <Input
+                        label="Organization name"
+                        name="org_name"
+                        value={name}
+                        placeholder="Acme Inc."
+                        required
+                        autofocus
+                        error={errors.org_name}
+                    />
 
-                    <div class="grid gap-2">
+                    <div class="grid gap-1">
                         <Label for="org_slug">URL slug</Label>
-                        <div
-                            class="flex overflow-hidden rounded-md border focus-within:ring-2 focus-within:ring-ring"
-                        >
-                            <Input
+                        <div class="flex overflow-hidden rounded-md border focus-within:ring-2">
+                            <input
                                 id="org_slug"
                                 name="org_slug"
                                 value={slug}
                                 placeholder="acme-inc"
                                 required
-                                class="rounded-none border-0 shadow-none focus-visible:ring-0"
+                                class="du-input flex-1 rounded-none border-0 shadow-none focus:outline-none"
                             />
                             {#if page.props.config.app?.rootDomain}
-                                <span
-                                    class="select-none border-r bg-muted px-3 py-2 text-sm text-muted-foreground"
-                                >
+                                <span class="select-none border-l bg-muted px-3 py-2 text-sm text-muted-foreground flex items-center">
                                     .{page.props.config.app.rootDomain}
                                 </span>
                             {/if}

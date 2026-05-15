@@ -14,7 +14,7 @@
     {#each paginatedData.links as link, index}
       <a
         href={link.url}
-        class="btn btn-primary pagination-link"
+        class="du-btn du-btn-primary pagination-link"
         class:pagination-end={index === 0 ||
           index === paginatedData.links.length - 1}
         class:active={pageIndex === index &&

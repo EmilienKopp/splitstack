@@ -4,7 +4,7 @@
     import { Form } from '@inertiajs/svelte';
     import { shared } from '@/lib/inertia';
     import Combobox from '@/components/DataInput/Combobox.svelte';
-    import { Button } from '@/components/ui/button';
+    import Button from '@/components/Actions/Button.svelte';
     import { CheckIcon } from 'lucide-svelte';
     import { ChevronsUpDownIcon } from 'lucide-svelte';
     import { tick } from 'svelte';

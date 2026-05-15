@@ -29,7 +29,7 @@
                 <button
                     type="button"
                     onclick={() => action.callback?.(row)}
-                    class={twMerge('btn btn-action btn-xs', action.css?.(row))}>
+                    class={twMerge('du-btn du-btn-xs', action.css?.(row))}>
                     {@render buttonContent(action, row)}
                 </button>
             {:else if action?.href}

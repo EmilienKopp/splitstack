@@ -46,7 +46,7 @@
                         {#if action.href}
                             <Link
                                 href={action.href(record) ?? '#'}
-                                class="btn btn-sm {action.css?.(record) ?? 'btn-outline'}">
+                                class="du-btn du-btn-sm {action.css?.(record) ?? 'du-btn-outline'}">
                                 {#if action.icon}
                                     {@const Icon = action.icon(record)}
                                     <Tip text={action.label}>
@@ -61,7 +61,7 @@
                             <button
                                 onclick={() => action.callback!(record)}
                                 disabled={action.disabled?.(record)}
-                                class="btn btn-sm {action.css?.(record) ?? 'btn-outline'}">
+                                class="du-btn du-btn-sm {action.css?.(record) ?? 'du-btn-outline'}">
                                 {#if action.icon}
                                     {@const Icon = action.icon(record)}
                                     <Tip text={action.label}>

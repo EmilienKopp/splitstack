@@ -40,13 +40,13 @@
   );
 
   let classes = $derived(clsx(
-    'textarea textarea-bordered w-full',
-    normalizedError && 'textarea-error',
+    'du-textarea du-textarea-bordered w-full',
+    normalizedError && 'du-textarea-error',
     className
   ))
 </script>
 
-<fieldset class="fieldset w-full" data-error={normalizedError ? 'true' : 'false'}>
+<fieldset class="du-fieldset w-full" data-error={normalizedError ? 'true' : 'false'}>
   {#if label}
     <InputLabel {required}>{label}</InputLabel>
   {/if}

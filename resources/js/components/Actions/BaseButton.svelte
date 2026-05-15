@@ -10,6 +10,6 @@
   const { class: css, ...attributes } = rest;
   
 </script>
-<button  {...attributes} class={twMerge("btn", css)}>
+<button  {...attributes} class={twMerge("du-btn", css)}>
   {@render children?.()}
 </button>

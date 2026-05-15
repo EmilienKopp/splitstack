@@ -1,6 +1,5 @@
 <script lang="ts">
     import { cn } from '@/lib/utils';
-    import LoaderCircle from 'lucide-svelte/icons/loader-circle';
 
     let {
         class: className = '',
@@ -11,4 +10,4 @@
     } = $props();
 </script>
 
-<LoaderCircle class={cn('animate-spin', className)} {...rest} />
+<span class={cn('du-loading du-loading-spinner', className)} {...rest}></span>

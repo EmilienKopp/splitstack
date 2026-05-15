@@ -4,7 +4,6 @@
     import { tick } from 'svelte';
     import * as Command from '$components/ui/command/index.js';
     import * as Popover from '$components/ui/popover/index.js';
-    import { Button } from '$components/ui/button/index.js';
     import { cn } from '$lib/utils.js';
 
     interface Props {
@@ -43,16 +42,17 @@
 <Popover.Root bind:open>
     <Popover.Trigger bind:ref={triggerRef}>
         {#snippet child({ props })}
-            <Button
+            <button
+                bind:this={triggerRef}
                 {...props}
-                variant="outline"
-                class="w-[200px] justify-between"
+                type="button"
+                class={cn('du-btn du-btn-outline w-[200px] justify-between', props.class)}
                 role="combobox"
                 aria-expanded={open}
-                onClick={() => (search = '')}>
+                onclick={() => (search = '')}>
                 {selectedValue || placeholder}
                 <ChevronsUpDownIcon class="opacity-50" />
-            </Button>
+            </button>
         {/snippet}
     </Popover.Trigger>
     <Popover.Content class="w-[200px] p-0">

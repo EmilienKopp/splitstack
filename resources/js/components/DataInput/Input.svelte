@@ -72,10 +72,10 @@
   );
 
   let classes = $derived(
-    clsx('input input-bordered w-full', normalizedError && 'input-error', className)
+    clsx('du-input du-input-bordered w-full', normalizedError && 'du-input-error', className)
   );
 
-  const fieldsetClasses = $derived(twMerge('fieldset w-full', fieldsetClass));
+  const fieldsetClasses = $derived(twMerge('du-fieldset w-full', fieldsetClass));
 
   const { formContext, handleChange } = usePrecog({
     active: precog,
@@ -86,7 +86,7 @@
 
 <fieldset class={fieldsetClasses} data-error={normalizedError ? 'true' : 'false'}>
   {#if label}
-    <legend class="fieldset-legend">
+    <legend class="du-fieldset-legend">
       {label}
       {#if required}
         <span class="text-error">*</span>

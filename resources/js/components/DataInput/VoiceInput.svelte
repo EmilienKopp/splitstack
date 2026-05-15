@@ -76,9 +76,9 @@
 </script>
 
 <div class="fixed bottom-4 left-4 z-50 w-80">
-  <div class="card bg-base-200 shadow-xl border border-base-300">
+  <div class="du-card shadow-xl border">
     <!-- Header -->
-    <div class="card-body p-3">
+    <div class="du-card-body p-3">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
           <svg
@@ -97,17 +97,17 @@
           </svg>
           <h3 class="font-semibold text-sm">Voice Assistant</h3>
           {#if voiceAssistant.isRecording}
-            <span class="badge badge-error badge-xs animate-pulse">REC</span>
+            <span class="du-badge du-badge-error du-badge-xs animate-pulse">REC</span>
           {:else if voiceAssistant.isListening}
-            <span class="badge badge-info badge-xs">LISTENING</span>
+            <span class="du-badge du-badge-info du-badge-xs">LISTENING</span>
           {/if}
           {#if isMinimized && voiceCommands.isListening}
-            <span class="badge badge-success badge-xs animate-pulse">CMD</span>
+            <span class="du-badge du-badge-success du-badge-xs animate-pulse">CMD</span>
           {/if}
         </div>
         <button
           onclick={toggleMinimize}
-          class="btn btn-ghost btn-xs btn-circle"
+          class="du-btn du-btn-ghost du-btn-xs du-btn-circle"
           aria-label="Toggle minimize"
         >
           {#if isMinimized}
@@ -145,7 +145,7 @@
       </div>
 
       {#if !isMinimized}
-        <div class="divider my-1"></div>
+        <div class="du-divider my-1"></div>
         <VoiceAssistantPanel {voiceAssistantMode} />
       {/if}
     </div>

@@ -50,7 +50,7 @@
     <div class="flex items-center gap-1">
       <button
         onclick={toggleSettings}
-        class="btn btn-ghost btn-xs btn-circle"
+        class="du-btn du-btn-ghost du-btn-xs du-btn-circle"
         aria-label="Settings"
       >
         <svg
@@ -76,7 +76,7 @@
       </button>
       <input
         type="checkbox"
-        class="toggle toggle-sm toggle-success"
+        class="du-toggle du-toggle-sm du-toggle-success"
         checked={voiceAssistant.voiceActivationEnabled}
         onchange={toggleVoiceActivation}
       />
@@ -85,10 +85,10 @@
 
   <!-- Settings Panel -->
   {#if showSettings}
-    <div class="bg-base-100 p-3 rounded-lg mb-3">
-      <label class="form-control">
-        <div class="label">
-          <span class="label-text text-xs"
+    <div class="bg-white p-3 rounded-lg mb-3 border">
+      <label class="du-form-control">
+        <div class="du-label">
+          <span class="du-label-text text-xs"
             >Volume Threshold: {voiceAssistant.volumeThreshold}%</span
           >
         </div>
@@ -97,10 +97,10 @@
           min="10"
           max="80"
           bind:value={voiceAssistant.volumeThreshold}
-          class="range range-xs range-success"
+          class="du-range du-range-xs du-range-success"
         />
-        <div class="label">
-          <span class="label-text-alt text-xs opacity-60">
+        <div class="du-label">
+          <span class="du-label-text-alt text-xs opacity-60">
             Recording starts when volume exceeds this level
           </span>
         </div>
@@ -110,7 +110,7 @@
 
   <!-- Error Display -->
   {#if voiceAssistant.error}
-    <div class="alert alert-error py-2 px-3 text-xs">
+    <div class="du-alert du-alert-error py-2 px-3 text-xs">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="stroke-current shrink-0 h-4 w-4"
@@ -130,12 +130,12 @@
 
   <!-- Transcript Display -->
   {#if voiceAssistant.transcript || voiceAssistant.assistantResponse}
-    <div class="bg-base-100 p-3 rounded-lg text-sm">
+    <div class="bg-white p-3 rounded-lg text-sm border">
       <div class="flex items-start justify-between gap-2">
         <p class="flex-1">{voiceAssistant.assistantResponse ?? voiceAssistant.transcript}</p>
         <button
           onclick={voiceAssistant.clearTranscript}
-          class="btn btn-ghost btn-xs btn-circle"
+          class="du-btn du-btn-ghost du-btn-xs du-btn-circle"
           aria-label="Clear transcript"
         >
           <svg
@@ -162,7 +162,7 @@
     {#if !voiceAssistant.isRecording && !voiceAssistant.isProcessing}
       <button
         onclick={voiceAssistant.startRecording}
-        class="btn btn-primary btn-sm gap-2"
+        class="du-btn du-btn-primary du-btn-sm gap-2"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -183,7 +183,7 @@
     {:else if voiceAssistant.isRecording}
       <button
         onclick={voiceAssistant.stopRecording}
-        class="btn btn-error btn-sm gap-2"
+        class="du-btn du-btn-error du-btn-sm gap-2"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -202,27 +202,27 @@
         Stop Recording
       </button>
     {:else if voiceAssistant.isProcessing}
-      <button class="btn btn-sm gap-2" disabled>
-        <span class="loading loading-spinner loading-sm"></span>
+      <button class="du-btn du-btn-sm gap-2" disabled>
+        <span class="du-loading du-loading-spinner du-loading-sm"></span>
         Processing...
       </button>
     {/if}
   </div>
 
   <!-- Voice Commands Section -->
-  <div class="divider my-2 text-xs">Quick Commands</div>
+  <div class="du-divider my-2 text-xs">Quick Commands</div>
 <!-- {:else if voiceCommands.isSupported} -->
   <!-- Continuous Mode Toggle -->
   <div class="flex items-center justify-between mb-2">
     <div class="flex items-center gap-2">
       <span class="text-xs font-medium">Continuous Listening</span>
       {#if voiceCommands.continuousMode && voiceCommands.isListening}
-        <span class="badge badge-success badge-xs animate-pulse">ACTIVE</span>
+        <span class="du-badge du-badge-success du-badge-xs animate-pulse">ACTIVE</span>
       {/if}
     </div>
     <input
       type="checkbox"
-      class="toggle toggle-sm toggle-secondary"
+      class="du-toggle du-toggle-sm du-toggle-secondary"
       checked={voiceCommands.continuousMode}
       onchange={voiceCommands.toggleContinuousMode}
     />
@@ -230,12 +230,12 @@
 
   <!-- Voice Command Status -->
   {#if voiceCommands.lastCommand}
-    <div class="bg-base-100 p-2 rounded-lg text-xs mb-2">
+    <div class="bg-white p-2 rounded-lg text-xs mb-2 border">
       <span class="opacity-60">Last command:</span>
       <span class="font-medium ml-1">{voiceCommands.lastCommand}</span>
       <button
         onclick={voiceCommands.clearLastCommand}
-        class="btn btn-ghost btn-xs btn-circle float-right"
+        class="du-btn du-btn-ghost du-btn-xs du-btn-circle float-right"
         aria-label="Clear last command"
       >
         <svg
@@ -257,7 +257,7 @@
   {/if}
 
   {#if voiceCommands.error}
-    <div class="alert alert-warning py-2 px-3 text-xs mb-2">
+    <div class="du-alert du-alert-warning py-2 px-3 text-xs mb-2">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="stroke-current shrink-0 h-4 w-4"
@@ -274,7 +274,7 @@
       <span>{voiceCommands.error}</span>
       <button
         onclick={voiceCommands.clearError}
-        class="btn btn-ghost btn-xs btn-circle"
+        class="du-btn du-btn-ghost du-btn-xs du-btn-circle"
         aria-label="Clear error"
       >
         <svg
@@ -300,7 +300,7 @@
     <div class="flex gap-2 justify-center">
       <button
         onclick={handleVoiceCommand}
-        class="btn btn-secondary btn-sm gap-2"
+        class="du-btn du-btn-secondary du-btn-sm gap-2"
         disabled={voiceCommands.isListening}
       >
         <svg
@@ -329,14 +329,14 @@
   <div class="text-xs text-center mt-2 opacity-60">
     <div>Try: "go to projects", "scroll down", "help"</div>
     <div class="mt-1">
-      <kbd class="kbd kbd-xs">Ctrl</kbd>+<kbd class="kbd kbd-xs">Shift</kbd
-      >+<kbd class="kbd kbd-xs">C</kbd> to {voiceCommands.continuousMode
+      <kbd class="du-kbd du-kbd-xs">Ctrl</kbd>+<kbd class="du-kbd du-kbd-xs">Shift</kbd
+      >+<kbd class="du-kbd du-kbd-xs">C</kbd> to {voiceCommands.continuousMode
         ? 'stop'
         : 'start'}
     </div>
   </div>
 {:else}
-  <div class="alert alert-info py-2 px-3 text-xs">
+  <div class="du-alert du-alert-info py-2 px-3 text-xs">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       class="stroke-current shrink-0 h-4 w-4"

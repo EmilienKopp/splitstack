@@ -80,23 +80,23 @@
 
 <svelte:window onclick={handleClickOutside} onkeydown={handleKeydown} />
 
-<fieldset class="fieldset w-full {className}" data-error={normalizedError ? 'true' : 'false'}>
+<fieldset class="du-fieldset w-full {className}" data-error={normalizedError ? 'true' : 'false'}>
   {#if label}
     <InputLabel {required}>{label}</InputLabel>
   {/if}
-  
-  <div class="dropdown dropdown-bottom w-full" bind:this={inputElement}>
-    <div 
-      tabindex="0" 
-      role="button" 
-      class="btn btn-outline w-full justify-between {normalizedError ? 'btn-error' : ''}"
-      class:btn-disabled={disabled}
+
+  <div class="du-dropdown du-dropdown-bottom w-full" bind:this={inputElement}>
+    <div
+      tabindex="0"
+      role="button"
+      class="du-btn du-btn-outline w-full justify-between {normalizedError ? 'du-btn-error' : ''}"
+      class:du-btn-disabled={disabled}
       onclick={() => !disabled && (isOpen = !isOpen)}
     >
       {#if selectedLabels.length > 0}
         <div class="flex flex-wrap gap-1 max-w-full overflow-hidden">
           {#each selectedLabels.slice(0, 3) as label, i}
-            <span class="badge badge-primary badge-sm">
+            <span class="du-badge du-badge-primary du-badge-sm">
               {label}
               <button type="button"
                 class="ml-1 text-xs"
@@ -108,46 +108,46 @@
             </span>
           {/each}
           {#if selectedLabels.length > 3}
-            <span class="badge badge-ghost badge-sm">+{selectedLabels.length - 3}</span>
+            <span class="du-badge du-badge-ghost du-badge-sm">+{selectedLabels.length - 3}</span>
           {/if}
         </div>
       {:else}
-        <span class="text-base-content/60">{placeholder}</span>
+        <span class="opacity-60">{placeholder}</span>
       {/if}
       <svg class="h-4 w-4 transform transition-transform {isOpen ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
       </svg>
     </div>
-    
+
     {#if isOpen && !disabled}
-      <div class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-full mt-1 border">
-        <div class="form-control">
+      <div class="du-dropdown-content du-menu shadow bg-white rounded-box w-full mt-1 border p-2 z-[1]">
+        <div class="du-form-control">
           <input
             type="text"
-            class="input input-bordered input-sm mb-2"
+            class="du-input du-input-bordered du-input-sm mb-2"
             bind:value={searchText}
             placeholder="Search..."
           />
         </div>
         <div class="max-h-48 overflow-y-auto">
           {#each filteredOptions as option}
-            <label class="label cursor-pointer justify-start gap-2 p-2 hover:bg-base-200 rounded">
+            <label class="du-label cursor-pointer justify-start gap-2 p-2 hover:bg-gray-50 rounded">
               <input
                 type="checkbox"
-                class="checkbox checkbox-sm"
+                class="du-checkbox du-checkbox-sm"
                 checked={selected.includes(option.value.toString())}
                 onchange={() => toggleOption(option.value.toString())}
               />
-              <span class="label-text">{option.name}</span>
+              <span class="du-label-text">{option.name}</span>
             </label>
           {/each}
           {#if filteredOptions.length === 0}
-            <div class="text-center text-base-content/60 p-4">No options found</div>
+            <div class="text-center opacity-60 p-4">No options found</div>
           {/if}
         </div>
       </div>
     {/if}
   </div>
-  
+
   <InputError message={normalizedError} />
 </fieldset>
