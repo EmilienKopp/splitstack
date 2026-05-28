@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Support\TypeScript\Attributes;
 
 use Attribute;
 
 #[Attribute(Attribute::TARGET_METHOD)]
-class ExportRelationship
+final class ExportRelationship
 {
     public function __construct(
         public string $relatedModel,
@@ -18,6 +20,6 @@ class ExportRelationship
             return false;
         }
 
-        return in_array($this->type, ['hasMany', 'belongsToMany', 'hasManyThrough', 'morphMany']);
+        return in_array($this->type, ['hasMany', 'belongsToMany', 'hasManyThrough', 'morphMany'], true);
     }
 }

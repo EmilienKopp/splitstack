@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Application\Actions\Tenants;
 
 use App\Domain\Entities\Landlord\TenantEntity;
 use App\Infrastructure\Contracts\TenantRepositoryInterface;
 
-final class DeleteTenant
+final readonly class DeleteTenant
 {
     public function __construct(
-        private readonly TenantRepositoryInterface $tenantRepository,
+        private TenantRepositoryInterface $tenantRepository,
     ) {}
 
     public function handle(TenantEntity $tenant): void

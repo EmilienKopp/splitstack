@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Models\Landlord\Tenant;
 use Illuminate\Support\Facades\Broadcast;
 

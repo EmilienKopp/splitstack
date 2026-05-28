@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
@@ -17,7 +19,7 @@ use function Laravel\Prompts\spin;
 use function Laravel\Prompts\text;
 use function Laravel\Prompts\warning;
 
-class SplitMake extends Command
+final class SplitMake extends Command
 {
     protected $signature = 'split:make
                             {name? : Entity name (StudlyCase). Triggers backend domain scaffolding.}
@@ -46,7 +48,7 @@ class SplitMake extends Command
                 : Str::studly(text(
                     label: 'DTO name',
                     placeholder: 'e.g. CreateProduct, UpdateOrder',
-                    validate: fn (string $v) => blank(trim($v)) ? 'DTO name is required.' : null,
+                    validate: fn (string $v): ?string => blank(mb_trim($v)) ? 'DTO name is required.' : null,
                 ));
 
             $this->generateDto($dtoName);
@@ -78,7 +80,7 @@ class SplitMake extends Command
             $rawName = text(
                 label: 'Entity name',
                 placeholder: 'e.g. Product, BlogPost, OrderItem',
-                validate: fn (string $v) => blank(trim($v)) ? 'Entity name is required.' : null,
+                validate: fn (string $v): ?string => blank(mb_trim($v)) ? 'Entity name is required.' : null,
             );
             $this->handleBackend(Str::studly($rawName));
         } else {
@@ -109,23 +111,21 @@ class SplitMake extends Command
             || $this->option('dto');
 
         if (! $hasArtifactFlags) {
-            if (! $this->option('entity-name') && ! $this->option('repository-name')) {
-                if (confirm(label: 'Override entity or repository class names?', default: false)) {
-                    $entityName = Str::studly(text(
-                        label: 'Entity class name',
-                        default: $entityName,
-                        hint: "Generates {$entityName}Entity",
-                    ));
-                    $repositoryName = Str::studly(text(
-                        label: 'Repository base name',
-                        default: $repositoryName,
-                        hint: "Generates {$repositoryName}RepositoryInterface",
-                    ));
-                }
+            if (! $this->option('entity-name') && ! $this->option('repository-name') && confirm(label: 'Override entity or repository class names?', default: false)) {
+                $entityName = Str::studly(text(
+                    label: 'Entity class name',
+                    default: $entityName,
+                    hint: sprintf('Generates %sEntity', $entityName),
+                ));
+                $repositoryName = Str::studly(text(
+                    label: 'Repository base name',
+                    default: $repositoryName,
+                    hint: sprintf('Generates %sRepositoryInterface', $repositoryName),
+                ));
             }
 
             $selected = multiselect(
-                label: "Artifacts to generate for {$name}",
+                label: 'Artifacts to generate for '.$name,
                 options: [
                     'model' => 'Eloquent model',
                     'migration' => 'Database migration',
@@ -197,78 +197,78 @@ class SplitMake extends Command
 
     private function generateEntity(string $name): void
     {
-        $path = app_path("Domain/Entities/{$name}Entity.php");
+        $path = app_path(sprintf('Domain/Entities/%sEntity.php', $name));
 
         if (File::exists($path)) {
-            warning("Entity already exists: app/Domain/Entities/{$name}Entity.php");
+            warning(sprintf('Entity already exists: app/Domain/Entities/%sEntity.php', $name));
 
             return;
         }
 
         File::ensureDirectoryExists(dirname($path));
         File::put($path, $this->renderStub('entity', $name));
-        info("Entity created: app/Domain/Entities/{$name}Entity.php");
+        info(sprintf('Entity created: app/Domain/Entities/%sEntity.php', $name));
     }
 
     private function generateModel(string $name): void
     {
-        spin(fn () => Artisan::call('make:model', ['name' => $name]), "Creating model {$name}…");
-        info("Model created: app/Models/{$name}.php");
+        spin(fn () => Artisan::call('make:model', ['name' => $name]), sprintf('Creating model %s…', $name));
+        info(sprintf('Model created: app/Models/%s.php', $name));
     }
 
     private function generateMigration(string $name): void
     {
         $table = Str::snake(Str::plural($name));
         spin(
-            fn () => Artisan::call('make:migration', ['name' => "create_{$table}_table", '--create' => $table]),
-            "Creating migration for table '{$table}'…",
+            fn () => Artisan::call('make:migration', ['name' => sprintf('create_%s_table', $table), '--create' => $table]),
+            sprintf("Creating migration for table '%s'…", $table),
         );
-        info("Migration created for table: {$table}");
+        info('Migration created for table: '.$table);
     }
 
     private function generateRepositoryInterface(string $repositoryName, string $entityName): void
     {
-        $path = app_path("Infrastructure/Contracts/{$repositoryName}RepositoryInterface.php");
+        $path = app_path(sprintf('Infrastructure/Contracts/%sRepositoryInterface.php', $repositoryName));
 
         if (File::exists($path)) {
-            warning("Repository interface already exists: app/Infrastructure/Contracts/{$repositoryName}RepositoryInterface.php");
+            warning(sprintf('Repository interface already exists: app/Infrastructure/Contracts/%sRepositoryInterface.php', $repositoryName));
 
             return;
         }
 
         File::ensureDirectoryExists(dirname($path));
         File::put($path, $this->renderStub('repository-interface', $repositoryName, ['entity' => $entityName]));
-        info("Repository interface created: app/Infrastructure/Contracts/{$repositoryName}RepositoryInterface.php");
+        info(sprintf('Repository interface created: app/Infrastructure/Contracts/%sRepositoryInterface.php', $repositoryName));
     }
 
     private function generateRepository(string $repositoryName, string $entityName): void
     {
-        $path = app_path("Infrastructure/Repositories/{$repositoryName}Repository.php");
+        $path = app_path(sprintf('Infrastructure/Repositories/%sRepository.php', $repositoryName));
 
         if (File::exists($path)) {
-            warning("Repository already exists: app/Infrastructure/Repositories/{$repositoryName}Repository.php");
+            warning(sprintf('Repository already exists: app/Infrastructure/Repositories/%sRepository.php', $repositoryName));
 
             return;
         }
 
         File::ensureDirectoryExists(dirname($path));
         File::put($path, $this->renderStub('repository', $repositoryName, ['entity' => $entityName]));
-        info("Repository created: app/Infrastructure/Repositories/{$repositoryName}Repository.php");
+        info(sprintf('Repository created: app/Infrastructure/Repositories/%sRepository.php', $repositoryName));
     }
 
     private function generateDto(string $name): void
     {
-        $path = app_path("Domain/DTOs/{$name}DTO.php");
+        $path = app_path(sprintf('Domain/DTOs/%sDTO.php', $name));
 
         if (File::exists($path)) {
-            warning("DTO already exists: app/Domain/DTOs/{$name}DTO.php");
+            warning(sprintf('DTO already exists: app/Domain/DTOs/%sDTO.php', $name));
 
             return;
         }
 
         File::ensureDirectoryExists(dirname($path));
         File::put($path, $this->renderStub('dto', $name));
-        info("DTO created: app/Domain/DTOs/{$name}DTO.php");
+        info(sprintf('DTO created: app/Domain/DTOs/%sDTO.php', $name));
     }
 
     private function generateAction(string $name, string $entityName, string $repositoryName, string $type): void
@@ -291,11 +291,11 @@ class SplitMake extends Command
         $plural = Str::plural($name);
 
         $classMap = [
-            'create' => "Create{$name}",
-            'update' => "Update{$name}",
-            'delete' => "Delete{$name}",
-            'index' => "List{$plural}",
-            'show' => "Get{$name}",
+            'create' => 'Create'.$name,
+            'update' => 'Update'.$name,
+            'delete' => 'Delete'.$name,
+            'index' => 'List'.$plural,
+            'show' => 'Get'.$name,
         ];
 
         $stubMap = [
@@ -307,10 +307,10 @@ class SplitMake extends Command
         ];
 
         $className = $classMap[$type];
-        $path = app_path("{$baseDir}/{$name}/{$className}.php");
+        $path = app_path(sprintf('%s/%s/%s.php', $baseDir, $name, $className));
 
         if (File::exists($path)) {
-            warning("Already exists: app/{$baseDir}/{$name}/{$className}.php");
+            warning(sprintf('Already exists: app/%s/%s/%s.php', $baseDir, $name, $className));
 
             return;
         }
@@ -318,12 +318,12 @@ class SplitMake extends Command
         File::ensureDirectoryExists(dirname($path));
         File::put($path, $this->renderStub($stubMap[$type], $entityName, [
             'class' => $className,
-            'namespace' => "App\\{$baseDir}\\{$name}",
+            'namespace' => sprintf('App\%s\%s', $baseDir, $name),
             'repo' => $repositoryName,
             'lower' => lcfirst($repositoryName),
             'classes' => Str::plural($entityName),
         ]));
-        info("Created: app/{$baseDir}/{$name}/{$className}.php");
+        info(sprintf('Created: app/%s/%s/%s.php', $baseDir, $name, $className));
     }
 
     // ─── Frontend ───────────────────────────────────────────────────────────────
@@ -343,8 +343,8 @@ class SplitMake extends Command
         $name = text(
             label: 'File name',
             placeholder: 'e.g. UserCard, auth/Login',
+            validate: fn (string $v): ?string => blank(mb_trim($v)) ? 'File name is required.' : null,
             hint: 'Supports subdirectory paths (e.g. auth/Login)',
-            validate: fn (string $v) => blank(trim($v)) ? 'File name is required.' : null,
         );
 
         match ($type) {
@@ -361,20 +361,20 @@ class SplitMake extends Command
         $filename = $parts->last();
         $subdir = $parts->count() > 1 ? $parts->slice(0, -1)->implode('/').'/' : '';
 
-        $fullDir = resource_path("js/{$dir}/{$subdir}");
+        $fullDir = resource_path(sprintf('js/%s/%s', $dir, $subdir));
         File::ensureDirectoryExists($fullDir);
 
-        $path = "{$fullDir}{$filename}.{$ext}";
-        $relativePath = ltrim(str_replace(base_path(), '', $path), '/');
+        $path = sprintf('%s%s.%s', $fullDir, $filename, $ext);
+        $relativePath = mb_ltrim(str_replace(base_path(), '', $path), '/');
         File::put($path, '');
-        info("Created: {$relativePath}");
+        info('Created: '.$relativePath);
     }
 
     // ─── Helpers ────────────────────────────────────────────────────────────────
 
     private function renderStub(string $stub, string $name, array $extra = []): string
     {
-        $content = File::get(base_path("stubs/{$stub}.stub"));
+        $content = File::get(base_path(sprintf('stubs/%s.stub', $stub)));
 
         $replacements = [
             'class' => $name,
@@ -387,7 +387,7 @@ class SplitMake extends Command
         ];
 
         foreach ($replacements as $key => $value) {
-            $content = str_replace("{{ {$key} }}", $value, $content);
+            $content = str_replace(sprintf('{{ %s }}', $key), $value, $content);
         }
 
         return $content;

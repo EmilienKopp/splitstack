@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Middleware;
 
 use App\Enums\TeamRole;
@@ -9,7 +11,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class EnsureTeamMembership
+final class EnsureTeamMembership
 {
     /**
      * Handle an incoming request.
@@ -21,6 +23,7 @@ class EnsureTeamMembership
         if (! config('features.uses_teams')) {
             return $next($request);
         }
+
         [$user, $team] = [$request->user(), $this->team($request)];
 
         abort_if(! $user || ! $team || ! $user->belongsToTeam($team), 403);
@@ -37,7 +40,7 @@ class EnsureTeamMembership
     /**
      * Ensure the given user has at least the given role, if applicable.
      */
-    protected function ensureTeamMemberHasRequiredRole(User $user, Team $team, ?string $minimumRole): void
+    private function ensureTeamMemberHasRequiredRole(User $user, Team $team, ?string $minimumRole): void
     {
         if ($minimumRole === null) {
             return;
@@ -49,7 +52,7 @@ class EnsureTeamMembership
 
         abort_if(
             $requiredRole === null ||
-            $role === null ||
+            ! $role instanceof TeamRole ||
             ! $role->isAtLeast($requiredRole),
             403,
         );
@@ -58,12 +61,12 @@ class EnsureTeamMembership
     /**
      * Get the team associated with the request.
      */
-    protected function team(Request $request): ?Team
+    private function team(Request $request): ?Team
     {
         $team = $request->route('current_team') ?? $request->route('team');
 
         if (is_string($team)) {
-            $team = Team::where('slug', $team)->first();
+            return Team::where('slug', $team)->first();
         }
 
         return $team;

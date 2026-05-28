@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands;
 
 use App\Models\Landlord\Tenant;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 
-class TenantTinker extends Command
+final class TenantTinker extends Command
 {
     /**
      * The name and signature of the console command.
@@ -20,7 +22,7 @@ class TenantTinker extends Command
      *
      * @var string
      */
-    protected $description = 'Start a tinker session for a specific tenant. Mostly inspired by Spatie\'s tenants:artisan command but more flexible in tenant selection (case insensitive, partial match)';
+    protected $description = "Start a tinker session for a specific tenant. Mostly inspired by Spatie's tenants:artisan command but more flexible in tenant selection (case insensitive, partial match)";
 
     /**
      * Execute the console command.
@@ -36,22 +38,22 @@ class TenantTinker extends Command
         }
 
         $tenant = Tenant::query()
-            ->where(function ($q) use ($tenantIdentifier) {
-                $q->where('database', 'ilike', "%{$tenantIdentifier}%")
-                    ->orWhere('space', 'ilike', "%{$tenantIdentifier}%")
-                    ->orWhere('domain', 'ilike', "%{$tenantIdentifier}%");
+            ->where(function ($q) use ($tenantIdentifier): void {
+                $q->where('database', 'ilike', sprintf('%%%s%%', $tenantIdentifier))
+                    ->orWhere('space', 'ilike', sprintf('%%%s%%', $tenantIdentifier))
+                    ->orWhere('domain', 'ilike', sprintf('%%%s%%', $tenantIdentifier));
             })
             ->first();
 
         if (! $tenant) {
-            $this->error("No tenant found matching: {$tenantIdentifier}");
+            $this->error('No tenant found matching: '.$tenantIdentifier);
 
             return -1;
         }
 
-        $tenant->execute(function () use ($tenant) {
+        $tenant->execute(function () use ($tenant): void {
             $this->line('');
-            $this->info("Running tinker for tenant `{$tenant->name}` (id: {$tenant->getKey()}, database: {$tenant->database})...");
+            $this->info(sprintf('Running tinker for tenant `%s` (id: %s, database: %s)...', $tenant->name, $tenant->getKey(), $tenant->database));
             $this->line('---------------------------------------------------------');
 
             Artisan::call('tinker', [], $this->output);

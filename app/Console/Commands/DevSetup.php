@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands;
 
 use App\Console\Commands\Concerns\ManagesTenantDatabases;
@@ -8,6 +10,7 @@ use App\Models\Currency;
 use App\Models\Landlord\Tenant;
 use App\Models\Role;
 use App\Models\User;
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
@@ -19,7 +22,7 @@ use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
-class DevSetup extends Command
+final class DevSetup extends Command
 {
     use ManagesTenantDatabases;
 
@@ -42,7 +45,7 @@ class DevSetup extends Command
         try {
             $this->checkPostgresConnection();
             $this->checkRedisConnection();
-        } catch (\Exception $e) {
+        } catch (Exception) {
             return Command::FAILURE;
         }
 
@@ -51,10 +54,8 @@ class DevSetup extends Command
         $host = $this->deriveHostFromDomain($domain);
         $database = $this->deriveDatabaseFromHost($host);
 
-        if ($this->option('fresh')) {
-            if (! $this->handleFresh($database, $landlordDb)) {
-                return Command::FAILURE;
-            }
+        if ($this->option('fresh') && ! $this->handleFresh($database, $landlordDb)) {
+            return Command::FAILURE;
         }
 
         $this->setupLandlordDatabase($landlordDb);
@@ -62,7 +63,7 @@ class DevSetup extends Command
         $this->setupTenantTemplate();
         $tenant = $this->setupDevTenant($domain, $host, $database);
 
-        if (! $tenant) {
+        if (! $tenant instanceof Tenant) {
             $this->error('Failed to create dev tenant.');
 
             return Command::FAILURE;
@@ -86,9 +87,9 @@ class DevSetup extends Command
         try {
             DB::connection('landlord')->getPdo();
             $this->info('  PostgreSQL connection OK');
-        } catch (\Exception $e) {
-            $this->error('Could not connect to PostgreSQL: '.$e->getMessage());
-            throw $e;
+        } catch (Exception $exception) {
+            $this->error('Could not connect to PostgreSQL: '.$exception->getMessage());
+            throw $exception;
         }
     }
 
@@ -99,54 +100,54 @@ class DevSetup extends Command
         try {
             Redis::ping();
             $this->info('  Redis connection OK');
-        } catch (\Exception $e) {
-            $this->error('Could not connect to Redis: '.$e->getMessage());
-            throw $e;
+        } catch (Exception $exception) {
+            $this->error('Could not connect to Redis: '.$exception->getMessage());
+            throw $exception;
         }
     }
 
     private function handleFresh(string $tenantDatabase, string $landlordDb): bool
     {
-        if (! $this->option('no-interaction')) {
-            if (! confirm('This will DROP all dev databases and recreate them. Continue?', false)) {
-                $this->info('Cancelled.');
+        if (! $this->option('no-interaction') && ! confirm('This will DROP all dev databases and recreate them. Continue?', false)) {
+            $this->info('Cancelled.');
 
-                return false;
-            }
+            return false;
         }
 
         $this->warn('Dropping databases for fresh setup...');
 
         if ($this->databaseExists($tenantDatabase)) {
             $this->dropDatabase($tenantDatabase);
-            $this->info("  Dropped {$tenantDatabase}");
+            $this->info('  Dropped '.$tenantDatabase);
         }
 
         if ($this->databaseExists($this->templateDatabase)) {
             // Unmark as template before dropping
             try {
                 DB::connection('landlord')->statement(
-                    "ALTER DATABASE \"{$this->templateDatabase}\" IS_TEMPLATE false"
+                    sprintf('ALTER DATABASE "%s" IS_TEMPLATE false', $this->templateDatabase)
                 );
-            } catch (\Exception) {
+            } catch (Exception) {
                 // May not be marked as template yet
             }
+
             $this->dropDatabase($this->templateDatabase);
-            $this->info("  Dropped {$this->templateDatabase}");
+            $this->info('  Dropped '.$this->templateDatabase);
         }
 
         // Wipe landlord tables instead of dropping the whole database
         if ($this->databaseExists($landlordDb)) {
-            $this->info("  Wiping landlord tables in {$landlordDb}...");
+            $this->info(sprintf('  Wiping landlord tables in %s...', $landlordDb));
             $tables = DB::connection('landlord')->select(
                 "SELECT tablename FROM pg_tables WHERE schemaname = 'public'"
             );
             foreach ($tables as $table) {
                 DB::connection('landlord')->statement(
-                    "DROP TABLE IF EXISTS \"{$table->tablename}\" CASCADE"
+                    sprintf('DROP TABLE IF EXISTS "%s" CASCADE', $table->tablename)
                 );
             }
-            $this->info("  Wiped landlord tables in {$landlordDb}");
+
+            $this->info('  Wiped landlord tables in '.$landlordDb);
         }
 
         return true;
@@ -155,14 +156,14 @@ class DevSetup extends Command
     private function setupLandlordDatabase(string $landlordDb): void
     {
         if ($this->databaseExists($landlordDb)) {
-            $this->info("Landlord database '{$landlordDb}' already exists - skipping");
+            $this->info(sprintf("Landlord database '%s' already exists - skipping", $landlordDb));
 
             return;
         }
 
-        $this->info("Creating landlord database: {$landlordDb}");
+        $this->info('Creating landlord database: '.$landlordDb);
         $this->createDatabase($landlordDb);
-        $this->info("  Created {$landlordDb}");
+        $this->info('  Created '.$landlordDb);
     }
 
     private function runLandlordMigrations(): void
@@ -178,10 +179,10 @@ class DevSetup extends Command
     private function setupTenantTemplate(): void
     {
         if (! $this->databaseExists($this->templateDatabase)) {
-            $this->info("Creating tenant template database: {$this->templateDatabase}");
+            $this->info('Creating tenant template database: '.$this->templateDatabase);
             $this->createDatabase($this->templateDatabase);
         } else {
-            $this->info("Tenant template database '{$this->templateDatabase}' already exists - skipping creation");
+            $this->info(sprintf("Tenant template database '%s' already exists - skipping creation", $this->templateDatabase));
         }
 
         // Ensure template record exists in landlord tenants table
@@ -235,9 +236,9 @@ class DevSetup extends Command
         foreach (RoleEnum::values() as $roleName) {
             if (! Role::where('name', $roleName)->where('guard_name', 'tenant')->exists()) {
                 Role::create(['name' => $roleName, 'guard_name' => 'tenant']);
-                $this->info("  Created role: {$roleName}");
+                $this->info('  Created role: '.$roleName);
             } else {
-                $this->info("  Role '{$roleName}' already exists - skipping");
+                $this->info(sprintf("  Role '%s' already exists - skipping", $roleName));
             }
         }
 
@@ -247,23 +248,23 @@ class DevSetup extends Command
         try {
             $this->terminateConnections($this->templateDatabase);
             DB::connection('landlord')->statement(
-                "ALTER DATABASE \"{$this->templateDatabase}\" IS_TEMPLATE true"
+                sprintf('ALTER DATABASE "%s" IS_TEMPLATE true', $this->templateDatabase)
             );
-            $this->info("  Marked {$this->templateDatabase} as IS_TEMPLATE");
-        } catch (\Exception $e) {
+            $this->info(sprintf('  Marked %s as IS_TEMPLATE', $this->templateDatabase));
+        } catch (Exception $exception) {
             // Already marked or other non-fatal issue
-            $this->warn('  Could not mark as template: '.$e->getMessage());
+            $this->warn('  Could not mark as template: '.$exception->getMessage());
         }
     }
 
     private function setupDevTenant(string $domain, string $host, string $database): ?Tenant
     {
-        $this->info("Setting up dev tenant: {$domain}");
+        $this->info('Setting up dev tenant: '.$domain);
 
         // Check if tenant record already exists
         $existing = Tenant::where('domain', $domain)->first();
         if ($existing) {
-            $this->info("  Dev tenant '{$domain}' already exists - skipping");
+            $this->info(sprintf("  Dev tenant '%s' already exists - skipping", $domain));
 
             return $existing;
         }
@@ -271,9 +272,9 @@ class DevSetup extends Command
         // Create the tenant database from template
         if (! $this->databaseExists($database)) {
             $this->duplicateFromTemplate($database);
-            $this->info("  Created database {$database} from template");
+            $this->info(sprintf('  Created database %s from template', $database));
         } else {
-            $this->info("  Database {$database} already exists - skipping duplication");
+            $this->info(sprintf('  Database %s already exists - skipping duplication', $database));
         }
 
         // Insert tenant record
@@ -285,7 +286,7 @@ class DevSetup extends Command
             'org_id' => 'dev_org',
         ]);
 
-        $this->info("  Created tenant record for {$domain}");
+        $this->info('  Created tenant record for '.$domain);
 
         return $tenant;
     }
@@ -296,14 +297,14 @@ class DevSetup extends Command
         $password = $this->option('admin-password');
         $name = $this->option('admin-name');
 
-        $this->info("Setting up admin user: {$email}");
+        $this->info('Setting up admin user: '.$email);
 
         $tenant->makeCurrent();
         $this->configureTenantConnection($tenant->database);
 
         // Check if user already exists
         if (User::where('email', $email)->exists()) {
-            $this->info("  Admin user '{$email}' already exists - skipping");
+            $this->info(sprintf("  Admin user '%s' already exists - skipping", $email));
             Tenant::forgetCurrent();
 
             return;
@@ -311,12 +312,12 @@ class DevSetup extends Command
 
         // Create roles
         foreach (RoleEnum::values() as $roleName) {
-            $this->info("  Ensuring role exists: {$roleName}");
+            $this->info('  Ensuring role exists: '.$roleName);
             // Display current tenant
-            $this->info("    Current tenant: {$tenant->domain} ({$tenant->database})");
+            $this->info(sprintf('    Current tenant: %s (%s)', $tenant->domain, $tenant->database));
             if (! Role::where('name', $roleName)->where('guard_name', 'tenant')->exists()) {
                 $role = Role::create(['name' => $roleName, 'guard_name' => 'tenant']);
-                $this->info("    Created role: {$roleName}");
+                $this->info('    Created role: '.$roleName);
             }
         }
 
@@ -326,16 +327,14 @@ class DevSetup extends Command
 
         // Bypass model events to avoid assignRole('user') firing before the user is persisted
         $this->info('  Creating admin user and assigning roles...');
-        $user = User::withoutEvents(function () use ($nameParts, $name, $email, $password): User {
-            return User::create([
-                'first_name' => $nameParts[0] ?? $name,
-                'last_name' => $nameParts[1] ?? '',
-                'handle' => str()->slug($name, '_'),
-                'email' => $email,
-                'password' => $password,
-                'email_verified_at' => now(),
-            ]);
-        });
+        $user = User::withoutEvents(fn (): User => User::create([
+            'first_name' => $nameParts[0] ?? $name,
+            'last_name' => $nameParts[1] ?? '',
+            'handle' => str()->slug($name, '_'),
+            'email' => $email,
+            'password' => $password,
+            'email_verified_at' => now(),
+        ]));
 
         $user->assignRole([RoleEnum::User, RoleEnum::Admin, RoleEnum::BusinessOwner]);
         $this->info('  Created admin user with Admin + BusinessOwner roles');
@@ -374,15 +373,15 @@ class DevSetup extends Command
 
             if ($choice === 'connect') {
                 $orgId = text(label: 'Enter WorkOS Organization ID', placeholder: 'org_...');
-                $this->info("  Connected WorkOS org: {$orgId}");
+                $this->info('  Connected WorkOS org: '.$orgId);
             } elseif ($choice === 'create') {
                 $orgName = text(label: 'Organization name for WorkOS', placeholder: 'My Organization');
                 $organizations = new Organizations;
                 $org = $organizations->createOrganization(name: $orgName);
-                $this->info("  Created WorkOS org: {$org->id}");
+                $this->info('  Created WorkOS org: '.$org->id);
             }
-        } catch (\Exception $e) {
-            $this->warn('WorkOS integration failed: '.$e->getMessage());
+        } catch (Exception $exception) {
+            $this->warn('WorkOS integration failed: '.$exception->getMessage());
             $this->info('You can configure WorkOS manually later.');
         }
     }

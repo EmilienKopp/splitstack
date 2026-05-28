@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
@@ -11,12 +13,12 @@ use function Laravel\Prompts\info;
 use function Laravel\Prompts\intro;
 use function Laravel\Prompts\outro;
 
-class SplitMigration extends Command
+final class SplitMigration extends Command
 {
     protected $signature = 'split:migration
                             {model : Model class (e.g. Post or App\\Models\\Post)}';
 
-    protected $description = 'Scaffold a BM25-ready migration derived from a model\'s searchableColumns()';
+    protected $description = "Scaffold a BM25-ready migration derived from a model's searchableColumns()";
 
     public function handle(): int
     {
@@ -25,7 +27,7 @@ class SplitMigration extends Command
         $modelClass = $this->resolveModelClass($this->argument('model'));
 
         if (! class_exists($modelClass)) {
-            error("Model [{$modelClass}] not found.");
+            error(sprintf('Model [%s] not found.', $modelClass));
 
             return self::FAILURE;
         }
@@ -33,7 +35,7 @@ class SplitMigration extends Command
         $model = new $modelClass;
 
         if (! method_exists($model, 'searchableColumns')) {
-            error("[{$modelClass}] must define searchableColumns() to scaffold a BM25 migration.");
+            error(sprintf('[%s] must define searchableColumns() to scaffold a BM25 migration.', $modelClass));
 
             return self::FAILURE;
         }
@@ -41,7 +43,7 @@ class SplitMigration extends Command
         $columns = $model->searchableColumns();
 
         if (empty($columns)) {
-            error("[{$modelClass}]::searchableColumns() returned an empty array.");
+            error(sprintf('[%s]::searchableColumns() returned an empty array.', $modelClass));
 
             return self::FAILURE;
         }
@@ -49,12 +51,12 @@ class SplitMigration extends Command
         $table = $model->getTable();
 
         $indexes = implode("\n", array_map(
-            fn ($col) => "        DB::statement(\"CREATE INDEX {$table}_{$col}_bm25 ON {$table} USING bm25({$col}) WITH (text_config='{\$textConfig}')\");",
+            fn ($col): string => sprintf("        DB::statement(\"CREATE INDEX %s_%s_bm25 ON %s USING bm25(%s) WITH (text_config='{\$textConfig}')\");", $table, $col, $table, $col),
             $columns
         ));
 
         $dropIndexes = implode("\n", array_map(
-            fn ($col) => "        DB::statement('DROP INDEX IF EXISTS \"{$table}_{$col}_bm25\"');",
+            fn ($col): string => sprintf("        DB::statement('DROP INDEX IF EXISTS \"%s_%s_bm25\"');", $table, $col),
             $columns
         ));
 
@@ -64,10 +66,10 @@ class SplitMigration extends Command
             File::get(base_path('stubs/bm25-migration.stub'))
         );
 
-        $filename = now()->format('Y_m_d_His')."_create_{$table}_table.php";
-        File::put(database_path("migrations/{$filename}"), $content);
+        $filename = now()->format('Y_m_d_His').sprintf('_create_%s_table.php', $table);
+        File::put(database_path('migrations/'.$filename), $content);
 
-        info("Migration created: database/migrations/{$filename}");
+        info('Migration created: database/migrations/'.$filename);
         outro('Add your columns to the Schema::create callback, then run php artisan migrate.');
 
         return self::SUCCESS;

@@ -18,6 +18,7 @@ export class Highlighter {
    */
   public static Fuzzy(target: object | Array<string>, searchQuery: string) {
     let targetString = "";
+
     if (!Array.isArray(target)) {
       targetString = Object.values(target).join(" ");
     } else {
@@ -62,12 +63,13 @@ export class Highlighter {
     const target = this.htmlSafe(targetString)?.split('');
     const search = searchString?.split('');
 
-    let result = target?.map((char) => {
+    const result = target?.map((char) => {
       if (search?.map(c => c.toLowerCase()).includes(char.toLowerCase())) {
         return highlightClass
           ? `<span class="${highlightClass}">${char}</span>`
           : `<span style="font-weight-500; background-color:grey;">${char}</span>`;
       }
+
       return char;
     });
 
@@ -98,7 +100,7 @@ export class Highlighter {
 
     if (start === -1) return safe;
 
-    let result = safe?.split('');
+    const result = safe?.split('');
     result.splice(start, 0, `<span class="${highlightClass}">`);
     result.splice(end + 1, 0, "</span>");
 
@@ -114,7 +116,7 @@ export class Highlighter {
    */
   public static exactHighlightFromArray(targetString: string, searchStrings: string[], highlightClass?: string) {
     let result = Highlighter.htmlSafe(targetString);
-    let resultArray = targetString.split('');
+    const resultArray = targetString.split('');
     // check that any of the search strings are in the target string, and highlight them
     searchStrings.forEach(searchString => {
       const start = result?.toLowerCase()?.indexOf(searchString?.toLowerCase());
@@ -126,6 +128,7 @@ export class Highlighter {
       resultArray.splice(end + 1, 0, "</span>");
       result = resultArray.join('');
     });
+
     return result;
   }
 
@@ -170,6 +173,7 @@ export class Highlighter {
     // First collect all positions that need highlighting
     for (let i = 0; i < searchStrings.length; i++) {
       const str = searchStrings[i];
+
       if (!str || typeof str !== 'string' || !str.length) continue;
 
       const highlightClass = i >= highlightClasses.length
@@ -178,6 +182,7 @@ export class Highlighter {
 
       if (type === "exact") {
         const start = cleanTarget.toLowerCase().indexOf(str.toLowerCase());
+
         if (start !== -1) {
           positions.push({
             start,
@@ -188,11 +193,12 @@ export class Highlighter {
       } else {
         // For fuzzy matching, collect character positions
         const chars = str.toLowerCase().split('');
-        let targetChars = cleanTarget.toLowerCase().split('');
+        const targetChars = cleanTarget.toLowerCase().split('');
         let currentPos = 0;
 
         chars.forEach(char => {
           const charPos = targetChars.indexOf(char, currentPos);
+
           if (charPos !== -1) {
             positions.push({
               start: charPos,
@@ -216,6 +222,7 @@ export class Highlighter {
       }
 
       const last = mergedPositions[mergedPositions.length - 1];
+
       if (pos.start <= last.end) {
         // Merge overlapping highlights
         last.end = Math.max(last.end, pos.end);
@@ -225,7 +232,7 @@ export class Highlighter {
     }
 
     // Apply all highlights at once
-    let result = cleanTarget.split('');
+    const result = cleanTarget.split('');
     let offset = 0;
 
     mergedPositions.forEach(pos => {
@@ -249,6 +256,7 @@ export class Highlighter {
    */
   public static fuzzyMatch(targetString: string, searchString: string) {
     if (!targetString || !searchString) return false;
+
     const target = targetString?.toLowerCase()?.split('');
     const search = searchString?.toLowerCase()?.split('');
 

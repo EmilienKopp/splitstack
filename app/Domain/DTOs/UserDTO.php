@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\DTOs;
 
 use App\Application\Shared\Contracts\BaseDTO;
 
-class UserDTO extends BaseDTO
+final class UserDTO extends BaseDTO
 {
     public function __construct(
         public readonly ?int $id = null,
@@ -21,7 +23,7 @@ class UserDTO extends BaseDTO
      */
     public static function fromArray(array $data): static
     {
-        return new static(
+        return new self(
             id: $data['id'] ?? null,
             name: $data['name'] ?? null,
             email: $data['email'] ?? null,

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 if (! function_exists('get_subdomain')) {
     function get_subdomain(): ?string
     {
@@ -17,7 +19,7 @@ if (! function_exists('get_subdomain')) {
 if (! function_exists('app_host')) {
     function app_host(): string
     {
-        return parse_url(config('app.url'), PHP_URL_HOST);
+        return parse_url((string) config('app.url'), PHP_URL_HOST);
     }
 }
 

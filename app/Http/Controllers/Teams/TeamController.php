@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Teams;
 
 use App\Application\Actions\Teams\CreateTeam;
@@ -16,7 +18,7 @@ use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class TeamController extends Controller
+final class TeamController extends Controller
 {
     /**
      * Display a listing of the user's teams.
@@ -56,7 +58,7 @@ class TeamController extends Controller
                 'slug' => $team->slug,
                 'isPersonal' => $team->is_personal,
             ],
-            'members' => $team->members()->get()->map(fn ($member) => [
+            'members' => $team->members()->get()->map(fn ($member): array => [
                 'id' => $member->id,
                 'name' => $member->name,
                 'email' => $member->email,
@@ -67,7 +69,7 @@ class TeamController extends Controller
             'invitations' => $team->invitations()
                 ->whereNull('accepted_at')
                 ->get()
-                ->map(fn ($invitation) => [
+                ->map(fn ($invitation): array => [
                     'code' => $invitation->code,
                     'email' => $invitation->email,
                     'role' => $invitation->role->value,
@@ -121,10 +123,10 @@ class TeamController extends Controller
             ? $user->fallbackTeam($team)
             : null;
 
-        DB::transaction(function () use ($user, $team) {
+        DB::transaction(function () use ($user, $team): void {
             User::where('current_team_id', $team->id)
                 ->where('id', '!=', $user->id)
-                ->each(fn (User $affectedUser) => $affectedUser->switchTeam($affectedUser->personalTeam()));
+                ->each(fn (User $affectedUser): bool => $affectedUser->switchTeam($affectedUser->personalTeam()));
 
             $team->invitations()->delete();
             $team->memberships()->delete();

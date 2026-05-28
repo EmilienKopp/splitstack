@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Facades;
 
 use App\Http\Concerns\HasHybridResponses;
@@ -17,7 +19,7 @@ use Illuminate\Support\Facades\Facade;
  * @see HybridController
  * @see HasHybridResponses
  */
-class Split extends Facade
+final class Split extends Facade
 {
     protected static function getFacadeAccessor()
     {

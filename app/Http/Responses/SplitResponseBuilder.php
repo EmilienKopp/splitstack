@@ -1,22 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Responses;
 
 use Illuminate\Contracts\Support\Responsable;
+use InvalidArgumentException;
 
-class SplitResponseBuilder implements Responsable
+final class SplitResponseBuilder implements Responsable
 {
-    protected array $data = [];
+    private array $data = [];
 
-    protected ?string $component = null;
+    private ?string $component = null;
 
-    protected ?string $route = null;
+    private ?string $route = null;
 
-    protected array $params = [];
+    private array $params = [];
 
-    public function respond(array $data): self
+    public function respond(iterable $data): self
     {
-        $this->data = $data;
+        $this->data = is_array($data) ? $data : iterator_to_array($data);
 
         return $this;
     }
@@ -42,14 +45,14 @@ class SplitResponseBuilder implements Responsable
     public function toResponse($request)
     {
         if ($this->route && $this->component) {
-            throw new \InvalidArgumentException('Cannot specify both a component and a route for response.');
+            throw new InvalidArgumentException('Cannot specify both a component and a route for response.');
         }
 
         if (! $this->route && ! $this->component) {
-            throw new \InvalidArgumentException('Must specify either a component or a route for response.');
+            throw new InvalidArgumentException('Must specify either a component or a route for response.');
         }
 
-        if ($request->wantsJson()) {
+        if ($request->wantsJson() && ! $request->hasHeader('X-Inertia')) {
             return response()->json($this->data);
         }
 
@@ -57,7 +60,7 @@ class SplitResponseBuilder implements Responsable
             return inertia($this->component, $this->data)->toResponse($request);
         }
 
-        if ($this->route) {
+        if ($this->route !== '' && $this->route !== '0') {
             return inertia()->location(route($this->route, $this->params));
         }
     }

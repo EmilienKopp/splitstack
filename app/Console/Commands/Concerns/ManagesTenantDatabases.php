@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands\Concerns;
 
 use Illuminate\Support\Facades\Config;
@@ -19,13 +21,13 @@ trait ManagesTenantDatabases
 
     protected function createDatabase(string $name): void
     {
-        DB::connection('landlord')->statement("CREATE DATABASE \"{$name}\"");
+        DB::connection('landlord')->statement(sprintf('CREATE DATABASE "%s"', $name));
     }
 
     protected function dropDatabase(string $name): void
     {
         $this->terminateConnections($name);
-        DB::connection('landlord')->statement("DROP DATABASE IF EXISTS \"{$name}\"");
+        DB::connection('landlord')->statement(sprintf('DROP DATABASE IF EXISTS "%s"', $name));
     }
 
     protected function duplicateFromTemplate(string $targetDatabase): void
@@ -33,7 +35,7 @@ trait ManagesTenantDatabases
         $this->terminateConnections('tenant_template');
 
         DB::connection('landlord')->statement(
-            "CREATE DATABASE \"{$targetDatabase}\" WITH TEMPLATE \"tenant_template\""
+            sprintf('CREATE DATABASE "%s" WITH TEMPLATE "tenant_template"', $targetDatabase)
         );
     }
 

@@ -1,6 +1,5 @@
 <script lang="ts">
     import { Form, page } from '@inertiajs/svelte';
-    import AppHead from '@/components/AppHead.svelte';
     import AppLogoIcon from '@/components/AppLogoIcon.svelte';
     import InputError from '@/components/InputError.svelte';
     import { Button } from '@/components/ui/button';

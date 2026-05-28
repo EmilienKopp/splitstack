@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Landlord;
 
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
 
-class TenantUser extends Model
+final class TenantUser extends Model
 {
     use UsesLandlordConnection;
 

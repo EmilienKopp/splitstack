@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Middleware;
 
 use App\Models\Landlord\Tenant;
@@ -7,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Uri;
 use Inertia\Middleware;
 
-class HandleInertiaRequests extends Middleware
+final class HandleInertiaRequests extends Middleware
 {
     /**
      * The root template that's loaded on the first page visit.
@@ -70,7 +72,7 @@ class HandleInertiaRequests extends Middleware
         return $user?->features() ?? [];
     }
 
-    public function getRelevantConfig()
+    public function getRelevantConfig(): array
     {
         $rootDomain = Uri::of(config('app.url'))->host();
 

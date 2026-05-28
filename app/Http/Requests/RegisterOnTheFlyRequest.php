@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegisterOnTheFlyRequest extends FormRequest
+final class RegisterOnTheFlyRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -36,10 +38,10 @@ class RegisterOnTheFlyRequest extends FormRequest
         ];
     }
 
-    public function prepareForValidation()
+    protected function prepareForValidation(): void
     {
         $this->merge([
-            'name' => $this->input('name') ?? "{$this->input('first_name')} {$this->input('last_name')}",
+            'name' => $this->input('name') ?? sprintf('%s %s', $this->input('first_name'), $this->input('last_name')),
         ]);
     }
 }

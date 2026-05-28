@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Support\TypeScript;
 
-class TypeScriptGenerator
+final readonly class TypeScriptGenerator
 {
     public function __construct(
-        protected TypeScriptScanner $scanner,
-        protected InterfaceWriter $writer,
+        private TypeScriptScanner $scanner,
+        private InterfaceWriter $writer,
     ) {}
 
     /**
@@ -16,7 +18,7 @@ class TypeScriptGenerator
      */
     public function scanSource(string $sourceKey, ?callable $onProgress = null): array
     {
-        $config = config("typegen.sources.{$sourceKey}", []);
+        $config = config('typegen.sources.'.$sourceKey, []);
         $directories = $config['directories'] ?? [];
         $include = $config['include'] ?? ['*'];
         $exclude = $config['exclude'] ?? [];
@@ -24,7 +26,7 @@ class TypeScriptGenerator
         $optIn = $config['opt_in'] ?? true;
         $interfaces = $this->scanner->scan($directories, $include, $exclude, $optIn);
 
-        if ($onProgress) {
+        if ($onProgress !== null) {
             foreach (array_keys($interfaces) as $name) {
                 $onProgress($name);
             }

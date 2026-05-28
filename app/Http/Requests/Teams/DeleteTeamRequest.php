@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\Teams;
 
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -7,7 +9,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Validator;
 
-class DeleteTeamRequest extends FormRequest
+final class DeleteTeamRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -35,7 +37,7 @@ class DeleteTeamRequest extends FormRequest
     public function after(): array
     {
         return [
-            function (Validator $validator) {
+            function (Validator $validator): void {
                 $team = $this->route('team');
 
                 if ($this->input('name') !== $team->name) {

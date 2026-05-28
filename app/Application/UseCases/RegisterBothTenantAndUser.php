@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Application\UseCases;
 
 use App\Application\Actions\Tenants\CreateTenant;
@@ -7,13 +9,14 @@ use App\Application\Actions\Tenants\DeleteTenant;
 use App\Application\Actions\Users\CreateUser;
 use App\Domain\DTOs\CreateTenantDTO;
 use App\Domain\DTOs\UserDTO;
+use Throwable;
 
-final class RegisterBothTenantAndUser
+final readonly class RegisterBothTenantAndUser
 {
     public function __construct(
-        private readonly CreateTenant $createTenant,
-        private readonly DeleteTenant $deleteTenant,
-        private readonly CreateUser $createUser,
+        private CreateTenant $createTenant,
+        private DeleteTenant $deleteTenant,
+        private CreateUser $createUser,
     ) {}
 
     public function execute(CreateTenantDTO $tenantData, UserDTO $userData): array
@@ -22,9 +25,9 @@ final class RegisterBothTenantAndUser
 
         try {
             $user = $this->createUser->handle($userData);
-        } catch (\Throwable $e) {
+        } catch (Throwable $throwable) {
             $this->deleteTenant->handle($tenant);
-            throw $e;
+            throw $throwable;
         }
 
         return [

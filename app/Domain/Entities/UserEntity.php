@@ -1,19 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Entities;
 
-final class UserEntity
+final readonly class UserEntity
 {
     public function __construct(
-        public readonly ?int $id = null,
-        public readonly ?string $name = null,
-        public readonly ?string $email = null,
-        public readonly ?string $password = null,
-        public readonly ?string $org_id = null,
-        public readonly ?string $workos_id = null,
-        public readonly ?string $avatar = null,
-        public readonly ?string $created_at = null,
-        public readonly ?string $updated_at = null,
+        public ?int $id = null,
+        public ?string $name = null,
+        public ?string $email = null,
+        public ?string $password = null,
+        public ?string $org_id = null,
+        public ?string $workos_id = null,
+        public ?string $avatar = null,
+        public ?string $created_at = null,
+        public ?string $updated_at = null,
     ) {}
 
     public static function fromAuthInfo($name, $email, $password, $org_id = null, $workos_id = null, $avatar = null): self

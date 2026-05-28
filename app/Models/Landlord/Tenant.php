@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Landlord;
 
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -9,9 +11,13 @@ use Laravel\Pennant\Concerns\HasFeatures;
 use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
 use Spatie\Multitenancy\Models\Tenant as BaseTenant;
 
-class Tenant extends BaseTenant
+final class Tenant extends BaseTenant
 {
-    use HasFactory, HasFeatures, UsesLandlordConnection;
+    use HasFactory;
+    use HasFeatures;
+    use UsesLandlordConnection;
+
+    public $incrementing = false;
 
     protected $fillable = [
         'id',
@@ -23,8 +29,6 @@ class Tenant extends BaseTenant
         'org_id',
     ];
 
-    public $incrementing = false;
-
     protected $keyType = 'string';
 
     protected function casts(): array
@@ -34,11 +38,11 @@ class Tenant extends BaseTenant
         ];
     }
 
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 
-        static::creating(function ($model) {
+        self::creating(function ($model): void {
             if (empty($model->id)) {
                 $model->id = (string) Str::uuid();
             }

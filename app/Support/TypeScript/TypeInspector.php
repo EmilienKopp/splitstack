@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Support\TypeScript;
 
 use PHPStan\PhpDocParser\Ast\Type\ArrayTypeNode;
@@ -15,11 +17,13 @@ use PHPStan\PhpDocParser\Parser\TypeParser;
 use PHPStan\PhpDocParser\ParserConfig;
 use ReflectionClass;
 use ReflectionNamedType;
+use ReflectionProperty;
+use ReflectionType;
 use ReflectionUnionType;
 
-class TypeInspector
+final class TypeInspector
 {
-    protected static array $phpToTs = [
+    private static array $phpToTs = [
         'string' => 'string',
         'int' => 'number',
         'integer' => 'number',
@@ -38,17 +42,17 @@ class TypeInspector
         'iterable' => 'any[]',
     ];
 
-    protected static array $dateClasses = [
+    private static array $dateClasses = [
         'Carbon', 'CarbonImmutable', 'DateTime', 'DateTimeImmutable', 'DateTimeInterface',
     ];
 
-    protected static array $collectionClasses = [
+    private static array $collectionClasses = [
         'Collection', 'Traversable', 'EloquentCollection',
     ];
 
-    protected static ?PhpDocParser $docParser = null;
+    private static ?PhpDocParser $docParser = null;
 
-    protected static ?Lexer $lexer = null;
+    private static ?Lexer $lexer = null;
 
     /**
      * Inspect a class using 3-tier strategy: Reflection → PHPDoc → TypeScriptConvertible.
@@ -78,10 +82,12 @@ class TypeInspector
     // -------------------------------------------------------------------------
 
     /** @return array<string, string>|null */
-    protected function inspectViaReflection(ReflectionClass $ref): ?array
+    private function inspectViaReflection(ReflectionClass $ref): ?array
     {
         $constructor = $ref->getConstructor();
         $properties = [];
+
+        $promotedNames = [];
 
         if ($constructor) {
             foreach ($constructor->getParameters() as $param) {
@@ -98,15 +104,16 @@ class TypeInspector
                 $optional = $param->isOptional() || $param->isDefaultValueAvailable();
                 $key = ($optional || $nullable) ? $param->getName().'?' : $param->getName();
                 $properties[$key] = $tsType;
-            }
-
-            if (! empty($properties)) {
-                return $properties;
+                $promotedNames[] = $param->getName();
             }
         }
 
-        foreach ($ref->getProperties(\ReflectionProperty::IS_PUBLIC) as $prop) {
+        foreach ($ref->getProperties(ReflectionProperty::IS_PUBLIC) as $prop) {
             if ($prop->isStatic()) {
+                continue;
+            }
+
+            if (in_array($prop->getName(), $promotedNames)) {
                 continue;
             }
 
@@ -120,11 +127,11 @@ class TypeInspector
             $properties[$key] = $tsType;
         }
 
-        return ! empty($properties) ? $properties : null;
+        return $properties === [] ? null : $properties;
     }
 
     /** @return array{string, bool} [tsType, isNullable] */
-    protected function mapReflectionType(\ReflectionType $type): array
+    private function mapReflectionType(ReflectionType $type): array
     {
         if ($type instanceof ReflectionNamedType) {
             $nullable = $type->allowsNull() && $type->getName() !== 'null';
@@ -143,6 +150,7 @@ class TypeInspector
 
                     continue;
                 }
+
                 $parts[] = $this->mapPhpTypeName($t->getName());
             }
 
@@ -156,7 +164,7 @@ class TypeInspector
         return ['any', false];
     }
 
-    protected function mapPhpTypeName(string $name): string
+    private function mapPhpTypeName(string $name): string
     {
         if (isset(self::$phpToTs[$name])) {
             return self::$phpToTs[$name];
@@ -184,12 +192,12 @@ class TypeInspector
     // -------------------------------------------------------------------------
 
     /** @return array<string, string>|null */
-    protected function inspectViaPhpDoc(ReflectionClass $ref): ?array
+    private function inspectViaPhpDoc(ReflectionClass $ref): ?array
     {
         $doc = $ref->getDocComment();
         if ($doc) {
             $properties = $this->parsePropertyTags($doc);
-            if (! empty($properties)) {
+            if ($properties !== []) {
                 return $properties;
             }
         }
@@ -199,7 +207,7 @@ class TypeInspector
             $doc = $constructor->getDocComment();
             if ($doc) {
                 $properties = $this->parseParamTags($doc);
-                if (! empty($properties)) {
+                if ($properties !== []) {
                     return $properties;
                 }
             }
@@ -209,7 +217,7 @@ class TypeInspector
     }
 
     /** @return array<string, string> */
-    protected function parsePropertyTags(string $doc): array
+    private function parsePropertyTags(string $doc): array
     {
         $tokens = new TokenIterator($this->getLexer()->tokenize($doc));
         $phpDocNode = $this->getDocParser()->parse($tokens);
@@ -222,7 +230,7 @@ class TypeInspector
         $properties = [];
         foreach ($tags as $tag) {
             $nullable = $tag->type instanceof NullableTypeNode;
-            $key = ltrim($tag->propertyName, '$').($nullable ? '?' : '');
+            $key = mb_ltrim($tag->propertyName, '$').($nullable ? '?' : '');
             $properties[$key] = $this->mapPhpDocType($tag->type);
         }
 
@@ -230,7 +238,7 @@ class TypeInspector
     }
 
     /** @return array<string, string> */
-    protected function parseParamTags(string $doc): array
+    private function parseParamTags(string $doc): array
     {
         $tokens = new TokenIterator($this->getLexer()->tokenize($doc));
         $phpDocNode = $this->getDocParser()->parse($tokens);
@@ -238,21 +246,21 @@ class TypeInspector
         $properties = [];
         foreach ($phpDocNode->getParamTagValues() as $tag) {
             $nullable = $tag->type instanceof NullableTypeNode;
-            $key = ltrim($tag->parameterName, '$').($nullable ? '?' : '');
+            $key = mb_ltrim($tag->parameterName, '$').($nullable ? '?' : '');
             $properties[$key] = $this->mapPhpDocType($tag->type);
         }
 
         return $properties;
     }
 
-    protected function mapPhpDocType(mixed $typeNode): string
+    private function mapPhpDocType(mixed $typeNode): string
     {
         if ($typeNode instanceof NullableTypeNode) {
             return $this->mapPhpDocType($typeNode->type).' | null';
         }
 
         if ($typeNode instanceof UnionTypeNode) {
-            $parts = array_map(fn ($t) => $this->mapPhpDocType($t), $typeNode->types);
+            $parts = array_map($this->mapPhpDocType(...), $typeNode->types);
 
             return implode(' | ', array_unique($parts));
         }
@@ -274,6 +282,7 @@ class TypeInspector
                 if (count($args) === 1) {
                     return $this->mapPhpDocType($args[0]).'[]';
                 }
+
                 if (count($args) === 2) {
                     return 'Record<'.$this->mapPhpDocType($args[0]).', '.$this->mapPhpDocType($args[1]).'>';
                 }
@@ -294,7 +303,7 @@ class TypeInspector
     // -------------------------------------------------------------------------
 
     /** @return array<string, string>|null */
-    protected function inspectViaConvertible(string $className): ?array
+    private function inspectViaConvertible(string $className): ?array
     {
         if (in_array(TypeScriptConvertible::class, class_implements($className) ?: [])) {
             return $className::getTypeScriptDefinition();
@@ -307,9 +316,9 @@ class TypeInspector
     // PHPDoc parser helpers (lazy-init, mirroring Wayfinder pattern)
     // -------------------------------------------------------------------------
 
-    protected function getDocParser(): PhpDocParser
+    private function getDocParser(): PhpDocParser
     {
-        if (self::$docParser === null) {
+        if (! self::$docParser instanceof PhpDocParser) {
             $config = new ParserConfig(usedAttributes: []);
             $constExpr = new ConstExprParser($config);
             $typeParser = new TypeParser($config, $constExpr);
@@ -319,9 +328,9 @@ class TypeInspector
         return self::$docParser;
     }
 
-    protected function getLexer(): Lexer
+    private function getLexer(): Lexer
     {
-        if (self::$lexer === null) {
+        if (! self::$lexer instanceof Lexer) {
             self::$lexer = new Lexer(new ParserConfig(usedAttributes: []));
         }
 

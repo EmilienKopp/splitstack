@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Attributes\ExportRelationship;
@@ -7,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
-class GitHubConnection extends Model
+final class GitHubConnection extends Model
 {
     use UsesTenantConnection;
 

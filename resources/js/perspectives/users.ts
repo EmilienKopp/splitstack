@@ -1,7 +1,7 @@
-import type { DataAction, DataHeader } from "@/types/core/dataDisplay";
 
 import { Perspective } from "@/lib/core/perspective";
 import type { User } from "@/types/auth";
+import type { DataAction, DataHeader } from "@/types/core/dataDisplay";
 
 type UserTableConfig = {
   headers: DataHeader<User>[];

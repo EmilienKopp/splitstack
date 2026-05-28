@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Concerns;
 
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -9,19 +12,6 @@ use Illuminate\Support\Arr;
 trait HasMetadata
 {
     protected $metadataColumn = 'metadata';
-
-    /**
-     * Boot the trait, ensuring that metadata is an empty array on saving.
-     */
-    protected static function bootHasMetadata()
-    {
-        static::saving(function (Model $model) {
-            $metadataColumn = $model->getMetadataColumn();
-            if (! is_array($model->{$metadataColumn})) {
-                $model->{$metadataColumn} = [];
-            }
-        });
-    }
 
     /**
      * Shorthand accessor for getMetadata and setMetadata.
@@ -35,9 +25,10 @@ trait HasMetadata
     {
         if (is_null($value)) {
             return $this->getMetadata($key);
-        } else {
-            return $this->setMetadata($key, $value);
         }
+
+        return $this->setMetadata($key, $value);
+
     }
 
     /**
@@ -82,7 +73,7 @@ trait HasMetadata
      */
     public function scopeWhereMetadata(Builder $query, string $key, $value): Builder
     {
-        return $query->where("{$this->getMetadataColumn()}->{$key}", $value);
+        return $query->where(sprintf('%s->%s', $this->getMetadataColumn(), $key), $value);
     }
 
     /**
@@ -103,17 +94,41 @@ trait HasMetadata
      * @param  mixed|null  $value
      * @return $this
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function setMetadata($key, $value = null, ?string $role = null): self
     {
         $allowedKeys = $this->getAllowedMetadataKeys($role);
 
         if (! Arr::has($allowedKeys, $key)) {
-            throw new \Exception("Key '{$key}' is not allowed for role '{$role}'");
+            throw new Exception(sprintf("Key '%s' is not allowed for role '%s'", $key, $role));
         }
 
         return $this->addMetadata($key, $value);
+    }
+
+    /**
+     * Get allowed metadata keys for a specific role.
+     */
+    public function getAllowedMetadataKeys(?string $role): array
+    {
+        $role ??= 'default';
+        $rolesConfig = config('metadata.roles', []);
+
+        return $rolesConfig[$role] ?? [];
+    }
+
+    /**
+     * Boot the trait, ensuring that metadata is an empty array on saving.
+     */
+    protected static function bootHasMetadata()
+    {
+        static::saving(function (Model $model): void {
+            $metadataColumn = $model->getMetadataColumn();
+            if (! is_array($model->{$metadataColumn})) {
+                $model->{$metadataColumn} = [];
+            }
+        });
     }
 
     /**
@@ -131,19 +146,9 @@ trait HasMetadata
         } else {
             Arr::set($metadata, $key, $value);
         }
+
         $this->{$this->getMetadataColumn()} = $metadata;
 
         return $this;
-    }
-
-    /**
-     * Get allowed metadata keys for a specific role.
-     */
-    public function getAllowedMetadataKeys(?string $role): array
-    {
-        $role = $role ?? 'default';
-        $rolesConfig = config('metadata.roles', []);
-
-        return $rolesConfig[$role] ?? [];
     }
 }

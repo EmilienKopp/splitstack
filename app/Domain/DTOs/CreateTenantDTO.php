@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\DTOs;
 
 use App\Application\Shared\Contracts\BaseDTO;
 
-class CreateTenantDTO extends BaseDTO
+final class CreateTenantDTO extends BaseDTO
 {
     public function __construct(
         public readonly string $org_name,
@@ -17,7 +19,7 @@ class CreateTenantDTO extends BaseDTO
      */
     public static function fromArray(array $data): static
     {
-        return new static(
+        return new self(
             org_name: $data['org_name'] ?? '',
             org_slug: $data['org_slug'] ?? '',
             org_id: $data['org_id'] ?? null,

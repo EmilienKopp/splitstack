@@ -24,6 +24,7 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - laravel/sail (SAIL) - v1
 - pestphp/pest (PEST) - v4
 - phpunit/phpunit (PHPUNIT) - v12
+- rector/rector (RECTOR) - v2
 - @inertiajs/svelte (INERTIA_SVELTE) - v3
 - tailwindcss (TAILWINDCSS) - v4
 - @laravel/vite-plugin-wayfinder (WAYFINDER_VITE) - v0

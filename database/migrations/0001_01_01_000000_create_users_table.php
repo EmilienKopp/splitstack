@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -22,11 +24,11 @@ return new class extends Migration
                 'uuid', 'guid' => 'uuid',
                 default => $userIdColumnType,
             };
-        } catch (Exception $e) {
+        } catch (Exception) {
             // If there's an error (e.g. the users table doesn't exist yet), we'll just use the default type
         }
 
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('users', function (Blueprint $table): void {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
@@ -37,7 +39,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('sessions', function (Blueprint $table) use ($userIdColumnType) {
+        Schema::create('sessions', function (Blueprint $table) use ($userIdColumnType): void {
             $table->string('id')->primary();
             $table->$userIdColumnType('user_id')->nullable()->index();
             $table->string('ip_address', 45)->nullable();

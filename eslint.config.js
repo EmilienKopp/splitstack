@@ -1,8 +1,8 @@
-import eslintConfigPrettier from 'eslint-config-prettier';
-import importPlugin from 'eslint-plugin-import';
 import js from '@eslint/js';
-import prettier from 'eslint-config-prettier/flat';
 import stylistic from '@stylistic/eslint-plugin';
+import eslintConfigPrettier from 'eslint-config-prettier';
+import prettier from 'eslint-config-prettier/flat';
+import importPlugin from 'eslint-plugin-import';
 import svelte from 'eslint-plugin-svelte';
 import ts from 'typescript-eslint';
 
@@ -57,6 +57,7 @@ const base = ts.config(
         rules: {
             'no-undef': 'off',
             '@typescript-eslint/no-explicit-any': 'off',
+            'svelte/no-navigation-without-resolve': 'off',
             '@typescript-eslint/no-unused-vars': [
                 'error',
                 {
@@ -74,7 +75,14 @@ const base = ts.config(
             'import/order': [
                 'error',
                 {
-                    groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+                    groups: [
+                        'builtin',
+                        'external',
+                        'internal',
+                        'parent',
+                        'sibling',
+                        'index',
+                    ],
                     alphabetize: {
                         order: 'asc',
                         caseInsensitive: true,
@@ -92,7 +100,11 @@ const base = ts.config(
             '@stylistic': stylistic,
         },
         rules: {
-            '@stylistic/brace-style': ['error', '1tbs', { allowSingleLine: false }],
+            '@stylistic/brace-style': [
+                'error',
+                '1tbs',
+                { allowSingleLine: false },
+            ],
             '@stylistic/padding-line-between-statements': [
                 'error',
                 ...paddingAroundControl,
@@ -111,6 +123,7 @@ const base = ts.config(
             'resources/js/components/ui/*',
             'resources/js/routes/**',
             'resources/js/wayfinder/**',
+            'packages/**',
         ],
     },
     prettier, // Turn off all rules that might conflict with Prettier
@@ -120,12 +133,13 @@ const base = ts.config(
         },
         rules: {
             curly: ['error', 'all'],
-            '@stylistic/brace-style': ['error', '1tbs', { allowSingleLine: false }],
+            '@stylistic/brace-style': [
+                'error',
+                '1tbs',
+                { allowSingleLine: false },
+            ],
         },
     },
 );
 
-export default [
-    base,
-    eslintConfigPrettier,
-]
+export default [...base, eslintConfigPrettier];

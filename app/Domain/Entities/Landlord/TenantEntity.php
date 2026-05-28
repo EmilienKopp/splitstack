@@ -1,35 +1,37 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Entities\Landlord;
 
-class TenantEntity
+final readonly class TenantEntity
 {
     public function __construct(
-        public readonly ?string $id = null,
-        public readonly ?string $org_id = null,
-        public readonly ?string $name = null,
-        public readonly ?string $domain = null,
-        public readonly ?string $space = null,
-        public readonly ?string $database = null,
-        public readonly ?string $hash = null,
-        public readonly ?string $created_at = null,
-        public readonly ?string $updated_at = null,
+        public ?string $id = null,
+        public ?string $org_id = null,
+        public ?string $name = null,
+        public ?string $domain = null,
+        public ?string $space = null,
+        public ?string $database = null,
+        public ?string $hash = null,
+        public ?string $created_at = null,
+        public ?string $updated_at = null,
     ) {}
 
     public static function fromNameAndSlug(string $name, string $slug, ?string $org_id = null): self
     {
         return new self(
+            org_id: $org_id,
             name: $name,
             space: $slug,
-            database: "{$slug}_db",
+            database: $slug.'_db',
             hash: hash('sha256', $slug),
-            org_id: $org_id,
         );
     }
 
     public static function fromArray(array $data): static
     {
-        return new static(
+        return new self(
             id: $data['id'] ?? null,
             org_id: $data['org_id'] ?? null,
             name: $data['name'] ?? null,

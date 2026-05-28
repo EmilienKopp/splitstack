@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Infrastructure\Repositories;
 
 use App\Domain\Entities\Landlord\TenantEntity;
@@ -8,13 +10,13 @@ use App\Models\Landlord\Tenant;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
-class TenantRepository implements TenantRepositoryInterface
+final class TenantRepository implements TenantRepositoryInterface
 {
     /** @return Collection<TenantEntity> */
     public function all(): Collection
     {
         return Tenant::all()->map(
-            fn (Tenant $model) => TenantEntity::fromArray($model->toArray()),
+            fn (Tenant $model): TenantEntity => TenantEntity::fromArray($model->toArray()),
         );
     }
 
@@ -27,10 +29,6 @@ class TenantRepository implements TenantRepositoryInterface
 
     public function save(TenantEntity $entity): TenantEntity
     {
-        if (! $entity instanceof TenantEntity) {
-            throw new \InvalidArgumentException('Expected TenantEntity');
-        }
-
         $dbExists = DB::selectOne(
             'SELECT 1 FROM pg_database WHERE datname = ?',
             [$entity->database]
@@ -40,7 +38,7 @@ class TenantRepository implements TenantRepositoryInterface
             $templateDB = config('splitstack.tenant_template_db', 'tenant_template');
 
             // CREATE DATABASE cannot run inside a transaction in Postgres
-            DB::unprepared("CREATE DATABASE \"{$entity->database}\" WITH TEMPLATE {$templateDB}");
+            DB::unprepared(sprintf('CREATE DATABASE "%s" WITH TEMPLATE %s', $entity->database, $templateDB));
         }
 
         $model = Tenant::updateOrCreate(
@@ -72,7 +70,7 @@ class TenantRepository implements TenantRepositoryInterface
         ) !== null;
 
         if ($dbExists) {
-            DB::unprepared("DROP DATABASE \"{$entity->database}\"");
+            DB::unprepared(sprintf('DROP DATABASE "%s"', $entity->database));
         }
     }
 }

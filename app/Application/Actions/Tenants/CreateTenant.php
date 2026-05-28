@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Application\Actions\Tenants;
 
 use App\Domain\DTOs\CreateTenantDTO;
 use App\Domain\Entities\Landlord\TenantEntity;
 use App\Infrastructure\Contracts\TenantRepositoryInterface;
 
-final class CreateTenant
+final readonly class CreateTenant
 {
     public function __construct(
-        private readonly TenantRepositoryInterface $tenantRepository,
+        private TenantRepositoryInterface $tenantRepository,
     ) {}
 
     public function handle(CreateTenantDTO $data): TenantEntity

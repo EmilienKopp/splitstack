@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Providers;
 
 use App\Guards\TenantGuard;
@@ -10,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
-class AppServiceProvider extends ServiceProvider
+final class AppServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
@@ -23,15 +25,13 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
-        Auth::extend('tenant', function ($app, $name, array $config) {
-            return new TenantGuard;
-        });
+        Auth::extend('tenant', fn ($app, $name, array $config): TenantGuard => new TenantGuard);
     }
 
     /**
      * Configure default behaviors for production-ready applications.
      */
-    protected function configureDefaults(): void
+    private function configureDefaults(): void
     {
         Date::use(CarbonImmutable::class);
 

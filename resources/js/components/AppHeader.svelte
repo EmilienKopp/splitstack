@@ -58,8 +58,6 @@
         currentTeam ? dashboard(currentTeam.slug) : '/dashboard',
     );
 
-    $inspect(dashboardUrl, 'dashboardUrl');
-
     const url = currentUrlState();
 
     const activeItemStyles =

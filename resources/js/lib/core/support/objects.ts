@@ -18,10 +18,13 @@
 export function dot(obj: any, key: string) {
   if (key.includes('.')) {
     const [first, ...rest] = key.split('.');
+
     if(!obj?.[first]) {
       return obj?.[key];
     }
+
     return dot(obj[first], rest.join('.'));
   }
+
   return obj?.[key];
 }

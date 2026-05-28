@@ -6,7 +6,6 @@
     let {
         breadcrumbs = [],
         children,
-        ...restProps
     }: {
         breadcrumbs?: BreadcrumbItem[];
         children?: Snippet;

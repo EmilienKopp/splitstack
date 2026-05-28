@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Concerns;
 
 use App\Http\Responses\SplitResponseBuilder;
@@ -18,11 +20,12 @@ trait HasHybridResponses
     /**
      * Start a fluent split response builder.
      */
-    public function respond(array $data = [], ?string $component = null, ?string $route = null): SplitResponseBuilder
+    public function respond(iterable $data = [], ?string $component = null, ?string $route = null): SplitResponseBuilder
     {
         $builder = $this->builder instanceof SplitResponseBuilder
             ? $this->builder
             : app()->make(SplitResponseBuilder::class);
+        $data = is_array($data) ? $data : iterator_to_array($data);
 
         return $builder->respond($data)->component($component)->route($route);
     }

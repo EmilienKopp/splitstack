@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -10,12 +12,6 @@ return [
     | 'include'/'exclude' accept glob-style class name patterns.
     */
     'sources' => [
-        'entities' => [
-            'directories' => ['Domain/Entities'],
-            'include' => ['*'],
-            'exclude' => ['Base*'],
-            'opt_in' => false,  // introspect all concrete classes automatically
-        ],
         'value_objects' => [
             'directories' => ['Domain/ValueObjects'],
             'include' => ['*'],
@@ -27,6 +23,12 @@ return [
             'include' => ['*'],
             'exclude' => [],
             'opt_in' => true,   // only classes implementing TypeScriptConvertible
+        ],
+        'entities' => [
+            'directories' => ['Domain/Entities'],
+            'include' => ['*'],
+            'exclude' => ['Base*'],
+            'opt_in' => false,  // introspect all concrete classes automatically
         ],
     ],
 

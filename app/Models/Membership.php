@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Enums\TeamRole;
@@ -9,8 +11,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 #[Fillable(['team_id', 'user_id', 'role'])]
-class Membership extends Pivot
+final class Membership extends Pivot
 {
+    /**
+     * Indicates if the IDs are auto-incrementing.
+     *
+     * @var bool
+     */
+    public $incrementing = true;
+
     /**
      * The table associated with the model.
      *
@@ -19,11 +28,16 @@ class Membership extends Pivot
     protected $table = 'team_members';
 
     /**
-     * Indicates if the IDs are auto-incrementing.
+     * Get the attributes that should be cast.
      *
-     * @var bool
+     * @return array<string, string>
      */
-    public $incrementing = true;
+    protected function casts(): array
+    {
+        return [
+            'role' => TeamRole::class,
+        ];
+    }
 
     /**
      * Get the team that the membership belongs to.
@@ -43,17 +57,5 @@ class Membership extends Pivot
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'role' => TeamRole::class,
-        ];
     }
 }

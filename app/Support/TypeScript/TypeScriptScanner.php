@@ -1,14 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Support\TypeScript;
 
 use Illuminate\Support\Facades\File;
 use ReflectionClass;
+use Throwable;
 
-class TypeScriptScanner
+final readonly class TypeScriptScanner
 {
     public function __construct(
-        protected TypeInspector $inspector,
+        private TypeInspector $inspector,
     ) {}
 
     /**
@@ -37,12 +40,20 @@ class TypeScriptScanner
                 }
 
                 $className = $this->resolveClassName($file->getPathname());
-                if (! $className || ! class_exists($className)) {
+                if (! $className) {
+                    continue;
+                }
+
+                if (! class_exists($className)) {
                     continue;
                 }
 
                 $ref = new ReflectionClass($className);
-                if ($ref->isAbstract() || $ref->isInterface()) {
+                if ($ref->isAbstract()) {
+                    continue;
+                }
+
+                if ($ref->isInterface()) {
                     continue;
                 }
 
@@ -61,7 +72,7 @@ class TypeScriptScanner
                     if ($definition !== null) {
                         $interfaces[$baseName] = $definition;
                     }
-                } catch (\Throwable) {
+                } catch (Throwable) {
                     // Skip classes that cannot be introspected
                 }
             }
@@ -77,6 +88,7 @@ class TypeScriptScanner
         if (! preg_match('/namespace\s+([^;]+);/', $content, $ns)) {
             return null;
         }
+
         if (! preg_match('/class\s+(\w+)/', $content, $class)) {
             return null;
         }
@@ -84,7 +96,7 @@ class TypeScriptScanner
         return $ns[1].'\\'.$class[1];
     }
 
-    protected function shouldInclude(string $className, array $include, array $exclude): bool
+    private function shouldInclude(string $className, array $include, array $exclude): bool
     {
         foreach ($exclude as $pattern) {
             if ($this->matchesPattern($className, $pattern)) {
@@ -101,7 +113,7 @@ class TypeScriptScanner
         return false;
     }
 
-    protected function matchesPattern(string $className, string $pattern): bool
+    private function matchesPattern(string $className, string $pattern): bool
     {
         $regex = '/^'.str_replace('\*', '.*', preg_quote($pattern, '/')).'$/';
 

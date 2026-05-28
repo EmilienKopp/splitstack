@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Application\Actions\Tenants\CreateTenant;
@@ -7,14 +9,14 @@ use App\Domain\DTOs\RegisterOnTheFlyDTO;
 use App\Http\Requests\StoreTenantRequest;
 use Illuminate\Http\Request;
 
-class TenantController extends Controller
+final class TenantController extends Controller
 {
     public function __construct(public readonly CreateTenant $createTenant) {}
 
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): void
     {
         //
     }
@@ -22,7 +24,7 @@ class TenantController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): void
     {
         //
     }
@@ -32,7 +34,7 @@ class TenantController extends Controller
      */
     public function store(StoreTenantRequest $request)
     {
-        $data = RegisterOnTheFlyDTO::fromRequest($request);
+        $data = RegisterOnTheFlyDTO::fromValidatable($request);
 
         $tenant = $this->createTenant->execute($data);
 
@@ -42,7 +44,7 @@ class TenantController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id): void
     {
         //
     }
@@ -50,7 +52,7 @@ class TenantController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(string $id): void
     {
         //
     }
@@ -58,7 +60,7 @@ class TenantController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id): void
     {
         //
     }
@@ -66,7 +68,7 @@ class TenantController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $id): void
     {
         //
     }

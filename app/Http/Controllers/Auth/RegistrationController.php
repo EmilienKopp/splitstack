@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Auth;
 
 use App\Application\UseCases\RegisterBothTenantAndUser;
@@ -10,7 +12,7 @@ use App\Facades\Split;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterOnTheFlyRequest;
 
-class RegistrationController extends Controller
+final class RegistrationController extends Controller
 {
     public function __construct(
         public readonly RegisterBothTenantAndUser $createTenantAndUser,
@@ -20,7 +22,7 @@ class RegistrationController extends Controller
     {
         $user = session()->get('pending_user');
         $org = session()->get('pending_org');
-        $user['name'] = "{$user['firstName']} {$user['lastName']}";
+        $user['name'] = sprintf('%s %s', $user['firstName'], $user['lastName']);
 
         return inertia('RegisterOnTheFly', [
             'user' => $user,
@@ -29,9 +31,9 @@ class RegistrationController extends Controller
         ]);
     }
 
-    public function registerOnTheFly(RegisterOnTheFlyRequest $request)
+    public function registerOnTheFly(RegisterOnTheFlyRequest $request): \App\Http\Responses\SplitResponseBuilder
     {
-        $data = RegisterOnTheFlyDTO::fromRequest($request)->toArray();
+        $data = RegisterOnTheFlyDTO::fromValidatable($request)->toArray();
 
         $tenantDTO = CreateTenantDTO::fromArray($data);
         $userDTO = UserDTO::fromArray($data);

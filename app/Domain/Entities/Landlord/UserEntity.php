@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Entities\Landlord;
 
-final class UserEntity
+final readonly class UserEntity
 {
     public function __construct(
-        public readonly ?int $id = null,
-        public readonly ?string $name = null,
-        public readonly ?string $email = null,
-        public readonly ?string $password = null,
-        public readonly ?string $created_at = null,
-        public readonly ?string $updated_at = null,
+        public ?int $id = null,
+        public ?string $name = null,
+        public ?string $email = null,
+        public ?string $password = null,
+        public ?string $created_at = null,
+        public ?string $updated_at = null,
     ) {}
 }

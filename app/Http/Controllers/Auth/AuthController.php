@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Auth;
 
 use App\Application\Actions\Auth\CreateUser;
@@ -11,16 +13,16 @@ use Laravel\WorkOS\Http\Requests\AuthKitAuthenticationRequest;
 use Laravel\WorkOS\Http\Requests\AuthKitLoginRequest;
 use Laravel\WorkOS\Http\Requests\AuthKitLogoutRequest;
 
-class AuthController extends Controller
+final class AuthController extends Controller
 {
-    public function login(AuthKitLoginRequest $request)
+    public function login(AuthKitLoginRequest $request): \Symfony\Component\HttpFoundation\Response
     {
         return $request->redirect();
     }
 
     public function authenticate(AuthKitAuthenticationRequest $request)
     {
-        $request->authenticate(findUsing: app(FindUser::class), createUsing: app(CreateUser::class), updateUsing: null);
+        $request->authenticate(findUsing: app(FindUser::class), createUsing: app(CreateUser::class));
 
         $tenant = Tenant::current();
         $user = auth()->user();
@@ -42,7 +44,7 @@ class AuthController extends Controller
         return redirect()->intended(route('dashboard', ['space' => $tenant?->space]));
     }
 
-    public function logout(AuthKitLogoutRequest $request)
+    public function logout(AuthKitLogoutRequest $request): \Symfony\Component\HttpFoundation\Response
     {
         return $request->logout();
     }

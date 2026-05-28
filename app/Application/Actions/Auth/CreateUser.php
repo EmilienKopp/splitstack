@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Application\Actions\Auth;
 
 use App\Exceptions\TenantNotFoundException;
@@ -12,7 +14,7 @@ final class CreateUser
 {
     public function __construct(public UserManagement $userManagement, public Organizations $organizations) {}
 
-    public function __invoke($user)
+    public function __invoke($user): User
     {
         $tenant = Tenant::where('org_id', $user->organizationId)->first();
         $org = $this->organizations->getOrganization($user->organizationId);
@@ -22,12 +24,12 @@ final class CreateUser
                 'pending_user' => $user,
                 'pending_org' => $org->toArray(),
             ]);
-            throw new TenantNotFoundException("Tenant with org_id {$user->organizationId} not found.");
+            throw new TenantNotFoundException(sprintf('Tenant with org_id %s not found.', $user->organizationId));
         }
 
         $tenant->makeCurrent();
         $newUser = new User;
-        $newUser->name = "{$user->firstName} {$user->lastName}";
+        $newUser->name = sprintf('%s %s', $user->firstName, $user->lastName);
         $newUser->email = $user->email;
         $newUser->workos_id = $user->id;
         $newUser->avatar = $user->avatar;

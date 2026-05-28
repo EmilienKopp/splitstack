@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Listeners;
 
 use App\Application\Actions\Teams\CreateTeam;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 
-class CreatePersonalTeam
+final readonly class CreatePersonalTeam
 {
     public function __construct(private CreateTeam $createTeam)
     {

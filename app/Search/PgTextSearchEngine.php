@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Search;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\LazyCollection;
+use InvalidArgumentException;
 use Laravel\Scout\Builder;
 use Laravel\Scout\Engines\Engine;
 
@@ -24,7 +27,7 @@ use Laravel\Scout\Engines\Engine;
  *
  * update/delete/flush are no-ops — the engine queries the live table directly.
  */
-class PgTextSearchEngine extends Engine
+final class PgTextSearchEngine extends Engine
 {
     /** @var array<string, true> Tracks which table+column combos have been verified this process. */
     private static array $ensuredIndexes = [];
@@ -51,7 +54,7 @@ class PgTextSearchEngine extends Engine
         }
 
         foreach ($columns as $column) {
-            $indexName = "{$name}_{$column}_bm25";
+            $indexName = sprintf('%s_%s_bm25', $name, $column);
             $this->createBm25Index($connection, $name, $column, $textConfig, $indexName);
         }
 
@@ -134,20 +137,20 @@ class PgTextSearchEngine extends Engine
         // Score bindings appear in the CTE SELECT clause, before the WHERE bindings.
         $scoreBindings = array_fill(0, count($columns), $builder->query);
 
-        $cteSql = "WITH _scored AS (SELECT \"{$pk}\", {$scoreExpr} AS _score FROM \"{$table}\" {$whereSql})";
+        $cteSql = sprintf('WITH _scored AS (SELECT "%s", %s AS _score FROM "%s" %s)', $pk, $scoreExpr, $table, $whereSql);
 
         $hits = $connection->select(
-            "{$cteSql} SELECT \"{$pk}\" FROM _scored WHERE _score < 0 ORDER BY _score ASC LIMIT ? OFFSET ?",
+            sprintf('%s SELECT "%s" FROM _scored WHERE _score < 0 ORDER BY _score ASC LIMIT ? OFFSET ?', $cteSql, $pk),
             [...$scoreBindings, ...$whereBindings, $limit, $offset]
         );
 
         $total = (int) $connection->selectOne(
-            "{$cteSql} SELECT COUNT(*) AS aggregate FROM _scored WHERE _score < 0",
+            $cteSql.' SELECT COUNT(*) AS aggregate FROM _scored WHERE _score < 0',
             [...$scoreBindings, ...$whereBindings]
         )?->aggregate;
 
         return [
-            'hits' => array_map(fn ($row) => (array) $row, $hits),
+            'hits' => array_map(fn ($row): array => (array) $row, $hits),
             'total' => $total,
         ];
     }
@@ -179,8 +182,8 @@ class PgTextSearchEngine extends Engine
         $count = count($columns);
 
         return match ($scheme) {
-            'exponential' => array_map(fn ($i) => 1.0 / (2 ** $i), range(0, $count - 1)),
-            default => array_map(fn ($i) => (float) ($count - $i), range(0, $count - 1)),
+            'exponential' => array_map(fn ($i): float => 1.0 / (2 ** $i), range(0, $count - 1)),
+            default => array_map(fn ($i): float => (float) ($count - $i), range(0, $count - 1)),
         };
     }
 
@@ -202,7 +205,7 @@ class PgTextSearchEngine extends Engine
         $indexNames = [];
 
         foreach ($columns as $column) {
-            $cacheKey = "{$table}.{$column}";
+            $cacheKey = sprintf('%s.%s', $table, $column);
 
             if (isset(self::$ensuredIndexes[$cacheKey])) {
                 $indexNames[$column] = self::$ensuredIndexes[$cacheKey];
@@ -224,7 +227,7 @@ class PgTextSearchEngine extends Engine
             if ($existing) {
                 $indexName = $existing->relname;
             } else {
-                $indexName = "{$table}_{$column}_bm25";
+                $indexName = sprintf('%s_%s_bm25', $table, $column);
                 $this->createBm25Index($connection, $table, $column, $textConfig, $indexName);
             }
 
@@ -249,12 +252,12 @@ class PgTextSearchEngine extends Engine
         $columnsArray = $options['columns'] ?? [];
 
         if (! method_exists($model, 'searchableColumns')) {
-            throw new \InvalidArgumentException('Model must define searchableColumns() method when using pg_textsearch engine.');
+            throw new InvalidArgumentException('Model must define searchableColumns() method when using pg_textsearch engine.');
         }
 
         $searchable = $model->searchableColumns();
         if (empty($searchable)) {
-            throw new \InvalidArgumentException('Model\'s searchableColumns() method must return at least one column.');
+            throw new InvalidArgumentException("Model's searchableColumns() method must return at least one column.");
         }
 
         if (empty($columnsArray)) {
@@ -262,7 +265,7 @@ class PgTextSearchEngine extends Engine
         } else {
             foreach ($columnsArray as $col) {
                 if (! in_array($col, $searchable)) {
-                    throw new \InvalidArgumentException("Column '{$col}' is not declared in searchableColumns() for model ".get_class($model));
+                    throw new InvalidArgumentException(sprintf("Column '%s' is not declared in searchableColumns() for model ", $col).$model::class);
                 }
             }
         }
@@ -287,9 +290,9 @@ class PgTextSearchEngine extends Engine
         $parts = [];
 
         foreach ($columns as $i => $col) {
-            $indexName = $indexNames[$col] ?? "{$table}_{$col}_bm25";
+            $indexName = $indexNames[$col] ?? sprintf('%s_%s_bm25', $table, $col);
             $weight = $weights[$i] ?? 1.0;
-            $parts[] = "COALESCE(\"{$col}\" <@> to_bm25query(?, '{$indexName}'), 0.0) * {$weight}";
+            $parts[] = sprintf("COALESCE(\"%s\" <@> to_bm25query(?, '%s'), 0.0) * %s", $col, $indexName, $weight);
         }
 
         return \count($parts) === 1
@@ -308,7 +311,7 @@ class PgTextSearchEngine extends Engine
         $bindings = [];
 
         foreach ($builder->wheres as $column => $value) {
-            $clauses[] = "\"{$column}\" = ?";
+            $clauses[] = sprintf('"%s" = ?', $column);
             $bindings[] = $value;
         }
 

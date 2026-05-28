@@ -1,7 +1,6 @@
 <script module lang="ts">
     import { dashboard } from '@/routes';
     import type { Team } from '@/types';
-    import { page } from '@inertiajs/svelte';
 
     export const layout = (props: { currentTeam?: Team | null }) => ({
         breadcrumbs: [
@@ -13,8 +12,6 @@
             },
         ],
     });
-
-    const user = $derived(page.props.auth.user);
 </script>
 
 <script lang="ts">

@@ -1,19 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Landlord;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Concerns\HasGitHubConnection;
-use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
 
-class User extends Authenticatable
+final class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
-    use HasFactory, HasGitHubConnection, Notifiable, UsesLandlordConnection;
+    use HasFactory;
+    use HasGitHubConnection;
+    use Notifiable;
+    use UsesLandlordConnection;
 
     /**
      * The attributes that are mass assignable.
@@ -57,9 +60,9 @@ class User extends Authenticatable
         ];
     }
 
-    public static function booted()
+    protected static function booted(): void
     {
-        static::creating(function ($user) {
+        self::creating(function ($user): void {
             if (! $user->handle) {
                 $user->handle = $user->email;
             }

@@ -1,10 +1,10 @@
 <script lang="ts">
     import { Link, page } from '@inertiajs/svelte';
     import AppHead from '@/components/AppHead.svelte';
+    import { Toaster } from '@/components/ui/sonner';
     import { toUrl } from '@/lib/utils';
     import { dashboard, login } from '@/routes';
-    import type { Team } from '@/types';
-    import { Toaster } from '@/components/ui/sonner';
+    // import type { Team } from '@/types';
 
     const auth = $derived(page.props.auth);
     const dashboardUrl = $derived(dashboard(page.props.space));

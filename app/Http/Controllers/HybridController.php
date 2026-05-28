@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Concerns\HasHybridResponses;
@@ -15,7 +17,7 @@ use App\Http\Responses\SplitResponseBuilder;
  * @see HasHybridResponses
  * @see Split
  */
-class HybridController extends Controller
+final class HybridController extends Controller
 {
     use HasHybridResponses;
 

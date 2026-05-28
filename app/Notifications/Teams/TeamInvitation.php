@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Notifications\Teams;
 
 use App\Models\TeamInvitation as TeamInvitationModel;
@@ -8,7 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class TeamInvitation extends Notification implements ShouldQueue
+final class TeamInvitation extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -44,7 +46,7 @@ class TeamInvitation extends Notification implements ShouldQueue
                 'inviterName' => $inviter->name,
                 'teamName' => $team->name,
             ]))
-            ->action(__('Accept invitation'), url("/invitations/{$this->invitation->code}/accept"));
+            ->action(__('Accept invitation'), url(sprintf('/invitations/%s/accept', $this->invitation->code)));
     }
 
     /**

@@ -1,0 +1,26 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Models;
+
+use App\Domain\Shared\BaseEntity;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+abstract class BaseModel extends Model
+{
+    abstract public function entityClass(): string;
+
+    /**
+     * @return TEntity
+     *
+     * @template TEntity of BaseEntity
+     */
+    final public function toEntity(): object
+    {
+        $resource = JsonResource::make($this)->resolve();
+
+        return static::entityClass()::fromArray($resource);
+    }
+}

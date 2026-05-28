@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\DTOs;
 
 use App\Application\Shared\Contracts\BaseDTO;
 
-class RegisterOnTheFlyDTO extends BaseDTO
+final class RegisterOnTheFlyDTO extends BaseDTO
 {
     public function __construct(
         public readonly ?string $first_name = null,
@@ -24,16 +26,16 @@ class RegisterOnTheFlyDTO extends BaseDTO
      */
     public static function fromArray(array $data): static
     {
-        return new static(
+        return new self(
             first_name: $data['first_name'] ?? null,
             last_name: $data['last_name'] ?? null,
             name: $data['name'] ?? null,
+            workos_id: $data['workos_id'] ?? null,
             email: $data['email'] ?? null,
             password: $data['password'] ?? null,
             org_name: $data['org_name'] ?? null,
             org_slug: $data['org_slug'] ?? null,
             org_id: $data['org_id'] ?? null,
-            workos_id: $data['workos_id'] ?? null,
             avatar: $data['avatar'] ?? null,
         );
     }

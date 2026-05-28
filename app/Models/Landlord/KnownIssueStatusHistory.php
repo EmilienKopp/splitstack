@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Landlord;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class KnownIssueStatusHistory extends Model
+final class KnownIssueStatusHistory extends Model
 {
     use HasFactory;
 
@@ -47,13 +49,16 @@ class KnownIssueStatusHistory extends Model
         $days = floor($hours / 24);
 
         if ($days > 0) {
-            $hours = $hours % 24;
+            $hours %= 24;
 
-            return "{$days}d {$hours}h";
-        } elseif ($hours > 0) {
-            return "{$hours}h {$minutes}m";
-        } else {
-            return "{$minutes}m";
+            return sprintf('%sd %dh', $days, $hours);
         }
+
+        if ($hours > 0) {
+            return sprintf('%sh %sm', $hours, $minutes);
+        }
+
+        return $minutes.'m';
+
     }
 }

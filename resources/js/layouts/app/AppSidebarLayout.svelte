@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { page } from '@inertiajs/svelte';
     import type { Snippet } from 'svelte';
     import AppContent from '@/components/AppContent.svelte';
     import AppShell from '@/components/AppShell.svelte';
@@ -6,7 +7,6 @@
     import AppSidebarHeader from '@/components/AppSidebarHeader.svelte';
     import { Toaster } from '@/components/ui/sonner';
     import type { BreadcrumbItem } from '@/types';
-    import { page } from '@inertiajs/svelte';
     import { translucid } from 'translucid-svelte';
 
     let {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Application\Actions\Auth;
 
 use App\Exceptions\TenantNotFoundException;
@@ -22,7 +24,7 @@ final class FindUser
                 'pending_user' => $user,
                 'pending_org' => $org->toArray(),
             ]);
-            throw new TenantNotFoundException("Tenant with org_id {$user->organizationId} not found.");
+            throw new TenantNotFoundException(sprintf('Tenant with org_id %s not found.', $user->organizationId));
         }
 
         $tenant->makeCurrent();
