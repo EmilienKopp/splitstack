@@ -23,6 +23,7 @@
         "spatie/laravel-medialibrary": "^11.21",
         "spatie/laravel-multitenancy": "^4.1",
         "spatie/laravel-permission": "^7.3",
+        "splitstack/laravel-typewriter": "@dev",
         "splitstack/translucid": "^0.1.0"
     },
     "require-dev": {
@@ -118,6 +119,13 @@
         {
             "type": "path",
             "url": "packages/*/*",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "../php_packages/laravel-typewriter",
             "options": {
                 "symlink": true
             }
