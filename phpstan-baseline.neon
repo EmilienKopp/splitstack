@@ -1,0 +1,319 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Trait App\\Concerns\\HasMetadata is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: app/Concerns/HasMetadata.php
+
+		-
+			message: '#^Access to an undefined property WorkOS\\Resource\\Organization\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/DevSetup.php
+
+		-
+			message: '#^Access to constant Admin on an unknown class App\\Enums\\RoleEnum\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Console/Commands/DevSetup.php
+
+		-
+			message: '#^Access to constant BusinessOwner on an unknown class App\\Enums\\RoleEnum\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Console/Commands/DevSetup.php
+
+		-
+			message: '#^Access to constant User on an unknown class App\\Enums\\RoleEnum\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Console/Commands/DevSetup.php
+
+		-
+			message: '#^Call to static method create\(\) on an unknown class App\\Models\\Currency\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Console/Commands/DevSetup.php
+
+		-
+			message: '#^Call to static method create\(\) on an unknown class App\\Models\\Role\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Console/Commands/DevSetup.php
+
+		-
+			message: '#^Call to static method values\(\) on an unknown class App\\Enums\\RoleEnum\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Console/Commands/DevSetup.php
+
+		-
+			message: '#^Call to static method where\(\) on an unknown class App\\Models\\Currency\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Console/Commands/DevSetup.php
+
+		-
+			message: '#^Call to static method where\(\) on an unknown class App\\Models\\Role\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Console/Commands/DevSetup.php
+
+		-
+			message: '#^Method App\\Console\\Commands\\DevSetup\:\:setupDevTenant\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: app/Console/Commands/DevSetup.php
+
+		-
+			message: '#^Offset 0 on non\-empty\-list\<string\> on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Console/Commands/DevSetup.php
+
+		-
+			message: '#^Match expression does not handle remaining values\: int\|string$#'
+			identifier: match.unhandled
+			count: 1
+			path: app/Console/Commands/SplitMake.php
+
+		-
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
+			count: 1
+			path: app/Domain/Entities/BaseEntity.php
+
+		-
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
+			count: 1
+			path: app/Domain/Shared/BaseEntity.php
+
+		-
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
+			count: 1
+			path: app/Domain/Shared/BaseValueObject.php
+
+		-
+			message: '#^Parameter \#1 \$source of static method App\\Application\\Shared\\Contracts\\BaseDTO\:\:fromValidatable\(\) expects App\\Application\\Shared\\Contracts\\HasValidatedData, App\\Http\\Requests\\RegisterOnTheFlyRequest given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Auth/RegistrationController.php
+
+		-
+			message: '#^Instanceof between App\\Http\\Responses\\SplitResponseBuilder and App\\Http\\Responses\\SplitResponseBuilder will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: app/Http/Controllers/HybridController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Settings\\ProfileController\:\:destroy\(\) should return Illuminate\\Http\\RedirectResponse but returns Symfony\\Component\\HttpFoundation\\RedirectResponse\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Http/Controllers/Settings/ProfileController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Teams/TeamController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Teams/TeamController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Teams/TeamController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$pivot\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Teams/TeamController.php
+
+		-
+			message: '#^Cannot access property \$value on string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Controllers/Teams/TeamController.php
+
+		-
+			message: '#^Cannot call method label\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Controllers/Teams/TeamController.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\TeamInvitation\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Http/Controllers/Teams/TeamController.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Http/Controllers/Teams/TeamController.php
+
+		-
+			message: '#^Call to an undefined method App\\Application\\Actions\\Tenants\\CreateTenant\:\:execute\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/TenantController.php
+
+		-
+			message: '#^Parameter \#1 \$source of static method App\\Application\\Shared\\Contracts\\BaseDTO\:\:fromValidatable\(\) expects App\\Application\\Shared\\Contracts\\HasValidatedData, App\\Http\\Requests\\StoreTenantRequest given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/TenantController.php
+
+		-
+			message: '#^Result of && is always true\.$#'
+			identifier: booleanAnd.alwaysTrue
+			count: 1
+			path: app/Http/Responses/SplitResponseBuilder.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and '''' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Http/Responses/SplitResponseBuilder.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and ''0'' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Http/Responses/SplitResponseBuilder.php
+
+		-
+			message: '#^If condition is always true\.$#'
+			identifier: if.alwaysTrue
+			count: 1
+			path: app/Infrastructure/Repositories/TenantRepository.php
+
+		-
+			message: '#^Template type TEntity of method App\\Models\\BaseModel\:\:toEntity\(\) is not referenced in a parameter\.$#'
+			identifier: method.templateTypeNotInParameter
+			count: 1
+			path: app/Models/BaseModel.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\GitHubConnection\:\:\$token_expires_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/GitHubConnection.php
+
+		-
+			message: '#^Attribute class App\\Attributes\\ExportRelationship does not exist\.$#'
+			identifier: attribute.notFound
+			count: 1
+			path: app/Models/GitHubConnection.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\GoogleConnection\:\:\$token_expires_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/GoogleConnection.php
+
+		-
+			message: '#^Attribute class App\\Attributes\\ExportRelationship does not exist\.$#'
+			identifier: attribute.notFound
+			count: 1
+			path: app/Models/GoogleConnection.php
+
+		-
+			message: '#^Method App\\Models\\Landlord\\KnownIssue\:\:getCurrentStatusDurationInSeconds\(\) should return int but returns float\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/Landlord/KnownIssue.php
+
+		-
+			message: '#^Parameter \#2 \$syntax of method Carbon\\CarbonImmutable\:\:diffForHumans\(\) expects array\|int\|null, true given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Models/Landlord/KnownIssue.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Landlord\\User\:\:\$gitHubConnection\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Landlord/User.php
+
+		-
+			message: '#^Method App\\Models\\Membership\:\:user\(\) should return Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<Illuminate\\Database\\Eloquent\\Model, \$this\(App\\Models\\Membership\)\> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<App\\Models\\User, \$this\(App\\Models\\Membership\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/Membership.php
+
+		-
+			message: '#^Method App\\Models\\Team\:\:members\(\) should return Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany\<Illuminate\\Database\\Eloquent\\Model, \$this\(App\\Models\\Team\), Illuminate\\Database\\Eloquent\\Relations\\Pivot, ''pivot''\> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany\<App\\Models\\User, \$this\(App\\Models\\Team\), App\\Models\\Membership, ''pivot''\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/Team.php
+
+		-
+			message: '#^Cannot call method isPast\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/TeamInvitation.php
+
+		-
+			message: '#^Method App\\Models\\TeamInvitation\:\:inviter\(\) should return Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<Illuminate\\Database\\Eloquent\\Model, \$this\(App\\Models\\TeamInvitation\)\> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<App\\Models\\User, \$this\(App\\Models\\TeamInvitation\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/TeamInvitation.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$gitHubConnection\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$googleConnection\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:teamRole\(\) should return App\\Enums\\TeamRole\|null but returns string\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Notifications/Teams/TeamInvitation.php
+
+		-
+			message: '#^Cannot access property \$value on string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Notifications/Teams/TeamInvitation.php
+
+		-
+			message: '#^Anonymous function has invalid return type App\\Guards\\TenantGuard\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Providers/AppServiceProvider.php
+
+		-
+			message: '#^Instantiated class App\\Guards\\TenantGuard not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Providers/AppServiceProvider.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getScoutModelsByIds\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Search/PgTextSearchEngine.php

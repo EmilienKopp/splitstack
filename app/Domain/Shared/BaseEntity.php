@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace App\Domain\Shared;
 
 use App\Concerns\ArrayLike;
-use ArrayAccess;
+use App\Domain\Shared\Contracts\Entity;
 use ArrayIterator;
-use Illuminate\Contracts\Support\Arrayable;
-use IteratorAggregate;
 use Traversable;
 
-abstract class BaseEntity implements Arrayable, ArrayAccess, IteratorAggregate
+abstract class BaseEntity implements Entity
 {
     use ArrayLike;
 
@@ -23,8 +21,11 @@ abstract class BaseEntity implements Arrayable, ArrayAccess, IteratorAggregate
         }
     }
 
-    final public static function fromArray(array $data): static
+    public static function fromArray(array $data): static
     {
+        // Protect from "Unknown named parameters" error if array keys don't match constructor params
+        $data = array_filter($data, fn ($key): bool => property_exists(static::class, $key), ARRAY_FILTER_USE_KEY);
+
         return new static(...$data);
     }
 
